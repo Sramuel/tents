@@ -2,3 +2,4 @@
 
 Auteurs du projet :
 - Sicot Anthony
+- Guillaumin Samuel
