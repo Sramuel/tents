@@ -1,0 +1,1 @@
+/usr/bin/cc -std=c99 -g -Wall CMakeFiles/game_text.dir/game_text.c.o -o game_text   -L/autofs/unityaccount/cremi/sguillaumin/tents-b32  -Wl,-rpath,/autofs/unityaccount/cremi/sguillaumin/tents-b32 -lgame
