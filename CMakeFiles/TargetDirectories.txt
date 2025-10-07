@@ -1,3 +1,0 @@
-/autofs/unityaccount/cremi/sguillaumin/tents-b32/CMakeFiles/game_text.dir
-/autofs/unityaccount/cremi/sguillaumin/tents-b32/CMakeFiles/edit_cache.dir
-/autofs/unityaccount/cremi/sguillaumin/tents-b32/CMakeFiles/rebuild_cache.dir
