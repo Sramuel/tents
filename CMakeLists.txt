@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(game C)
 
+include(CTest)
+enable_testing()
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 
 link_directories(${CMAKE_SOURCE_DIR})
 
 add_executable(game_text game_text.c)
+add_executable(game_test_sguillaumin game_test_sguillaumin.c)
 target_link_libraries(game_text game)
+
+add_test(game_test_sguillaumin_dummy ./game_test_sguillaumin dummy)
