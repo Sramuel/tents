@@ -7,7 +7,17 @@ bool test_dummy(){
     return true;
 }
 
+void usage(int argc, char *argv[])
+{
+  fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
+  exit(EXIT_FAILURE);
+}
+
 int main(int argc, char *argv[]){
+
+    if (argc == 1)
+        usage(argc, argv);
+    fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
     bool ok = false;
     if (strcmp("dummy",argv[1])==0){
         ok = test_dummy();
