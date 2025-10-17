@@ -11,7 +11,7 @@
 
 
 bool test_dummy(){
-    return EXIT_SUCCESS;
+    return true;
 }
 
 void usage(int argc, char *argv[])
