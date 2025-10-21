@@ -39,7 +39,7 @@ bool test_new(){
     return true;
 }
 
-bool test_new_empty(void) {
+bool test_new_empty() {
     game g = game_new_empty();
     if (g == NULL) {
         fprintf(stderr, "La fonction renvoie un pointeur Null\n");
@@ -70,6 +70,47 @@ bool test_new_empty(void) {
     return true;
 }
 
+bool test_copy() {
+    game g1 = game_new_empty();
+    if (g1 == NULL){
+        return false; 
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL) {
+        fprintf(stderr, "La fonction renvoie un pointeur Null\n");
+        game_delete(g1);
+        return false;
+    }
+    for (uint i = 0; i < DEFAULT_SIZE; i++) {
+        for (uint j = 0; j < DEFAULT_SIZE; j++) {
+            if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
+                fprintf(stderr, "Non correspondance dans la case (%u,%u)\n", i, j);
+                return false;
+            }
+        }
+    }
+    for (uint i = 0; i < DEFAULT_SIZE; i++) {
+        if (game_get_expected_nb_tents_row(g1, i) != game_get_expected_nb_tents_row(g2, i)) {
+            fprintf(stderr, "Le nombre de tente attendu pour la ligne [%u] n'est pas le même\n", i);
+            return false;
+        }
+        if (game_get_expected_nb_tents_col(g1, i) != game_get_expected_nb_tents_col(g2, i)) {
+            fprintf(stderr, "Le nombre de tente attendu pour la colonne [%u] n'est pas le même\n", i);
+            return false;
+        }
+    }
+    game_set_square(g2, 0, 0, TENT);
+    if (game_get_square(g1, 0, 0) == TENT) {
+        fprintf(stderr, "La copie modifie aussi l'originale\n");
+        return false;
+    }
+    game_print(g1);
+    game_print(g2);
+    game_delete(g1);
+    game_delete(g2);
+    return true;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[])
@@ -94,6 +135,8 @@ int main(int argc, char *argv[])
     ok = test_new();
   else if (strcmp("new_empty", argv[1]) == 0)
     ok = test_new_empty();
+  else if (strcmp("copy", argv[1]) == 0)
+    ok = test_copy();
 
   else
   {
