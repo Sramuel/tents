@@ -13,7 +13,6 @@ bool test_dummy(){
     return true;
 }
 
-
 bool test_new(){
     square* squares = malloc((DEFAULT_SIZE*DEFAULT_SIZE)*sizeof(square));
     if (squares==NULL){

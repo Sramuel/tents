@@ -26,4 +26,3 @@ add_test(test_sguillaumin_print ./game_test_sguillaumin print)
 add_test(test_sguillaumin_delete ./game_test_sguillaumin delete)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
-
