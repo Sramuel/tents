@@ -7,10 +7,23 @@
 #include "game.h"
 #include "game_aux.h"
 
-/* ********** TEST DUMMY ********** */
+/* ********** TEST ********** */
 
 bool test_dummy()
 {
+  return true;
+}
+
+bool test_print(){
+  game g = game_default();
+  game_print(g);
+  game_delete(g);
+  return true;
+}
+
+bool test_delete(){
+  game g = game_default();
+  game_delete(g);
   return true;
 }
 
@@ -34,6 +47,10 @@ int main(int argc, char *argv[])
   bool ok = false;
   if (strcmp("dummy", argv[1]) == 0)
     ok = test_dummy();
+  else if (strcmp("print", argv[1]) == 0)
+    ok = test_print();
+  else if (strcmp("delete", argv[1]) == 0)
+    ok = test_delete();
   else
   {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);

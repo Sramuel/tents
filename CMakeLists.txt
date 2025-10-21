@@ -15,7 +15,12 @@ add_executable(game_test_ansicot game_test_ansicot.c)
 add_executable(game_test_amassie game_test_amassie.c)
 
 target_link_libraries(game_text game)
+target_link_libraries(game_test_sguillaumin game)
 
 add_test(test_ansicot_dummy ./game_test_ansicot dummy)
+
 add_test(test_sguillaumin_dummy ./game_test_sguillaumin dummy)
+add_test(test_sguillaumin_print ./game_test_sguillaumin print)
+add_test(test_sguillaumin_delete ./game_test_sguillaumin delete)
+
 add_test(test_amassie_dummy ./game_test_amassie dummy)
