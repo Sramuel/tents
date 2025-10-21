@@ -20,6 +20,7 @@ target_link_libraries(game_test_ansicot game)
 
 add_test(test_ansicot_dummy ./game_test_ansicot dummy)
 add_test(test_ansicot_new ./game_test_ansicot new)
+add_test(test_ansicot_new_empty ./game_test_ansicot new_empty)
 
 add_test(test_sguillaumin_dummy ./game_test_sguillaumin dummy)
 add_test(test_sguillaumin_print ./game_test_sguillaumin print)

@@ -39,6 +39,37 @@ bool test_new(){
     return true;
 }
 
+bool test_new_empty(void) {
+    game g = game_new_empty();
+    if (g == NULL) {
+        fprintf(stderr, "La fonction renvoie un pointeur Null\n");
+        return false;
+    }
+    for (uint i = 0; i < DEFAULT_SIZE; i++) {
+        for (uint j = 0; j < DEFAULT_SIZE; j++) {
+            if (game_get_square(g, i, j) != EMPTY) {
+                fprintf(stderr, "La case (%u,%u) n'est pas vide\n", i, j);
+                return false;
+            }
+        }
+    }
+    for (uint i = 0; i < DEFAULT_SIZE; i++) {
+        if (game_get_expected_nb_tents_row(g, i) != 0) {
+            fprintf(stderr, "Le nombre de tentes attendu sur la ligne [%u] n'est pas de 0\n", i);
+            return false;
+        }
+    }
+    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+        if (game_get_expected_nb_tents_col(g, j) != 0) {
+            fprintf(stderr, "Le nombre de tentes attendu sur la colonne [%u] n'est pas de 0\n", j);
+            return false;
+        }
+    }
+    game_print(g);
+    game_delete(g);
+    return true;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[])
@@ -61,7 +92,8 @@ int main(int argc, char *argv[])
     ok = test_dummy();
   else if (strcmp("new", argv[1]) == 0)
     ok = test_new();
-
+  else if (strcmp("new_empty", argv[1]) == 0)
+    ok = test_new_empty();
 
   else
   {
