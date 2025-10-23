@@ -27,5 +27,7 @@ add_test(test_ansicot_copy ./game_test_ansicot copy)
 add_test(test_sguillaumin_dummy ./game_test_sguillaumin dummy)
 add_test(test_sguillaumin_print ./game_test_sguillaumin print)
 add_test(test_sguillaumin_delete ./game_test_sguillaumin delete)
+add_test(test_sguillaumin_get_expected_nb_tents_row ./game_test_sguillaumin get_expected_nb_tents_row)
+add_test(test_sguillaumin_get_expected_nb_tents_col ./game_test_sguillaumin get_expected_nb_tents_col)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
