@@ -57,6 +57,22 @@ bool test_get_expected_nb_tents_col(){
   return true;
 }
 
+bool test_get_expected_nb_tents_all(){
+  game g=game_default();
+  if (g ==NULL)
+    return false;
+  uint val=0;
+  for (uint i=0;i<DEFAULT_SIZE;i++){
+    val+=game_get_expected_nb_tents_row(g,i);
+  }
+  uint total=game_get_expected_nb_tents_all(g);
+  game_delete(g);
+  if (val==total){
+    return true;
+  }
+  return false;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[])
@@ -85,6 +101,8 @@ int main(int argc, char *argv[])
     ok = test_get_expected_nb_tents_row();
   else if (strcmp("get_expected_nb_tents_col", argv[1]) == 0)
     ok = test_get_expected_nb_tents_col();
+  else if (strcmp("get_expected_nb_tents_all", argv[1]) == 0)
+    ok = test_get_expected_nb_tents_all();
   else
   {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
