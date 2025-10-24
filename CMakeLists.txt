@@ -17,6 +17,7 @@ add_executable(game_test_amassie game_test_amassie.c)
 target_link_libraries(game_text game)
 target_link_libraries(game_test_sguillaumin game)
 target_link_libraries(game_test_ansicot game)
+target_link_libraries(game_test_amassie game)
 
 add_test(test_ansicot_dummy ./game_test_ansicot dummy)
 add_test(test_ansicot_new ./game_test_ansicot new)
@@ -32,5 +33,6 @@ add_test(test_sguillaumin_get_expected_nb_tents_col ./game_test_sguillaumin get_
 add_test(test_sguillaumin_get_expected_nb_tents_all ./game_test_sguillaumin get_expected_nb_tents_all)
 add_test(test_sguillaumin_get_current_nb_tents_col ./game_test_sguillaumin get_current_nb_tents_col)
 add_test(test_sguillaumin_get_current_nb_tents_row ./game_test_sguillaumin get_current_nb_tents_row)
+add_test(test_sguillaumin_get_current_nb_tents_all ./game_test_sguillaumin get_current_nb_tents_all)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
