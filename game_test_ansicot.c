@@ -33,10 +33,15 @@ bool test_new(){
         fprintf(stderr, "La fonction renvoie un pointeur Null\n");
         return false;
     }
+    if (game_equal(g, game_new_empty())){ 
+        game_delete(g);
+        free(squares);
+        return true;
+    }
     game_print(g);
     game_delete(g);
     free(squares);
-    return true;
+    return false;
 }
 
 bool test_new_empty() {
@@ -71,7 +76,7 @@ bool test_new_empty() {
 }
 
 bool test_copy() {
-    game g1 = game_new_empty();
+    game g1 = game_default();
     if (g1 == NULL){
         return false; 
     }
@@ -99,8 +104,8 @@ bool test_copy() {
             return false;
         }
     }
-    game_set_square(g2, 0, 0, TENT);
-    if (game_get_square(g1, 0, 0) == TENT) {
+    game_set_square(g2, 1, 0, TENT);
+    if (game_get_square(g1, 1, 0) == TENT) {
         fprintf(stderr, "La copie modifie aussi l'originale\n");
         return false;
     }
