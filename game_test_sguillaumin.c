@@ -73,6 +73,60 @@ bool test_get_expected_nb_tents_all(){
   return false;
 }
 
+bool test_get_current_nb_tents_col(){
+  game g=game_default();
+  if (g ==NULL) 
+    return false;
+  for (uint i=0;i<DEFAULT_SIZE;i++){
+    if (game_get_current_nb_tents_col(g,i)!=0){
+      game_delete(g);
+      return false;
+    }
+  }
+  game_play_move(g,4,3,TENT);
+  if (game_get_current_nb_tents_col(g,3)!=1){
+    game_delete(g);
+    return false;
+  }
+  for(uint i=0;i<DEFAULT_SIZE;i++){ //je teste une nouvelle fois pour etre sur que les autres colonnes n'ont pas bougé
+    if (i!=3){
+      if (game_get_current_nb_tents_col(g,i)!=0){
+        game_delete(g);
+        return false;
+      }
+    }
+  }
+  game_delete(g);
+  return true;
+}
+
+bool test_get_current_nb_tents_row(){
+  game g=game_default();
+  if (g ==NULL) 
+    return false;
+  for (uint i=0;i<DEFAULT_SIZE;i++){
+    if (game_get_current_nb_tents_row(g,i)!=0){
+      game_delete(g);
+      return false;
+    }
+  }
+  game_play_move(g,4,3,TENT);
+  if (game_get_current_nb_tents_row(g,4)!=1){
+    game_delete(g);
+    return false;
+  }
+  for(uint i=0;i<DEFAULT_SIZE;i++){ //je teste une nouvelle fois pour etre sur que les autres lignes n'ont pas bougé
+    if (i!=4){
+      if (game_get_current_nb_tents_row(g,i)!=0){
+        game_delete(g);
+        return false;
+      }
+    }
+  }
+  game_delete(g);
+  return true;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[])
@@ -103,6 +157,10 @@ int main(int argc, char *argv[])
     ok = test_get_expected_nb_tents_col();
   else if (strcmp("get_expected_nb_tents_all", argv[1]) == 0)
     ok = test_get_expected_nb_tents_all();
+  else if (strcmp("get_current_nb_tents_col", argv[1]) == 0)
+    ok = test_get_current_nb_tents_col();
+  else if (strcmp("get_current_nb_tents_row", argv[1]) == 0)
+    ok = test_get_current_nb_tents_row();
   else
   {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
