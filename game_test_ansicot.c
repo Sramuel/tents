@@ -121,8 +121,12 @@ bool test_copy() {
 
 bool test_equal() {
     game g1 = game_default();
-    game g2 = game_default();
-    if (g1==NULL || g2==NULL){
+    if (g1 == NULL){
+        return false;
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL){
+        game_delete(g1);
         return false;
     }
     if (!game_equal(g1, g2)) {
@@ -153,6 +157,7 @@ bool test_set_square() {
     }
     game g2 = game_copy(g1);
     if (g2 == NULL){
+        game_delete(g1);
         return false;
     }
     if (game_get_square(g1, 1, 0) != EMPTY) {
@@ -182,6 +187,35 @@ bool test_set_square() {
     return true;
 }
 
+bool test_get_square() {
+    game g1 = game_default();
+    if (g1 == NULL){
+        return false;
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL){
+        return false;
+    }
+    if (game_get_square(g1, 1, 0) != EMPTY) {
+        fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g1, 1, 0, TENT);
+    if (game_get_square(g1, 1, 0) != TENT) {
+        fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g1, 1, 0, EMPTY);
+    game_print(g1);
+    game_print(g2);
+    game_delete(g1);
+    game_delete(g2);
+    return true;
+}
 
 /* ********** USAGE ********** */
 
@@ -210,6 +244,8 @@ int main(int argc, char *argv[]){
         ok = test_equal();
     else if (strcmp("set_square", argv[1]) == 0)
         ok = test_set_square();
+    else if (strcmp("get_square", argv[1]) == 0)
+        ok = test_get_square();
 
     else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
