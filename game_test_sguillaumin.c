@@ -154,6 +154,29 @@ bool test_get_current_nb_tents_all(){
   return true;
 }
 
+bool test_play_move(){
+  game g=game_default();
+  if (g ==NULL) 
+    return false;
+  game_play_move(g,4,3,TENT);
+  if (game_get_square(g,4,3)!=TENT){
+    game_delete(g);
+    return false;
+  }
+  game_play_move(g,4,3,EMPTY);
+  if (game_get_square(g,4,3)!=EMPTY){
+    game_delete(g);
+    return false;
+  }
+  game_play_move(g,0,1,GRASS);
+  if (game_get_square(g,0,1)!=GRASS){
+    game_delete(g);
+    return false;
+  }
+  game_delete(g);
+  return true;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[])
@@ -190,6 +213,8 @@ int main(int argc, char *argv[])
     ok = test_get_current_nb_tents_row();
   else if (strcmp("get_current_nb_tents_all", argv[1]) == 0)
     ok = test_get_current_nb_tents_all();
+  else if (strcmp("play_move", argv[1]) == 0)
+    ok = test_play_move();
   else
   {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);

@@ -38,5 +38,6 @@ add_test(test_sguillaumin_get_expected_nb_tents_all ./game_test_sguillaumin get_
 add_test(test_sguillaumin_get_current_nb_tents_col ./game_test_sguillaumin get_current_nb_tents_col)
 add_test(test_sguillaumin_get_current_nb_tents_row ./game_test_sguillaumin get_current_nb_tents_row)
 add_test(test_sguillaumin_get_current_nb_tents_all ./game_test_sguillaumin get_current_nb_tents_all)
+add_test(test_sguillaumin_play_move ./game_test_sguillaumin play_move)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
