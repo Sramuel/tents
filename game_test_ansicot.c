@@ -57,7 +57,7 @@ bool test_new(){
 bool test_new_empty() {
     game g = game_new_empty();
     if (g == NULL) {
-        fprintf(stderr, "La fonction renvoie un pointeur Null\n");
+        fprintf(stderr, "La fonction renvoie un pointeur NULL\n");
         return false;
     }
     for (uint i = 0; i < DEFAULT_SIZE; i++) {
@@ -95,7 +95,7 @@ bool test_copy() {
     }
     game g2 = game_copy(g1);
     if (g2 == NULL) {
-        fprintf(stderr, "La fonction renvoie un pointeur nul\n");
+        fprintf(stderr, "La fonction renvoie un pointeur NULL\n");
         game_delete(g1);
         return false;
     }
@@ -192,28 +192,20 @@ bool test_get_square() {
     if (g1 == NULL){
         return false;
     }
-    game g2 = game_copy(g1);
-    if (g2 == NULL){
-        return false;
-    }
     if (game_get_square(g1, 1, 0) != EMPTY) {
         fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
         game_delete(g1);
-        game_delete(g2);
         return false;
     }
     game_set_square(g1, 1, 0, TENT);
     if (game_get_square(g1, 1, 0) != TENT) {
         fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
         game_delete(g1);
-        game_delete(g2);
         return false;
     }
     game_set_square(g1, 1, 0, EMPTY);
     game_print(g1);
-    game_print(g2);
     game_delete(g1);
-    game_delete(g2);
     return true;
 }
 
