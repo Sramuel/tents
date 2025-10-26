@@ -26,7 +26,8 @@ add_test(test_ansicot_copy ./game_test_ansicot copy)
 add_test(test_ansicot_equal ./game_test_ansicot equal)
 add_test(test_ansicot_set_square ./game_test_ansicot set_square)
 add_test(test_ansicot_get_square ./game_test_ansicot get_square)
-
+add_test(test_ansicot_set_expected_nb_tents_row ./game_test_ansicot set_expected_nb_tents_row)
+add_test(test_ansicot_set_expected_nb_tents_col ./game_test_ansicot set_expected_nb_tents_col)
 
 add_test(test_sguillaumin_dummy ./game_test_sguillaumin dummy)
 add_test(test_sguillaumin_print ./game_test_sguillaumin print)

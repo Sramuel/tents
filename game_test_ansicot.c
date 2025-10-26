@@ -21,11 +21,11 @@ bool test_new(){
     }
     uint nb_tents_row[DEFAULT_SIZE];
     uint nb_tents_col[DEFAULT_SIZE];
-    for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    for (uint i = 0; i < DEFAULT_SIZE; i++){
         nb_tents_row[i] = 0;
         nb_tents_col[i] = 0;
     }
-    for (uint i = 0; i < DEFAULT_SIZE * DEFAULT_SIZE; i++) {
+    for (uint i = 0; i < DEFAULT_SIZE * DEFAULT_SIZE; i++){
         squares[i] = EMPTY;
     }
     game g = game_new(squares, nb_tents_row, nb_tents_col);
@@ -35,7 +35,7 @@ bool test_new(){
         return false;
     }
     game g2 = game_new_empty();
-        if (g2 == NULL) {
+        if (g2 == NULL){
         fprintf(stderr, "La fonction game_new_empty() a renvoye un pointeur NULL\n");
         game_delete(g);
         free(squares);
@@ -54,30 +54,30 @@ bool test_new(){
     return true;
 }
 
-bool test_new_empty() {
+bool test_new_empty(){
     game g = game_new_empty();
-    if (g == NULL) {
+    if (g == NULL){
         fprintf(stderr, "La fonction renvoie un pointeur NULL\n");
         return false;
     }
-    for (uint i = 0; i < DEFAULT_SIZE; i++) {
-        for (uint j = 0; j < DEFAULT_SIZE; j++) {
-            if (game_get_square(g, i, j) != EMPTY) {
+    for (uint i = 0; i < DEFAULT_SIZE; i++){
+        for (uint j = 0; j < DEFAULT_SIZE; j++){
+            if (game_get_square(g, i, j) != EMPTY){
                 fprintf(stderr, "La case (%u,%u) n'est pas vide\n", i, j);
                 game_delete(g);
                 return false;
             }
         }
     }
-    for (uint i = 0; i < DEFAULT_SIZE; i++) {
-        if (game_get_expected_nb_tents_row(g, i) != 0) {
+    for (uint i = 0; i < DEFAULT_SIZE; i++){
+        if (game_get_expected_nb_tents_row(g, i) != 0){
             fprintf(stderr, "Le nombre de tentes attendu sur la ligne [%u] n'est pas de 0\n", i);
             game_delete(g);
             return false;
         }
     }
-    for (uint j = 0; j < DEFAULT_SIZE; j++) {
-        if (game_get_expected_nb_tents_col(g, j) != 0) {
+    for (uint j = 0; j < DEFAULT_SIZE; j++){
+        if (game_get_expected_nb_tents_col(g, j) != 0){
             fprintf(stderr, "Le nombre de tentes attendu sur la colonne [%u] n'est pas de 0\n", j);
             game_delete(g);
             return false;
@@ -88,25 +88,25 @@ bool test_new_empty() {
     return true;
 }
 
-bool test_copy() {
+bool test_copy(){
     game g1 = game_default();
     if (g1 == NULL){
         return false; 
     }
     game g2 = game_copy(g1);
-    if (g2 == NULL) {
+    if (g2 == NULL){
         fprintf(stderr, "La fonction renvoie un pointeur NULL\n");
         game_delete(g1);
         return false;
     }
-    if (!game_equal(g1, g2)) {
+    if (!game_equal(g1, g2)){
         fprintf(stderr, "La copie n'est pas egale a l'originale\n");
         game_delete(g1);
         game_delete(g2);
         return false;
     }
     game_set_square(g2, 1, 0, TENT);
-    if (game_get_square(g1, 1, 0) == TENT) {
+    if (game_get_square(g1, 1, 0) == TENT){
         fprintf(stderr, "La copie modifie aussi l'originale\n");
         game_delete(g1);
         game_delete(g2);
@@ -129,14 +129,14 @@ bool test_equal() {
         game_delete(g1);
         return false;
     }
-    if (!game_equal(g1, g2)) {
+    if (!game_equal(g1, g2)){
         fprintf(stderr, "Les deux games devraient etres egales a la creation\n");
         game_delete(g1);
         game_delete(g2);
         return false;
     }
     game_set_square(g2, 1, 0, TENT);
-    if (game_equal(g1, g2)) {
+    if (game_equal(g1, g2)){
         fprintf(stderr, "Les deux games devraient etres differentes des qu'on en modifie une\n");
         game_delete(g1);
         game_delete(g2);
@@ -150,7 +150,7 @@ bool test_equal() {
     return true;
 }
 
-bool test_set_square() {
+bool test_set_square(){
     game g1 = game_default();
     if (g1 == NULL){
         return false;
@@ -160,21 +160,21 @@ bool test_set_square() {
         game_delete(g1);
         return false;
     }
-    if (game_get_square(g1, 1, 0) != EMPTY) {
+    if (game_get_square(g1, 1, 0) != EMPTY){
         fprintf(stderr, "La case a mal ete initialisee\n");
         game_delete(g1);
         game_delete(g2);
         return false;
     }
     game_set_square(g1, 1, 0, TENT);
-    if (game_get_square(g1, 1, 0) != TENT) {
+    if (game_get_square(g1, 1, 0) != TENT){
         fprintf(stderr, "La case n'a ete correctement remplie\n");
         game_delete(g1);
         game_delete(g2);
         return false;
     }
     game_set_square(g1, 1, 0, EMPTY);
-    if (!game_equal(g1, g2)) {
+    if (!game_equal(g1, g2)){
         fprintf(stderr, "set_square a aussi modifiee d'autres case que celle voulue\n");
         game_delete(g1);
         game_delete(g2);
@@ -187,18 +187,18 @@ bool test_set_square() {
     return true;
 }
 
-bool test_get_square() {
+bool test_get_square(){
     game g1 = game_default();
     if (g1 == NULL){
         return false;
     }
-    if (game_get_square(g1, 1, 0) != EMPTY) {
+    if (game_get_square(g1, 1, 0) != EMPTY){
         fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
         game_delete(g1);
         return false;
     }
     game_set_square(g1, 1, 0, TENT);
-    if (game_get_square(g1, 1, 0) != TENT) {
+    if (game_get_square(g1, 1, 0) != TENT){
         fprintf(stderr, "On ne trouve pas la bonne valeur pour cette case\n");
         game_delete(g1);
         return false;
@@ -206,6 +206,74 @@ bool test_get_square() {
     game_set_square(g1, 1, 0, EMPTY);
     game_print(g1);
     game_delete(g1);
+    return true;
+}
+
+bool test_set_expected_nb_tents_row(){
+    game g1 = game_default();
+    if (g1 == NULL){
+        return false;
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL){
+        game_delete(g1);
+        return false;
+    }
+    uint row = 1;
+    uint original = game_get_expected_nb_tents_row(g1, row);
+    game_set_expected_nb_tents_row(g1, row, original + 1);
+    if (game_get_expected_nb_tents_row(g1, row) != original + 1){
+        fprintf(stderr, "La modification n'a pas ete prise en compte\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    for (uint i = 0; i < DEFAULT_SIZE; i++){
+        if ((i!=row) && (game_get_expected_nb_tents_row(g1, i) != game_get_expected_nb_tents_row(g2, i))){
+            fprintf(stderr, "Une autre ligne a ete modifiee\n");
+            game_delete(g1);
+            game_delete(g2);
+            return false;
+        }
+    }
+    game_set_expected_nb_tents_row(g1, row, original);
+    game_print(g1);
+    game_delete(g1);
+    game_delete(g2);
+    return true;
+}
+
+bool test_set_expected_nb_tents_col(){
+    game g1 = game_default();
+    if (g1 == NULL){
+        return false;
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL){
+        game_delete(g1);
+        return false;
+    }
+    uint col = 1;
+    uint original = game_get_expected_nb_tents_col(g1, col);
+    game_set_expected_nb_tents_col(g1, col, original + 1);
+    if (game_get_expected_nb_tents_col(g1, col) != original + 1){
+        fprintf(stderr, "La modification n'a pas ete prise en compte\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    for (uint j = 0; j < DEFAULT_SIZE; j++){
+        if ((j!=col) && (game_get_expected_nb_tents_col(g1, j) != game_get_expected_nb_tents_col(g2, j))){
+            fprintf(stderr, "Une autre colonne a ete modifiee\n");
+            game_delete(g1);
+            game_delete(g2);
+            return false;
+        }
+    }
+    game_set_expected_nb_tents_col(g1, col, original);
+    game_print(g1);
+    game_delete(g1);
+    game_delete(g2);
     return true;
 }
 
@@ -238,6 +306,10 @@ int main(int argc, char *argv[]){
         ok = test_set_square();
     else if (strcmp("get_square", argv[1]) == 0)
         ok = test_get_square();
+    else if (strcmp("set_expected_nb_tents_row", argv[1]) == 0)
+        ok = test_set_expected_nb_tents_row();
+    else if (strcmp("set_expected_nb_tents_col", argv[1]) == 0)
+        ok = test_set_expected_nb_tents_col();
 
     else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
