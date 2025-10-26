@@ -23,6 +23,7 @@ add_test(test_ansicot_dummy ./game_test_ansicot dummy)
 add_test(test_ansicot_new ./game_test_ansicot new)
 add_test(test_ansicot_new_empty ./game_test_ansicot new_empty)
 add_test(test_ansicot_copy ./game_test_ansicot copy)
+add_test(test_ansicot_equal ./game_test_ansicot equal)
 
 
 add_test(test_sguillaumin_dummy ./game_test_sguillaumin dummy)

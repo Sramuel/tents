@@ -119,53 +119,69 @@ bool test_copy() {
     return true;
 }
 
-
-
-
-
+bool test_equal() {
+    game g1 = game_default();
+    game g2 = game_default();
+    if (g1==NULL || g2==NULL){
+        return false;
+    }
+    if (!game_equal(g1, g2)) {
+        fprintf(stderr, "Les deux games devraient êtres égales à la création\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g2, 1, 0, TENT);
+    if (game_equal(g1, g2)) {
+        fprintf(stderr, "Les deux games devraient êtres différentes dès qu'on en modifie une\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g2, 1, 0, EMPTY);
+    game_print(g1);
+    game_print(g2);
+    game_delete(g1);
+    game_delete(g2);
+    return true;
+}
 
 /* ********** USAGE ********** */
 
-void usage(int argc, char *argv[])
-{
-  fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
-  exit(EXIT_FAILURE);
+void usage(int argc, char *argv[]){
+    fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
+    exit(EXIT_FAILURE);
 }
 
 /* ********** MAIN ROUTINE ********** */
 
-int main(int argc, char *argv[])
-{
-  if (argc == 1)
-    usage(argc, argv);
+int main(int argc, char *argv[]){
+    if (argc == 1)
+        usage(argc, argv);
+    // start test
+    fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
+    bool ok = false;
+    if (strcmp("dummy", argv[1]) == 0)
+        ok = test_dummy();
+    else if (strcmp("new", argv[1]) == 0)
+        ok = test_new();
+    else if (strcmp("new_empty", argv[1]) == 0)
+        ok = test_new_empty();
+    else if (strcmp("copy", argv[1]) == 0)
+        ok = test_copy();
+    else if (strcmp("equal", argv[1]) == 0)
+        ok = test_equal();
 
-  // start test
-  fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
-  bool ok = false;
-  if (strcmp("dummy", argv[1]) == 0)
-    ok = test_dummy();
-  else if (strcmp("new", argv[1]) == 0)
-    ok = test_new();
-  else if (strcmp("new_empty", argv[1]) == 0)
-    ok = test_new_empty();
-  else if (strcmp("copy", argv[1]) == 0)
-    ok = test_copy();
-
-  else
-  {
+    else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);
-  }
-
-  // print test result
-  if (ok)
-  {
-    fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
-    return EXIT_SUCCESS;
-  }
-  else
-  {
-    fprintf(stderr, "Test \"%s\" finished: FAILURE\n", argv[1]);
-    return EXIT_FAILURE;
-  }
+    }
+    // print test result
+    if (ok){
+        fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
+        return EXIT_SUCCESS;
+    } else {
+        fprintf(stderr, "Test \"%s\" finished: FAILURE\n", argv[1]);
+        return EXIT_FAILURE;
+    }
 }
