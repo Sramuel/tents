@@ -30,18 +30,28 @@ bool test_new(){
     }
     game g = game_new(squares, nb_tents_row, nb_tents_col);
     if (g == NULL){
-        fprintf(stderr, "La fonction renvoie un pointeur Null\n");
+        fprintf(stderr, "La fonction renvoie un pointeur NULL\n");
+        free(squares);
         return false;
     }
-    if (game_equal(g, game_new_empty())){ 
+    game g2 = game_new_empty();
+        if (g2 == NULL) {
+        fprintf(stderr, "La fonction game_new_empty() a renvoyé un pointeur NULL\n");
         game_delete(g);
         free(squares);
-        return true;
+        return false;
+    }
+    if (!game_equal(g, g2)){ 
+        game_delete(g);
+        game_delete(g2);
+        free(squares);
+        return false;
     }
     game_print(g);
     game_delete(g);
+    game_delete(g2);
     free(squares);
-    return false;
+    return true;
 }
 
 bool test_new_empty() {
@@ -54,6 +64,7 @@ bool test_new_empty() {
         for (uint j = 0; j < DEFAULT_SIZE; j++) {
             if (game_get_square(g, i, j) != EMPTY) {
                 fprintf(stderr, "La case (%u,%u) n'est pas vide\n", i, j);
+                game_delete(g);
                 return false;
             }
         }
@@ -61,12 +72,14 @@ bool test_new_empty() {
     for (uint i = 0; i < DEFAULT_SIZE; i++) {
         if (game_get_expected_nb_tents_row(g, i) != 0) {
             fprintf(stderr, "Le nombre de tentes attendu sur la ligne [%u] n'est pas de 0\n", i);
+            game_delete(g);
             return false;
         }
     }
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
         if (game_get_expected_nb_tents_col(g, j) != 0) {
             fprintf(stderr, "Le nombre de tentes attendu sur la colonne [%u] n'est pas de 0\n", j);
+            game_delete(g);
             return false;
         }
     }
@@ -82,31 +95,21 @@ bool test_copy() {
     }
     game g2 = game_copy(g1);
     if (g2 == NULL) {
-        fprintf(stderr, "La fonction renvoie un pointeur Null\n");
+        fprintf(stderr, "La fonction renvoie un pointeur nul\n");
         game_delete(g1);
         return false;
     }
-    for (uint i = 0; i < DEFAULT_SIZE; i++) {
-        for (uint j = 0; j < DEFAULT_SIZE; j++) {
-            if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
-                fprintf(stderr, "Non correspondance dans la case (%u,%u)\n", i, j);
-                return false;
-            }
-        }
-    }
-    for (uint i = 0; i < DEFAULT_SIZE; i++) {
-        if (game_get_expected_nb_tents_row(g1, i) != game_get_expected_nb_tents_row(g2, i)) {
-            fprintf(stderr, "Le nombre de tente attendu pour la ligne [%u] n'est pas le même\n", i);
-            return false;
-        }
-        if (game_get_expected_nb_tents_col(g1, i) != game_get_expected_nb_tents_col(g2, i)) {
-            fprintf(stderr, "Le nombre de tente attendu pour la colonne [%u] n'est pas le même\n", i);
-            return false;
-        }
+    if (!game_equal(g1, g2)) {
+        fprintf(stderr, "La copie n'est pas egale a l'originale\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
     }
     game_set_square(g2, 1, 0, TENT);
     if (game_get_square(g1, 1, 0) == TENT) {
         fprintf(stderr, "La copie modifie aussi l'originale\n");
+        game_delete(g1);
+        game_delete(g2);
         return false;
     }
     game_print(g1);
@@ -115,6 +118,11 @@ bool test_copy() {
     game_delete(g2);
     return true;
 }
+
+
+
+
+
 
 /* ********** USAGE ********** */
 
