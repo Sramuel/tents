@@ -50,5 +50,3 @@ add_test(test_amassie_game_fill_grass ./game_test_amassie game_fill_grass)
 add_test(test_amassie_game_won ./game_test_amassie game_won)
 add_test(test_amassie_game_check_move ./game_test_amassie game_check_move)
 
-
-
