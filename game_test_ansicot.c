@@ -36,7 +36,7 @@ bool test_new(){
     }
     game g2 = game_new_empty();
         if (g2 == NULL) {
-        fprintf(stderr, "La fonction game_new_empty() a renvoyé un pointeur NULL\n");
+        fprintf(stderr, "La fonction game_new_empty() a renvoye un pointeur NULL\n");
         game_delete(g);
         free(squares);
         return false;
@@ -126,14 +126,14 @@ bool test_equal() {
         return false;
     }
     if (!game_equal(g1, g2)) {
-        fprintf(stderr, "Les deux games devraient êtres égales à la création\n");
+        fprintf(stderr, "Les deux games devraient etres egales a la creation\n");
         game_delete(g1);
         game_delete(g2);
         return false;
     }
     game_set_square(g2, 1, 0, TENT);
     if (game_equal(g1, g2)) {
-        fprintf(stderr, "Les deux games devraient êtres différentes dès qu'on en modifie une\n");
+        fprintf(stderr, "Les deux games devraient etres differentes des qu'on en modifie une\n");
         game_delete(g1);
         game_delete(g2);
         return false;
@@ -145,6 +145,43 @@ bool test_equal() {
     game_delete(g2);
     return true;
 }
+
+bool test_set_square() {
+    game g1 = game_default();
+    if (g1 == NULL){
+        return false;
+    }
+    game g2 = game_copy(g1);
+    if (g2 == NULL){
+        return false;
+    }
+    if (game_get_square(g1, 1, 0) != EMPTY) {
+        fprintf(stderr, "La case a mal ete initialisee\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g1, 1, 0, TENT);
+    if (game_get_square(g1, 1, 0) != TENT) {
+        fprintf(stderr, "La case n'a ete correctement remplie\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_set_square(g1, 1, 0, EMPTY);
+    if (!game_equal(g1, g2)) {
+        fprintf(stderr, "set_square a aussi modifiee d'autres case que celle voulue\n");
+        game_delete(g1);
+        game_delete(g2);
+        return false;
+    }
+    game_print(g1);
+    game_print(g2);
+    game_delete(g1);
+    game_delete(g2);
+    return true;
+}
+
 
 /* ********** USAGE ********** */
 
@@ -171,6 +208,8 @@ int main(int argc, char *argv[]){
         ok = test_copy();
     else if (strcmp("equal", argv[1]) == 0)
         ok = test_equal();
+    else if (strcmp("set_square", argv[1]) == 0)
+        ok = test_set_square();
 
     else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
