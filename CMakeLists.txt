@@ -41,3 +41,14 @@ add_test(test_sguillaumin_get_current_nb_tents_all ./game_test_sguillaumin get_c
 add_test(test_sguillaumin_play_move ./game_test_sguillaumin play_move)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
+add_test(test_amassie_game_is_neigh ./game_test_amassie game_is_neigh)
+add_test(test_amassie_game_get_ajacent_square ./game_test_amassie game_get_ajacent_square)
+add_test(test_amassie_game_default_solution ./game_test_amassie game_default_solution)
+add_test(test_amassie_game_default ./game_test_amassie game_default)
+add_test(test_amassie_game_restart ./game_test_amassie game_restart)
+add_test(test_amassie_game_fill_grass ./game_test_amassie game_fill_grass)
+add_test(test_amassie_game_won ./game_test_amassie game_won)
+add_test(test_amassie_game_check_move ./game_test_amassie game_check_move)
+
+
+
