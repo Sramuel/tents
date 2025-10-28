@@ -179,50 +179,33 @@ bool test_game_default(){
   return true;
 }
 
-bool test_game_restart(){
-  game g=game_default();
-  game_set_square(g, 3, 2, TENT);
-  game_set_square(g, 4, 2, GRASS);
-  game_set_square(g, 5, 2, GRASS);
-  game_set_square(g, 6, 2, TENT);
-  game copie=game_default();
-  game_restart(g);
-
-  for (uint i=0; i<DEFAULT_SIZE; i++){
-    for (uint j=0; j<DEFAULT_SIZE; j++){
-      square s1= game_get_square(g,i,j);
-      square s2= game_get_square(copie,i,j);
-
-      if (s2==TREE && s1!=TREE){
-        fprintf(stderr, "un arbre a disparu de son emplacement\n");
-        game_delete(g);
-        game_delete(copie);
-        return false;
-      }if (s2!=TREE && s1!=EMPTY){
-        fprintf(stderr, "une case non TREE n'as pas été vidée\n");
-        game_delete(g);
-        game_delete(copie);
-        return false;
-      }
-    }
-  }for (uint i=0;i<DEFAULT_SIZE;i++){
-    if(game_get_expected_nb_tents_row(g,i)!=game_get_expected_nb_tents_row(copie, i)){
-      fprintf(stderr, "objectifs changés sur les lignes\n");
-      game_delete(g);
-      game_delete(copie);
-      return false;
-    }
-  }for (uint j=0;j<DEFAULT_SIZE;j++){
-    if(game_get_expected_nb_tents_col(g,j)!=game_get_expected_nb_tents_col(copie, j)){
-      fprintf(stderr, "objectifs changés sur les colonnes\n");
-      game_delete(g);
-      game_delete(copie);
-      return false;
-    }
+bool test_game_restart() {
+  game g_original = game_default();
+  if (g_original ==NULL){
+    return false;
   }
-  game_delete(g);
-  game_delete(copie);
-  return true;
+  game g_to_restart =game_copy(g_original);
+  if (g_to_restart ==NULL){
+    game_delete(g_original);
+    return false;
+  }
+  game_play_move(g_to_restart,0,1, TENT);
+  game_play_move(g_to_restart,1,1, GRASS);
+  if (game_equal(g_original,g_to_restart)) {
+    game_delete(g_original);
+    game_delete(g_to_restart);
+    return false;
+  }
+  game_restart(g_to_restart);
+  bool test_passed =game_equal(g_original,g_to_restart);
+  if (!test_passed){
+    game_delete(g_original);
+    game_delete(g_to_restart);
+    return test_passed;
+  }
+  game_delete(g_original);
+  game_delete(g_to_restart);
+  return test_passed;
 }
 
 bool test_game_fill_grass(){
