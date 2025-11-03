@@ -74,9 +74,10 @@ bool test_get_expected_nb_tents_all(){
 }
 
 bool test_get_current_nb_tents_col(){
-  game g=game_default();
+  game g=game_new_empty();
   if (g ==NULL) 
     return false;
+  game_set_square(g,4,4,TREE);
   for (uint i=0;i<DEFAULT_SIZE;i++){
     if (game_get_current_nb_tents_col(g,i)!=0){
       game_delete(g);
@@ -101,9 +102,10 @@ bool test_get_current_nb_tents_col(){
 }
 
 bool test_get_current_nb_tents_row(){
-  game g=game_default();
+  game g=game_new_empty();
   if (g ==NULL) 
     return false;
+  game_set_square(g,4,4,TREE);
   for (uint i=0;i<DEFAULT_SIZE;i++){
     if (game_get_current_nb_tents_row(g,i)!=0){
       game_delete(g);
