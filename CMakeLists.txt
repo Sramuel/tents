@@ -7,7 +7,8 @@ enable_testing()
 
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
 
-link_directories(${CMAKE_SOURCE_DIR})
+add_library(game game.c game_aux.c)
+
 add_executable(game_text game_text.c)
 
 add_executable(game_test_sguillaumin game_test_sguillaumin.c)

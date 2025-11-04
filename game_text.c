@@ -1,41 +1,40 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "game.h"
 #include "game_aux.h"
 
-int main(void){
-    char c;
-    int i;
-    int j;
-    game g = game_default();
-    while (!game_won(g)){
-        game_print(g);
-        printf("? [h pour aide]\n");
-        scanf(" %c",&c);
-        if (c== 'h'){
-            printf("Si 't', met une pièce TENT dans la case (<i>,<j>)\nSi 'g', met la pièce GRASS dans la case (<i>,<j>)\nSi 'e', met la pièce EMPTY dans la case (<i>,<j>)\nSi 'f', remplie la grille avec de l'herbe (fill grass)\nSi 'r', le jeu redémarre\nSi 'q', quitter le jeu\n");
-        }
-        else if ( c=='t' || c=='g' || c=='e') {
-            scanf(" %d %d",&i,&j);
-            if (c== 't')
-                game_play_move(g,i,j,TENT);
-            if (c== 'g')
-                game_play_move(g,i,j,GRASS);
-            if (c== 'e')
-                game_play_move(g,i,j,EMPTY);
-        }
-        else if (c =='r')
-            game_restart(g);
-        else if (c=='f')
-            game_fill_grass(g);
-        else if (c=='q'){
-            game_delete(g);
-            printf("shame\n");
-            return EXIT_SUCCESS;
-        }
-    }
+int main(void) {
+  char c;
+  int i;
+  int j;
+  game g = game_default();
+  while (!game_won(g)) {
     game_print(g);
-    printf("congratulation\n");
-    game_delete(g);
-    return EXIT_SUCCESS;
+    printf("? [h pour aide]\n");
+    scanf(" %c", &c);
+    if (c == 'h') {
+      printf(
+          "Si 't', met une pièce TENT dans la case (<i>,<j>)\nSi 'g', met la pièce GRASS dans la case (<i>,<j>)\nSi "
+          "'e', met la pièce EMPTY dans la case (<i>,<j>)\nSi 'f', remplie la grille avec de l'herbe (fill grass)\nSi "
+          "'r', le jeu redémarre\nSi 'q', quitter le jeu\n");
+    } else if (c == 't' || c == 'g' || c == 'e') {
+      scanf(" %d %d", &i, &j);
+      if (c == 't') game_play_move(g, i, j, TENT);
+      if (c == 'g') game_play_move(g, i, j, GRASS);
+      if (c == 'e') game_play_move(g, i, j, EMPTY);
+    } else if (c == 'r')
+      game_restart(g);
+    else if (c == 'f')
+      game_fill_grass(g);
+    else if (c == 'q') {
+      game_delete(g);
+      printf("shame\n");
+      return EXIT_SUCCESS;
+    }
+  }
+  game_print(g);
+  printf("congratulation\n");
+  game_delete(g);
+  return EXIT_SUCCESS;
 }

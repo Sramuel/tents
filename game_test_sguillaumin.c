@@ -9,31 +9,27 @@
 
 /* ********** TEST ********** */
 
-bool test_dummy()
-{
-  return true;
-}
+bool test_dummy() { return true; }
 
-bool test_print(){
+bool test_print() {
   game g = game_default();
   game_print(g);
   game_delete(g);
   return true;
 }
 
-bool test_delete(){
+bool test_delete() {
   game g = game_default();
   game_delete(g);
   return true;
 }
 
-bool test_get_expected_nb_tents_row(){
-  game g=game_default();
-  if (g ==NULL) 
-    return false;
-  uint val[DEFAULT_SIZE]={1,2,1,2,2,0,1,3};
-  for (uint i=0;i<DEFAULT_SIZE;i++){
-    if (game_get_expected_nb_tents_row(g,i)!=val[i]){
+bool test_get_expected_nb_tents_row() {
+  game g = game_default();
+  if (g == NULL) return false;
+  uint val[DEFAULT_SIZE] = {1, 2, 1, 2, 2, 0, 1, 3};
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    if (game_get_expected_nb_tents_row(g, i) != val[i]) {
       game_delete(g);
       return false;
     }
@@ -42,13 +38,12 @@ bool test_get_expected_nb_tents_row(){
   return true;
 }
 
-bool test_get_expected_nb_tents_col(){
-  game g=game_default();
-  if (g ==NULL) 
-    return false;
-  uint val[DEFAULT_SIZE]={3,0,2,1,2,1,2,1};
-  for (uint j=0;j<DEFAULT_SIZE;j++){
-    if (game_get_expected_nb_tents_col(g,j)!=val[j]){
+bool test_get_expected_nb_tents_col() {
+  game g = game_default();
+  if (g == NULL) return false;
+  uint val[DEFAULT_SIZE] = {3, 0, 2, 1, 2, 1, 2, 1};
+  for (uint j = 0; j < DEFAULT_SIZE; j++) {
+    if (game_get_expected_nb_tents_col(g, j) != val[j]) {
       game_delete(g);
       return false;
     }
@@ -57,49 +52,48 @@ bool test_get_expected_nb_tents_col(){
   return true;
 }
 
-bool test_get_expected_nb_tents_all(){
-  game g=game_default();
-  if (g ==NULL)
-    return false;
-  uint val=0;
-  for (uint i=0;i<DEFAULT_SIZE;i++){
-    val+=game_get_expected_nb_tents_row(g,i);
+bool test_get_expected_nb_tents_all() {
+  game g = game_default();
+  if (g == NULL) return false;
+  uint val = 0;
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    val += game_get_expected_nb_tents_row(g, i);
   }
-  uint total=game_get_expected_nb_tents_all(g);
+  uint total = game_get_expected_nb_tents_all(g);
   game_delete(g);
-  if (val==total){
+  if (val == total) {
     return true;
   }
   return false;
 }
 
-bool test_get_current_nb_tents_row(){
-  game g=game_default();
-  if(g==NULL) return false;
-  game_set_square(g,0,4,TENT);
-  game_set_square(g,1,0,TENT);
-  game_set_square(g,1,6,TENT);
-  game_set_square(g,2,2,TENT);
-  game_set_square(g,3,4,TENT);
-  game_set_square(g,3,6,TENT);
-  game_set_square(g,4,0,TENT);
-  game_set_square(g,4,2,TENT);
-  game_set_square(g,6,5,TENT);
-  game_set_square(g,7,0,TENT);
-  game_set_square(g,7,3,TENT);
-  game_set_square(g,7,7,TENT);
-  game_set_square(g,5,1,TENT);
+bool test_get_current_nb_tents_row() {
+  game g = game_default();
+  if (g == NULL) return false;
+  game_set_square(g, 0, 4, TENT);
+  game_set_square(g, 1, 0, TENT);
+  game_set_square(g, 1, 6, TENT);
+  game_set_square(g, 2, 2, TENT);
+  game_set_square(g, 3, 4, TENT);
+  game_set_square(g, 3, 6, TENT);
+  game_set_square(g, 4, 0, TENT);
+  game_set_square(g, 4, 2, TENT);
+  game_set_square(g, 6, 5, TENT);
+  game_set_square(g, 7, 0, TENT);
+  game_set_square(g, 7, 3, TENT);
+  game_set_square(g, 7, 7, TENT);
+  game_set_square(g, 5, 1, TENT);
 
-  game_set_square(g,0,1,GRASS);
-  game_set_square(g,1,3,GRASS);
-  game_set_square(g,2,5,GRASS);
-  game_set_square(g,3,0,GRASS);
-  game_set_square(g,4,6,GRASS);
-  game_set_square(g,6,7,GRASS);
-  game_set_square(g,7,4,GRASS);
-  uint expected_row[8]={1,2,1,2,2,1,1,3};
-  for(uint i=0;i<DEFAULT_SIZE;i++){
-    if(game_get_current_nb_tents_row(g,i)!=expected_row[i]){
+  game_set_square(g, 0, 1, GRASS);
+  game_set_square(g, 1, 3, GRASS);
+  game_set_square(g, 2, 5, GRASS);
+  game_set_square(g, 3, 0, GRASS);
+  game_set_square(g, 4, 6, GRASS);
+  game_set_square(g, 6, 7, GRASS);
+  game_set_square(g, 7, 4, GRASS);
+  uint expected_row[8] = {1, 2, 1, 2, 2, 1, 1, 3};
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    if (game_get_current_nb_tents_row(g, i) != expected_row[i]) {
       game_delete(g);
       return false;
     }
@@ -108,33 +102,33 @@ bool test_get_current_nb_tents_row(){
   return true;
 }
 
-bool test_get_current_nb_tents_col(){
-  game g=game_default();
-  if(g==NULL) return false;
-  game_set_square(g,0,4,TENT);
-  game_set_square(g,1,0,TENT);
-  game_set_square(g,1,6,TENT);
-  game_set_square(g,2,2,TENT);
-  game_set_square(g,3,4,TENT);
-  game_set_square(g,3,6,TENT);
-  game_set_square(g,4,0,TENT);
-  game_set_square(g,4,2,TENT);
-  game_set_square(g,6,5,TENT);
-  game_set_square(g,7,0,TENT);
-  game_set_square(g,7,3,TENT);
-  game_set_square(g,7,7,TENT);
-  game_set_square(g,3,1,TENT);
+bool test_get_current_nb_tents_col() {
+  game g = game_default();
+  if (g == NULL) return false;
+  game_set_square(g, 0, 4, TENT);
+  game_set_square(g, 1, 0, TENT);
+  game_set_square(g, 1, 6, TENT);
+  game_set_square(g, 2, 2, TENT);
+  game_set_square(g, 3, 4, TENT);
+  game_set_square(g, 3, 6, TENT);
+  game_set_square(g, 4, 0, TENT);
+  game_set_square(g, 4, 2, TENT);
+  game_set_square(g, 6, 5, TENT);
+  game_set_square(g, 7, 0, TENT);
+  game_set_square(g, 7, 3, TENT);
+  game_set_square(g, 7, 7, TENT);
+  game_set_square(g, 3, 1, TENT);
 
-  game_set_square(g,0,2,GRASS);
-  game_set_square(g,1,4,GRASS);
-  game_set_square(g,2,7,GRASS);
-  game_set_square(g,3,5,GRASS);
-  game_set_square(g,4,3,GRASS);
-  game_set_square(g,6,0,GRASS);
-  game_set_square(g,7,6,GRASS);
-  uint expected_col[8]={3,1,2,1,2,1,2,1};
-  for(uint j=0;j<DEFAULT_SIZE;j++){
-    if(game_get_current_nb_tents_col(g,j)!=expected_col[j]){
+  game_set_square(g, 0, 2, GRASS);
+  game_set_square(g, 1, 4, GRASS);
+  game_set_square(g, 2, 7, GRASS);
+  game_set_square(g, 3, 5, GRASS);
+  game_set_square(g, 4, 3, GRASS);
+  game_set_square(g, 6, 0, GRASS);
+  game_set_square(g, 7, 6, GRASS);
+  uint expected_col[8] = {3, 1, 2, 1, 2, 1, 2, 1};
+  for (uint j = 0; j < DEFAULT_SIZE; j++) {
+    if (game_get_current_nb_tents_col(g, j) != expected_col[j]) {
       game_delete(g);
       return false;
     }
@@ -143,27 +137,25 @@ bool test_get_current_nb_tents_col(){
   return true;
 }
 
-
-bool test_get_current_nb_tents_all(){
-  game g=game_default();
-  if (g ==NULL) 
-    return false;
-  if (game_get_current_nb_tents_all(g)!=0){
+bool test_get_current_nb_tents_all() {
+  game g = game_default();
+  if (g == NULL) return false;
+  if (game_get_current_nb_tents_all(g) != 0) {
     game_delete(g);
     return false;
   }
-  game_play_move(g,4,3,TENT);
-  if (game_get_current_nb_tents_all(g)!=1){
+  game_play_move(g, 4, 3, TENT);
+  if (game_get_current_nb_tents_all(g) != 1) {
     game_delete(g);
     return false;
   }
-  game_play_move(g,0,1,TENT);
-  if (game_get_current_nb_tents_all(g)!=2){
+  game_play_move(g, 0, 1, TENT);
+  if (game_get_current_nb_tents_all(g) != 2) {
     game_delete(g);
     return false;
   }
-  game_play_move(g,0,1,EMPTY);
-  if (game_get_current_nb_tents_all(g)!=1){
+  game_play_move(g, 0, 1, EMPTY);
+  if (game_get_current_nb_tents_all(g) != 1) {
     game_delete(g);
     return false;
   }
@@ -171,22 +163,21 @@ bool test_get_current_nb_tents_all(){
   return true;
 }
 
-bool test_play_move(){
-  game g=game_default();
-  if (g ==NULL) 
-    return false;
-  game_play_move(g,4,3,TENT);
-  if (game_get_square(g,4,3)!=TENT){
+bool test_play_move() {
+  game g = game_default();
+  if (g == NULL) return false;
+  game_play_move(g, 4, 3, TENT);
+  if (game_get_square(g, 4, 3) != TENT) {
     game_delete(g);
     return false;
   }
-  game_play_move(g,4,3,EMPTY);
-  if (game_get_square(g,4,3)!=EMPTY){
+  game_play_move(g, 4, 3, EMPTY);
+  if (game_get_square(g, 4, 3) != EMPTY) {
     game_delete(g);
     return false;
   }
-  game_play_move(g,0,1,GRASS);
-  if (game_get_square(g,0,1)!=GRASS){
+  game_play_move(g, 0, 1, GRASS);
+  if (game_get_square(g, 0, 1) != GRASS) {
     game_delete(g);
     return false;
   }
@@ -196,18 +187,15 @@ bool test_play_move(){
 
 /* ********** USAGE ********** */
 
-void usage(int argc, char *argv[])
-{
+void usage(int argc, char *argv[]) {
   fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
   exit(EXIT_FAILURE);
 }
 
 /* ********** MAIN ROUTINE ********** */
 
-int main(int argc, char *argv[])
-{
-  if (argc == 1)
-    usage(argc, argv);
+int main(int argc, char *argv[]) {
+  if (argc == 1) usage(argc, argv);
 
   // start test
   fprintf(stderr, "=> Start test \"%s\"\n", argv[1]);
@@ -232,20 +220,16 @@ int main(int argc, char *argv[])
     ok = test_get_current_nb_tents_all();
   else if (strcmp("play_move", argv[1]) == 0)
     ok = test_play_move();
-  else
-  {
+  else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);
   }
 
   // print test result
-  if (ok)
-  {
+  if (ok) {
     fprintf(stderr, "Test \"%s\" finished: SUCCESS\n", argv[1]);
     return EXIT_SUCCESS;
-  }
-  else
-  {
+  } else {
     fprintf(stderr, "Test \"%s\" finished: FAILURE\n", argv[1]);
     return EXIT_FAILURE;
   }
