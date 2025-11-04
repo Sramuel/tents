@@ -73,73 +73,60 @@ bool test_get_expected_nb_tents_all(){
   return false;
 }
 
-bool test_get_current_nb_tents_col(){
-  game g=game_new_empty();
-  if (g ==NULL) 
-    return false;
-  game_set_square(g,0,0,TREE);
-  game_set_square(g,2,6,TREE);
-  game_set_square(g,6,7,TREE);
-  for (uint i=0;i<DEFAULT_SIZE;i++){
-    if (game_get_current_nb_tents_col(g,i)!=0){
+bool test_get_current_nb_tents_row(){
+  game g=game_default();
+  if(g==NULL) return false;
+  game_set_square(g,0,4,TENT);
+  game_set_square(g,1,0,TENT);
+  game_set_square(g,1,6,TENT);
+  game_set_square(g,2,2,TENT);
+  game_set_square(g,3,4,TENT);
+  game_set_square(g,3,6,TENT);
+  game_set_square(g,4,0,TENT);
+  game_set_square(g,4,2,TENT);
+  game_set_square(g,6,5,TENT);
+  game_set_square(g,7,0,TENT);
+  game_set_square(g,7,3,TENT);
+  game_set_square(g,7,7,TENT);
+  game_set_square(g,5,1,TENT);
+  uint expected_row[8]={1,2,1,2,2,1,1,3};
+  for(uint i=0;i<DEFAULT_SIZE;i++){
+    if(game_get_current_nb_tents_row(g,i)!=expected_row[i]){
       game_delete(g);
       return false;
     }
   }
-  game_set_square(g,0,1,TENT);
-  game_set_square(g,2,5,TENT);
-  game_set_square(g,6,6,TENT);
-  if (game_get_current_nb_tents_col(g,1) != 1) { game_delete(g); return false; }
-  if (game_get_current_nb_tents_col(g,5) != 1) { game_delete(g); return false; }
-  if (game_get_current_nb_tents_col(g,6) != 1) { game_delete(g); return false; }
-  for(uint i=0;i<DEFAULT_SIZE;i++){ //je teste une nouvelle fois pour etre sur que les autres colonnes n'ont pas bougé
-    if (i!=1 && i!=5 && i!=6){
-      if (game_get_current_nb_tents_col(g,i)!=0){
-        game_delete(g);
-        return false;
-      }
-    }
-  }
-  game_set_square(g,4,1,TREE);
-  game_set_square(g,5,1,TENT);
-  if (game_get_current_nb_tents_col(g,1) != 2) { game_delete(g); return false; }
   game_delete(g);
   return true;
 }
 
-bool test_get_current_nb_tents_row(){
-  game g=game_new_empty();
-  if (g ==NULL) 
-    return false;
-  game_set_square(g,0,0,TREE);
-  game_set_square(g,2,6,TREE);
-  game_set_square(g,6,7,TREE);
-  for (uint i=0;i<DEFAULT_SIZE;i++){
-    if (game_get_current_nb_tents_row(g,i)!=0){
+bool test_get_current_nb_tents_col(){
+  game g=game_default();
+  if(g==NULL) return false;
+  game_set_square(g,0,4,TENT);
+  game_set_square(g,1,0,TENT);
+  game_set_square(g,1,6,TENT);
+  game_set_square(g,2,2,TENT);
+  game_set_square(g,3,4,TENT);
+  game_set_square(g,3,6,TENT);
+  game_set_square(g,4,0,TENT);
+  game_set_square(g,4,2,TENT);
+  game_set_square(g,6,5,TENT);
+  game_set_square(g,7,0,TENT);
+  game_set_square(g,7,3,TENT);
+  game_set_square(g,7,7,TENT);
+  game_set_square(g,3,1,TENT);
+  uint expected_col[8]={3,1,2,1,2,1,2,1};
+  for(uint j=0;j<DEFAULT_SIZE;j++){
+    if(game_get_current_nb_tents_col(g,j)!=expected_col[j]){
       game_delete(g);
       return false;
     }
   }
-  game_set_square(g,0,1,TENT);
-  game_set_square(g,2,5,TENT);
-  game_set_square(g,6,6,TENT);
-  if (game_get_current_nb_tents_row(g,0) != 1) { game_delete(g); return false; }
-  if (game_get_current_nb_tents_row(g,2) != 1) { game_delete(g); return false; }
-  if (game_get_current_nb_tents_row(g,6) != 1) { game_delete(g); return false; }
-  for(uint i=0;i<DEFAULT_SIZE;i++){ //je teste une nouvelle fois pour etre sur que les autres lignes n'ont pas bougé
-    if (i!=0 && i!=2 && i!=6){
-      if (game_get_current_nb_tents_row(g,i)!=0){
-        game_delete(g);
-        return false;
-      }
-    }
-  }
-  game_set_square(g,0,4,TREE);
-  game_set_square(g,0,5,TENT);
-  if (game_get_current_nb_tents_row(g,0) != 2) { game_delete(g); return false; }
   game_delete(g);
   return true;
 }
+
 
 bool test_get_current_nb_tents_all(){
   game g=game_default();
