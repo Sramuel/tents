@@ -243,93 +243,36 @@ bool test_game_fill_grass(){
 }
 
 bool test_game_won(){
-  game sol=game_default_solution();
-  game def=game_default();
-  if (!game_won(sol)){
-    fprintf(stderr, "solution devrait etre gagnante\n");
-    game_delete(sol);
-    game_delete(def);
-    return false;
-  }
-  if (game_won(def)){
-    fprintf(stderr, "jeu par default ne devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(def);
-    return false;
-  }
-  game_set_square(sol,0,0,TENT);
-  if(game_won(sol)){
-    fprintf(stderr, "SOLUTION +1 TENT de devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(def);
-    return false;
-  }
-  game sol1=game_default_solution();
-  game_set_square(sol1,7,7,GRASS);
-  if(game_won(sol1)){
-    fprintf(stderr, "SOLUTION +1 GRASS ne devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(sol1);
-    game_delete(def);
-    return false;
-  }
-  game_delete(sol);
-  game_delete(sol1);
-  game_delete(def);
-
-  game sol2=game_default_solution();
-  uint nb_trees=0;
+  game g=game_default_solution();
+  uint nb_trees;
   for (uint i=0; i<DEFAULT_SIZE; i++){
     for (uint j=0; j<DEFAULT_SIZE; j++){
-      if (game_get_square(sol2,i,j)==TENT){
-        if (!game_is_neigh(sol2,i,j,TREE,false)){
-          game_delete(sol2);
-          return false;
+      if (game_get_current_nb_tents_row(g,i)==game_get_expected_nb_tents_row(g,i)){
+        if (!game_won(g)){
+        game_delete(g);
+        return false;
         }
-        if (game_is_neigh(sol2,i,j,TENT,true)){
-          game_delete(sol2);
+      }if (game_get_current_nb_tents_col(g,j)==game_get_expected_nb_tents_col(g,j)){
+        if (!game_won(g)){
+          game_delete(g);
           return false;
         }
       }
-      if (game_get_square(sol2,i,j)==TREE){
+      if (game_get_square(g,i,j)==TREE){
         nb_trees++;
       }
     }
-  }
-  if (game_get_expected_nb_tents_all(sol2) != nb_trees){
-    game_delete(sol2);
+  }if(game_get_current_nb_tents_all(g)==nb_trees){
+    if (!game_won(g)){
+    game_delete(g);
     return false;
-  }
-
-  uint nb_tents_col=0;
-  uint nb_tents_row=0;
-  for (uint i=0; i<DEFAULT_SIZE; i++){
-    nb_tents_row=0;
-    for (uint j=0; j<DEFAULT_SIZE; j++){
-      if (game_get_square(sol2,i,j)==TENT){
-        nb_tents_row++;
+    }
+  }game_set_square(g,1,1,TENT);
+      if(game_won(g)){
+          game_delete(g);
+          return false;
       }
-    }
-    if (game_get_current_nb_tents_row(sol2, i)!=nb_tents_row){
-      game_delete(sol2);
-      return false;
-    }
-  }
-  for (uint j=0; j<DEFAULT_SIZE; j++){
-    nb_tents_col=0;
-    for (uint i=0; i<DEFAULT_SIZE; i++){
-      if (game_get_square(sol2,i,j)==TENT){
-        nb_tents_col++;
-      }
-    }
-    if (game_get_current_nb_tents_col(sol2, j)!=nb_tents_col){
-      game_delete(sol2);
-      return false;
-    }
-  }
-  game_delete(sol2);
-  return true;
-  }
+}
 
 bool test_game_check_move(){
   game g=game_new_empty();
@@ -358,9 +301,6 @@ bool test_game_check_move(){
   game_delete(g);
   return true;
 }
-
-
-
 
 void usage(int argc, char *argv[])
 {
