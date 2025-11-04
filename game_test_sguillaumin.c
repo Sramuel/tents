@@ -89,6 +89,14 @@ bool test_get_current_nb_tents_row(){
   game_set_square(g,7,3,TENT);
   game_set_square(g,7,7,TENT);
   game_set_square(g,5,1,TENT);
+
+  game_set_square(g,0,1,GRASS);
+  game_set_square(g,1,3,GRASS);
+  game_set_square(g,2,5,GRASS);
+  game_set_square(g,3,0,GRASS);
+  game_set_square(g,4,6,GRASS);
+  game_set_square(g,6,7,GRASS);
+  game_set_square(g,7,4,GRASS);
   uint expected_row[8]={1,2,1,2,2,1,1,3};
   for(uint i=0;i<DEFAULT_SIZE;i++){
     if(game_get_current_nb_tents_row(g,i)!=expected_row[i]){
@@ -116,6 +124,14 @@ bool test_get_current_nb_tents_col(){
   game_set_square(g,7,3,TENT);
   game_set_square(g,7,7,TENT);
   game_set_square(g,3,1,TENT);
+
+  game_set_square(g,0,2,GRASS);
+  game_set_square(g,1,4,GRASS);
+  game_set_square(g,2,7,GRASS);
+  game_set_square(g,3,5,GRASS);
+  game_set_square(g,4,3,GRASS);
+  game_set_square(g,6,0,GRASS);
+  game_set_square(g,7,6,GRASS);
   uint expected_col[8]={3,1,2,1,2,1,2,1};
   for(uint j=0;j<DEFAULT_SIZE;j++){
     if(game_get_current_nb_tents_col(g,j)!=expected_col[j]){
