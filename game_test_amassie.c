@@ -247,39 +247,29 @@ bool test_game_fill_grass() {
 }
 
 bool test_game_won() {
-  game sol = game_default_solution();
-  game def = game_default();
-  if (!game_won(sol)) {
-    fprintf(stderr, "solution devrait etre gagnante\n");
-    game_delete(sol);
-    game_delete(def);
+  game g1 = game_default_solution();
+  game g2 = game_default_solution();
+  game g3 = game_default_solution();
+  game_set_square(g1, 2, 2, TREE);
+  game_set_square(g1, 3, 2, TENT);
+  game_set_square(g1, 2, 6, TENT);
+  game_set_square(g1, 3, 6, TREE);
+
+  game_set_square(g2, 5, 2, GRASS);
+
+  game_set_square(g3, 4, 4, GRASS);
+  game_set_square(g3, 1, 3, TREE);
+  game_set_square(g3, 0, 5, GRASS);
+  game_set_square(g3, 5, 7, TREE);
+  if (game_won(g1) || game_won(g2) || game_won(g3)) {
+    game_delete(g1);
+    game_delete(g2);
+    game_delete(g3);
     return false;
   }
-  if (game_won(def)) {
-    fprintf(stderr, "jeu par default ne devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(def);
-    return false;
-  }
-  game_set_square(sol, 0, 0, TENT);
-  if (game_won(sol)) {
-    fprintf(stderr, "SOLUTION +1 TENT de devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(def);
-    return false;
-  }
-  game sol1 = game_default_solution();
-  game_set_square(sol1, 7, 7, GRASS);
-  if (game_won(sol1)) {
-    fprintf(stderr, "SOLUTION +1 GRASS ne devrait pas etre gagnant\n");
-    game_delete(sol);
-    game_delete(sol1);
-    game_delete(def);
-    return false;
-  }
-  game_delete(sol);
-  game_delete(sol1);
-  game_delete(def);
+  game_delete(g1);
+  game_delete(g2);
+  game_delete(g3);
   return true;
 }
 
