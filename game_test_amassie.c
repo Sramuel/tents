@@ -318,28 +318,16 @@ bool test_game_won()
   game g1 = game_default_solution();
   game g2 = game_default_solution();
   game g3 = game_default_solution();
+  game_set_square(g1, 3, 6, GRASS);
+  game_set_square(g1, 3, 7, TENT);
+
   game_set_square(g2, 5, 2, GRASS);
-  if (game_won(g2))
-  {
-    game_delete(g1);
-    game_delete(g2);
-    game_delete(g3);
-    return false;
-  }
-  game_set_square(g1, 4, 2, GRASS);
-  game_set_square(g1, 6, 2, TENT);
-  game_set_square(g1, 6, 5, GRASS);
-  game_set_square(g1, 4, 5, TENT);
-  if (game_won(g1))
-  {
-    game_delete(g1);
-    game_delete(g2);
-    game_delete(g3);
-    return false;
-  }
-  game_set_square(g3, 3, 6, GRASS);
-  game_set_square(g3, 3, 7, TENT);
-  if (game_won(g3))
+
+  game_set_square(g3, 4, 4, GRASS);
+  game_set_square(g3, 1, 3, TREE);
+  game_set_square(g3, 0, 5, GRASS);
+  game_set_square(g3, 5, 7, TREE);
+  if (game_won(g1) || game_won(g2) || game_won(g3))
   {
     game_delete(g1);
     game_delete(g2);
