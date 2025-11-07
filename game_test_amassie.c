@@ -315,20 +315,40 @@ bool test_game_fill_grass()
 
 bool test_game_won()
 {
-  game g = game_default_solution();
-  game g2 = game_default();
-  if (!game_won(g))
-  {
-    game_delete(g);
-    game_delete(g2);
-    return false;
-  }
+  game g1 = game_default_solution();
+  game g2 = game_default_solution();
+  game g3 = game_default_solution();
+  game_set_square(g2, 5, 2, GRASS);
   if (game_won(g2))
   {
-    game_delete(g);
+    game_delete(g1);
     game_delete(g2);
+    game_delete(g3);
     return false;
   }
+  game_set_square(g1, 4, 2, GRASS);
+  game_set_square(g1, 6, 2, TENT);
+  game_set_square(g1, 6, 5, GRASS);
+  game_set_square(g1, 4, 5, TENT);
+  if (game_won(g1))
+  {
+    game_delete(g1);
+    game_delete(g2);
+    game_delete(g3);
+    return false;
+  }
+  game_set_square(g3, 3, 6, GRASS);
+  game_set_square(g3, 3, 7, TENT);
+  if (game_won(g3))
+  {
+    game_delete(g1);
+    game_delete(g2);
+    game_delete(g3);
+    return false;
+  }
+  game_delete(g1);
+  game_delete(g2);
+  game_delete(g3);
   return true;
 }
 
