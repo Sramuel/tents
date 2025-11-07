@@ -318,8 +318,10 @@ bool test_game_won()
   game g1 = game_default_solution();
   game g2 = game_default_solution();
   game g3 = game_default_solution();
-  game_set_square(g1, 3, 6, GRASS);
-  game_set_square(g1, 3, 7, TENT);
+  game_set_square(g1, 2, 2, TREE);
+  game_set_square(g1, 3, 2, TENT);
+  game_set_square(g1, 2, 6, TENT);
+  game_set_square(g1, 3, 6, TREE);
 
   game_set_square(g2, 5, 2, GRASS);
 
