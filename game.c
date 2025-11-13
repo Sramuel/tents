@@ -12,7 +12,7 @@ game game_new_empty(void) {
   if (g == NULL) {
     return NULL;
   }
-  g->board = malloc(DEFAULT_SIZE * sizeof(square));  // allocation du premier tableau (première ligne)
+  g->board = malloc(DEFAULT_SIZE * sizeof(square*));  // allocation du premier tableau (première ligne)
   if (g->board == NULL) {
     game_delete(g);
     return NULL;
@@ -47,7 +47,7 @@ game game_copy(cgame g) { return NULL; }
 bool game_equal(cgame g1, cgame g2) { return false; }
 void game_delete(game g) {
   if (g) {
-    for (uint i = 0; i < g->nb_cols; i++) {
+    for (uint i = 0; i < g->nb_rows; i++) {
       free(g->board[i]);
     }
     free(g->board);
