@@ -17,8 +17,8 @@ game game_new_empty(void) {
     game_delete(g);
     return NULL;
   }
-  b->nb_rows = DEFAULT_SIZE;  // nombre de lignes
-  b->nb_cols = DEFAULT_SIZE;  // nombre de colonnes
+  g->nb_rows = DEFAULT_SIZE;  // nombre de lignes
+  g->nb_cols = DEFAULT_SIZE;  // nombre de colonnes
 
   g->nb_tents_row =
       calloc(DEFAULT_SIZE, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par ligne
