@@ -69,7 +69,6 @@ bool test_game_default_solution() {
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(sol, i, j) == EMPTY) {
-        fprintf(stderr, "Toute les cases ne sont pas remplies\n");
         game_delete(sol);
         game_delete(def);
         return false;
@@ -80,7 +79,6 @@ bool test_game_default_solution() {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(sol, i, j) == TENT) {
         if (game_is_neigh(sol, i, j, TENT, true)) {
-          fprintf(stderr, "deux tentes sont adjacentes(attention diagonalement compte\n");
           game_delete(sol);
           game_delete(def);
           return false;
@@ -92,7 +90,6 @@ bool test_game_default_solution() {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(def, i, j) == TREE) {
         if (!game_is_neigh(sol, i, j, TENT, false)) {
-          fprintf(stderr, "un arbre ou plus n'as pas de tente a ses cotés\n");
           game_delete(sol);
           game_delete(def);
           return false;
@@ -108,7 +105,6 @@ bool test_game_default_solution() {
       }
     }
     if (nb != game_get_expected_nb_tents_row(def, i)) {
-      fprintf(stderr, "le nombre de tentes dans chaque ligne est differentes de celui attendu\n");
       game_delete(sol);
       game_delete(def);
       return false;
@@ -122,7 +118,6 @@ bool test_game_default_solution() {
       }
     }
     if (nb != game_get_expected_nb_tents_col(def, j)) {
-      fprintf(stderr, "le nombre de tentes dans chaque colonne est differentes de celui attendu\n");
       game_delete(sol);
       game_delete(def);
       return false;
@@ -140,7 +135,6 @@ bool test_game_default() {
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(def, i, j) != TREE && game_get_square(def, i, j) != EMPTY) {
-        fprintf(stderr, "certaines case sont TENTS OU GRASS\n");
         game_delete(sol);
         game_delete(def);
         return false;
@@ -157,7 +151,6 @@ bool test_game_default() {
     }
   }
   if (trees_def != trees_sol) {
-    fprintf(stderr, "mauvais nombre d'arbre sur le tableau de jeu\n");
     game_delete(sol);
     game_delete(def);
     return false;
@@ -218,17 +211,14 @@ bool test_game_fill_grass() {
   game_fill_grass(g);
 
   if (game_get_square(g, 0, 0) != TREE) {
-    fprintf(stderr, "un TREE a été changé en GRASS\n");
     game_delete(g);
     return false;
   }
   if (game_get_square(g, 1, 1) != TENT) {
-    fprintf(stderr, "une TENT a été changé en GRASS\n");
     game_delete(g);
     return false;
   }
   if (game_get_square(g, 2, 2) != GRASS) {
-    fprintf(stderr, "une GRASS a été changé en en autre chose\n");
     game_delete(g);
     return false;
   }
@@ -278,22 +268,18 @@ bool test_game_check_move() {
   game_set_square(g, 2, 2, TREE);
 
   if (!game_check_move(g, 0, 0, TENT)) {
-    fprintf(stderr, "poser une TENT sur une case vide devrait etre legal\n");
     game_delete(g);
     return false;
   }
   if (game_check_move(g, 2, 2, TENT)) {
-    fprintf(stderr, "on devrait pas pouvoir modifier une case TREE\n");
     game_delete(g);
     return false;
   }
   if (game_check_move(g, 1, 1, TREE)) {
-    fprintf(stderr, "on devrait pas pouvoir ajouter une case TREE\n");
     game_delete(g);
     return false;
   }
   if (game_check_move(g, 8, 8, TENT)) {
-    fprintf(stderr, "on ne devrait pas pouvoir poser une case en dehors des limite de la grille\n");
     game_delete(g);
     return false;
   }
