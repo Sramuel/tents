@@ -5,11 +5,11 @@
 #include "game_struct.h"
 
 void game_print(cgame g) {
-  int i;
-  int j;
+  uint i;
+  uint j;
   printf("   ");
   for (j = 0; j < g->nb_cols; j++) {
-    printf("%d", j);  // print de 0 à nb colonnes -1
+    printf("%u", j);  // print de 0 à nb colonnes -1
   }
   printf("\n   ");
   for (j = 0; j < g->nb_cols; j++) {
@@ -17,7 +17,7 @@ void game_print(cgame g) {
   }
   printf("\n");
   for (i = 0; i < g->nb_rows; i++) {  // print du plateau
-    printf("%d |", i);                // print de 0 à nb lignes -1
+    printf("%u |", i);                // print de 0 à nb lignes -1
     for (j = 0; j < g->nb_cols; j++) {
       if (g->board[i][j] == TREE) {
         printf("x");
@@ -32,7 +32,7 @@ void game_print(cgame g) {
         printf("*");
       }
     }
-    printf("| %d\n", g->nb_tents_row[i]);  // print des expected tentes dans les lignes
+    printf("| %u\n", g->nb_tents_row[i]);  // print des expected tentes dans les lignes
   }
   printf("   ");
   for (j = 0; j < g->nb_cols; j++) {
@@ -40,7 +40,7 @@ void game_print(cgame g) {
   }
   printf("\n   ");
   for (j = 0; j < g->nb_cols; j++) {
-    printf("%d", g->nb_tents_col[j]);  // print des expected tentes dans les colonnes
+    printf("%u", g->nb_tents_col[j]);  // print des expected tentes dans les colonnes
   }
   printf("\n");
 }
