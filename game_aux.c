@@ -38,10 +38,11 @@ void game_print(cgame g) {
   for (j = 0; j < g->nb_cols; j++) {
     printf("-");  // --------
   }
-  printf("\t\n");
+  printf("\n\t");
   for (j = 0; j < g->nb_cols; j++) {
     printf("%d", g->nb_tents_col[j]);  // print des expected tentes dans les colonnes
   }
+  printf("\n");
 }
 
 game game_default(void) { return NULL; }
