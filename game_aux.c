@@ -7,11 +7,11 @@
 void game_print(cgame g) {
   int i;
   int j;
-  printf("\t");
+  printf("   ");
   for (j = 0; j < g->nb_cols; j++) {
     printf("%d", j);  // print de 0 à nb colonnes -1
   }
-  printf("\n\t");
+  printf("\n   ");
   for (j = 0; j < g->nb_cols; j++) {
     printf("-");  // --------
   }
@@ -34,11 +34,11 @@ void game_print(cgame g) {
     }
     printf("| %d\n", g->nb_tents_row[i]);  // print des expected tentes dans les lignes
   }
-  printf("\t");
+  printf("   ");
   for (j = 0; j < g->nb_cols; j++) {
     printf("-");  // --------
   }
-  printf("\n\t");
+  printf("\n   ");
   for (j = 0; j < g->nb_cols; j++) {
     printf("%d", g->nb_tents_col[j]);  // print des expected tentes dans les colonnes
   }
