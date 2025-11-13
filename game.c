@@ -21,20 +21,20 @@ game game_new_empty(void) {
   b->nb_cols = DEFAULT_SIZE;  // nombre de colonnes
 
   g->nb_tents_row =
-      calloc(DEFAULT_SIZE * sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par ligne
+      calloc(DEFAULT_SIZE, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par ligne
   if (g->nb_tents_row == NULL) {
     game_delete(g);
     return NULL;
   }
   g->nb_tents_col =
-      calloc(DEFAULT_SIZE * sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par colonne
+      calloc(DEFAULT_SIZE, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par colonne
   if (g->nb_tents_col == NULL) {
     game_delete(g);
     return NULL;
   }
   for (uint i = 0; i < DEFAULT_SIZE;
        i++) {  // allocation de toutes les cases (une colonne pour chaque case de la première ligne)
-    g->board[i] = calloc(DEFAULT_SIZE * sizeof(square));
+    g->board[i] = calloc(DEFAULT_SIZE, sizeof(square));
     if (g->board[i] == NULL) {
       game_delete(g);
       return NULL;
