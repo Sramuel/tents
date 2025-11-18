@@ -47,8 +47,6 @@ void game_print(cgame g) {
 
 game game_default(void) {
   game g = game_new_empty();
-  g->nb_rows = DEFAULT_SIZE;
-  g->nb_cols = DEFAULT_SIZE;
 
   g->nb_tents_row[0] = 1;
   g->nb_tents_row[1] = 2;
@@ -116,8 +114,8 @@ game game_default(void) {
   g->board[5][0] = EMPTY;
   g->board[5][1] = EMPTY;
   g->board[5][2] = EMPTY;
-  g->board[5][3] = EMPTY;
-  g->board[5][4] = TREE;
+  g->board[5][3] = TREE;
+  g->board[5][4] = EMPTY;
   g->board[5][5] = EMPTY;
   g->board[5][6] = EMPTY;
   g->board[5][7] = EMPTY;
