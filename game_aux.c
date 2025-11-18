@@ -95,8 +95,8 @@ game game_default(void) {
 
   g->board[3][0] = TREE;
   g->board[3][1] = EMPTY;
-  g->board[3][2] = EMPTY;
-  g->board[3][3] = TREE;
+  g->board[3][2] = TREE;
+  g->board[3][3] = EMPTY;
   g->board[3][4] = EMPTY;
   g->board[3][5] = EMPTY;
   g->board[3][6] = EMPTY;
@@ -106,15 +106,15 @@ game game_default(void) {
   g->board[4][1] = EMPTY;
   g->board[4][2] = EMPTY;
   g->board[4][3] = EMPTY;
-  g->board[4][4] = EMPTY;
-  g->board[4][5] = TREE;
+  g->board[4][4] = TREE;
+  g->board[4][5] = EMPTY;
   g->board[4][6] = EMPTY;
   g->board[4][7] = EMPTY;
 
   g->board[5][0] = EMPTY;
   g->board[5][1] = EMPTY;
-  g->board[5][2] = EMPTY;
-  g->board[5][3] = TREE;
+  g->board[5][2] = TREE;
+  g->board[5][3] = EMPTY;
   g->board[5][4] = EMPTY;
   g->board[5][5] = EMPTY;
   g->board[5][6] = EMPTY;
