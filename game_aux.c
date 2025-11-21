@@ -141,7 +141,26 @@ game game_default(void) {
   return g;
 }
 
-game game_default_solution(void) { return NULL; }
+game game_default_solution(void) {
+  game g = game_default();
+
+  g->board[0][4] = TENT;
+  g->board[1][0] = TENT;
+  g->board[1][6] = TENT;
+  g->board[2][2] = TENT;
+  g->board[3][4] = TENT;
+  g->board[3][6] = TENT;
+  g->board[4][0] = TENT;
+  g->board[4][2] = TENT;
+  g->board[6][5] = TENT;
+  g->board[7][0] = TENT;
+  g->board[7][3] = TENT;
+  g->board[7][7] = TENT;
+
+  game_fill_grass(g);
+  
+  return g;
+}
 
 bool game_get_ajacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) { 
   if (g == NULL) {  // verifie que g n'est pas NULL
