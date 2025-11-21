@@ -197,7 +197,25 @@ uint game_get_current_nb_tents_all(cgame g) {
   return somme;
 }
 void game_play_move(game g, uint i, uint j, square s) { g->board[i][j] = s; }
-bool game_check_move(cgame g, uint i, uint j, square s) { return false; }
+
+bool game_check_move(cgame g, uint i, uint j, square s) { 
+  if (g == NULL) {  // verifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= g->nb_rows || j >=g->nb_cols){  // verifie que i et j sont bien dans la grille
+    return false;
+  }
+  if (s<0 || s>3){  // verifie la validité de la case (EMPTY, GRASS, TENT or TREE)
+    return false;
+  }
+  if (s == TREE){ // on ne peux pas poser un nouvel arbre
+    return false;
+  }
+  if (g->board[i][j]==TREE){  // on ne peux remplacer un arbre par une autre case
+    return false;
+  }
+  return true;
+}
 bool game_won(cgame g) { return false; }
 
 void game_fill_grass(game g) {
