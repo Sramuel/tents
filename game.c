@@ -199,5 +199,18 @@ uint game_get_current_nb_tents_all(cgame g) {
 void game_play_move(game g, uint i, uint j, square s) { g->board[i][j] = s; }
 bool game_check_move(cgame g, uint i, uint j, square s) { return false; }
 bool game_won(cgame g) { return false; }
-void game_fill_grass(game g) {}
+
+void game_fill_grass(game g) {
+  if (g == NULL) {
+    return;
+  }
+  for (int i=0 ; i< g->nb_rows; i++){
+    for (int j=0; j< g->nb_cols; j++){
+      if(g->board[i][j]==EMPTY){
+        game_set_square(g,i,j,GRASS); // transforme toutes les cases EMPTY en case GRASS
+      }
+    }
+  }
+  return;
+}
 void game_restart(game g) {}
