@@ -142,8 +142,27 @@ game game_default(void) {
 }
 
 game game_default_solution(void) { return NULL; }
-bool game_get_ajacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) { return false; }
 
+bool game_get_ajacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) { 
+  if (g == NULL) {  // verifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= g->nb_rows || j >=g->nb_cols || i<0 || j<0){  // verifie que i et j sont bien dans la grille
+    return false;
+  }
+  if (d < HERE || d > DOWN_RIGHT){  // verifie que d est valide (compris entre HERE et DOWN_RIGHT)
+    return false;
+  } 
+  const int dj[] = {0, 0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
+  const int di[] = {0, -1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
+  *pi_next= i + di[d];  //abscisse de la case adjacente
+  *pj_next= j + dj[d];  //ordonnée de la case adjacente
+
+  if (*pi_next >= g->nb_rows || *pj_next >= g->nb_cols || *pi_next <0 || *pj_next <0){
+    return false;
+  }
+  return true;
+}
 
 bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) { 
   if (g == NULL) {  // verifie que g n'est pas NULL
@@ -157,8 +176,8 @@ bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
   }
 
   if (diag){
-    const int di[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
-    const int dj[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
+    const int dj[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
+    const int di[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
     for (int k=0; k<8; k++){
       int ni = i+ di[k];
       int nj = j+ dj[k];
