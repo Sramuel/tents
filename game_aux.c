@@ -143,4 +143,44 @@ game game_default(void) {
 
 game game_default_solution(void) { return NULL; }
 bool game_get_ajacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) { return false; }
-bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) { return false; }
+
+
+bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) { 
+  if (g == NULL) {  // verifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= g->nb_rows || j >=g->nb_cols){  // verifie que i et j sont bien dans la grille
+    return false;
+  }
+  if (s<0 || s>3){
+    return false;
+  }
+
+  if (diag){
+    const int di[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
+    const int dj[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
+    for (int k=0; k<8; k++){
+      int ni = i+ di[k];
+      int nj = j+ dj[k];
+      if (ni >=0 && ni < g->nb_rows && nj>=0 && nj < g->nb_cols){
+        if (g->board[ni][nj] == s){
+          return true;
+        }
+      }
+    }
+  }
+  else {
+    const int di[] = {0, 0, -1, 1};
+    const int dj[] = {-1, 1, 0, 0};
+    for (int k=0; k<4; k++){
+      int ni = i+ di[k];
+      int nj = j+ dj[k];
+      if (ni >=0 && ni < g->nb_rows && nj>=0 && nj < g->nb_cols){
+        if (g->board[ni][nj] == s){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
