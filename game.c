@@ -231,4 +231,16 @@ void game_fill_grass(game g) {
   }
   return;
 }
-void game_restart(game g) {}
+void game_restart(game g) {
+    if (g == NULL) {
+    return;
+  }
+  for (int i=0 ; i< g->nb_rows; i++){
+    for (int j=0; j< g->nb_cols; j++){
+      if(g->board[i][j]!=TREE){
+        game_set_square(g,i,j,EMPTY); // transforme toutes les cases non TREE en case EMPTY
+      }
+    }
+  }
+  return;
+}
