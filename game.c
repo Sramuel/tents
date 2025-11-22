@@ -127,6 +127,8 @@ void game_delete(game g) {
       free(g->board[i]);
     }
     free(g->board);
+    free(g->nb_tents_col);
+    free(g->nb_tents_row);
     free(g);
   }
 }
