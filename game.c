@@ -1,4 +1,5 @@
 #include "game.h"
+#include "game_aux.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -216,7 +217,44 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
   }
   return true;
 }
-bool game_won(cgame g) { return false; }
+
+
+bool game_won(cgame g) { 
+  uint nb_trees = 0;
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+      if (game_get_square(g, i, j) == TREE) {
+        nb_trees++;
+        if (!game_is_neigh(g, i, j, TENT, false)) {
+            return false;
+        }
+      }
+    }
+  }
+  if (game_get_current_nb_tents_all(g) != nb_trees) {
+    return false;
+  }
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i) ||
+      game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {
+      return false;
+    }
+  }
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+      if (game_get_square(g, i, j) == TENT) {
+        if (!game_is_neigh(g, i, j, TREE, false)) {
+            return false;
+        }
+        if (game_is_neigh(g, i, j, TENT, true)){
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 
 void game_fill_grass(game g) {
   if (g == NULL) {
