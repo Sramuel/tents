@@ -224,29 +224,29 @@ bool game_won(cgame g) {
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(g, i, j) == TREE) {
-        nb_trees++;
-        if (!game_is_neigh(g, i, j, TENT, false)) {
+        nb_trees++; // Compteur d'arbre
+        if (!game_is_neigh(g, i, j, TENT, false)) { // Regle 4)
             return false;
         }
       }
     }
   }
-  if (game_get_current_nb_tents_all(g) != nb_trees) {
+  if (game_get_current_nb_tents_all(g) != nb_trees) { // Regle 3)
     return false;
   }
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i) ||
-      game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {
+      game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {  // Regle 2)
       return false;
     }
   }
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(g, i, j) == TENT) {
-        if (!game_is_neigh(g, i, j, TREE, false)) {
+        if (!game_is_neigh(g, i, j, TREE, false)) { // Regle 4) deuxieme verification
             return false;
         }
-        if (game_is_neigh(g, i, j, TENT, true)){
+        if (game_is_neigh(g, i, j, TENT, true)){  // Regle 1)
           return false;
         }
       }
