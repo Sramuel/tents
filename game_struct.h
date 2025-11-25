@@ -9,6 +9,7 @@ struct game_s {
   uint *nb_tents_col;  // Tableau du nombre attendu de tentes par colonne
   uint nb_rows;        // Nombre de lignes (par défaut DEFAULT_SIZE)
   uint nb_cols;        // Nombre de colonnes (par défaut DEFAULT_SIZE)
+  bool wrapping;       // Est vrai si le jeu à une topologie torique (faux sinon)
 };
 
 #endif
