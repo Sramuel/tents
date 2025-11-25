@@ -1,9 +1,9 @@
 #include "game.h"
-#include "game_aux.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "game_aux.h"
 #include "game_struct.h"
 
 //////////////////////////////////////////////////////////////////////////AUXILIAIRES/////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@ square** square_to_board_aux(game g, square* squares, uint nb_rows, uint nb_cols
   return g->board;
 }
 
-square* board_to_square_aux (cgame g, uint nb_rows, uint nb_cols){
-  square* squares = malloc(nb_cols*nb_rows*sizeof(square));
-  if (squares == NULL){
+square* board_to_square_aux(cgame g, uint nb_rows, uint nb_cols) {
+  square* squares = malloc(nb_cols * nb_rows * sizeof(square));
+  if (squares == NULL) {
     exit(EXIT_FAILURE);
   }
   for (uint i = 0; i < g->nb_rows; i++) {
@@ -86,6 +86,7 @@ game game_copy(cgame g) {
   square* squares = board_to_square_aux(g, g->nb_rows, g->nb_cols);  // Traduction du Double tableau en Simple tableau
   game g_copy = game_new(squares, g->nb_tents_row,
                          g->nb_tents_col);  // Création d'une game avec un Simple tableau et modifiée en Double tableau
+  free(squares);
   return g_copy;
 }
 
@@ -201,54 +202,53 @@ uint game_get_current_nb_tents_all(cgame g) {
 }
 void game_play_move(game g, uint i, uint j, square s) { g->board[i][j] = s; }
 
-bool game_check_move(cgame g, uint i, uint j, square s) { 
+bool game_check_move(cgame g, uint i, uint j, square s) {
   if (g == NULL) {  // verifie que g n'est pas NULL
     return false;
   }
-  if (i >= g->nb_rows || j >=g->nb_cols){  // verifie que i et j sont bien dans la grille
+  if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
     return false;
   }
-  if (s<0 || s>3){  // verifie la validité de la case (EMPTY, GRASS, TENT or TREE)
+  if (s < 0 || s > 3) {  // verifie la validité de la case (EMPTY, GRASS, TENT or TREE)
     return false;
   }
-  if (s == TREE){ // on ne peux pas poser un nouvel arbre
+  if (s == TREE) {  // on ne peux pas poser un nouvel arbre
     return false;
   }
-  if (g->board[i][j]==TREE){  // on ne peux remplacer un arbre par une autre case
+  if (g->board[i][j] == TREE) {  // on ne peux remplacer un arbre par une autre case
     return false;
   }
   return true;
 }
 
-
-bool game_won(cgame g) { 
+bool game_won(cgame g) {
   uint nb_trees = 0;
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(g, i, j) == TREE) {
-        nb_trees++; // Compteur d'arbre
-        if (!game_is_neigh(g, i, j, TENT, false)) { // Regle 4)
-            return false;
+        nb_trees++;                                  // Compteur d'arbre
+        if (!game_is_neigh(g, i, j, TENT, false)) {  // Regle 4)
+          return false;
         }
       }
     }
   }
-  if (game_get_current_nb_tents_all(g) != nb_trees) { // Regle 3)
+  if (game_get_current_nb_tents_all(g) != nb_trees) {  // Regle 3)
     return false;
   }
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i) ||
-      game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {  // Regle 2)
+        game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {  // Regle 2)
       return false;
     }
   }
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(g, i, j) == TENT) {
-        if (!game_is_neigh(g, i, j, TREE, false)) { // Regle 4) deuxieme verification
-            return false;
+        if (!game_is_neigh(g, i, j, TREE, false)) {  // Regle 4) deuxieme verification
+          return false;
         }
-        if (game_is_neigh(g, i, j, TENT, true)){  // Regle 1)
+        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1)
           return false;
         }
       }
@@ -257,28 +257,27 @@ bool game_won(cgame g) {
   return true;
 }
 
-
 void game_fill_grass(game g) {
   if (g == NULL) {
     return;
   }
-  for (int i=0 ; i< g->nb_rows; i++){
-    for (int j=0; j< g->nb_cols; j++){
-      if(g->board[i][j]==EMPTY){
-        game_set_square(g,i,j,GRASS); // transforme toutes les cases EMPTY en case GRASS
+  for (int i = 0; i < g->nb_rows; i++) {
+    for (int j = 0; j < g->nb_cols; j++) {
+      if (g->board[i][j] == EMPTY) {
+        game_set_square(g, i, j, GRASS);  // transforme toutes les cases EMPTY en case GRASS
       }
     }
   }
   return;
 }
 void game_restart(game g) {
-    if (g == NULL) {
+  if (g == NULL) {
     return;
   }
-  for (int i=0 ; i< g->nb_rows; i++){
-    for (int j=0; j< g->nb_cols; j++){
-      if(g->board[i][j]!=TREE){
-        game_set_square(g,i,j,EMPTY); // transforme toutes les cases non TREE en case EMPTY
+  for (int i = 0; i < g->nb_rows; i++) {
+    for (int j = 0; j < g->nb_cols; j++) {
+      if (g->board[i][j] != TREE) {
+        game_set_square(g, i, j, EMPTY);  // transforme toutes les cases non TREE en case EMPTY
       }
     }
   }
