@@ -227,8 +227,8 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 
 bool game_won(cgame g) {
   uint nb_trees = 0;
-  for (uint i = 0; i < DEFAULT_SIZE; i++) {
-    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+  for (uint i = 0; i < g->nb_rows; i++) {
+    for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TREE) {
         nb_trees++;                                  // Compteur d'arbre
         if (!game_is_neigh(g, i, j, TENT, false)) {  // Regle 4)
@@ -240,14 +240,18 @@ bool game_won(cgame g) {
   if (game_get_current_nb_tents_all(g) != nb_trees) {  // Regle 3)
     return false;
   }
-  for (uint i = 0; i < DEFAULT_SIZE; i++) {
-    if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i) ||
-        game_get_current_nb_tents_col(g, i) != game_get_expected_nb_tents_col(g, i)) {  // Regle 2)
+  for (uint i = 0; i < g->nb_rows; i++) {  // Regle 2)
+    if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i)) {
       return false;
     }
   }
-  for (uint i = 0; i < DEFAULT_SIZE; i++) {
-    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+  for (uint j = 0; j < g->nb_cols; j++) {  // Regle 2)
+    if (game_get_current_nb_tents_col(g, j) != game_get_expected_nb_tents_col(g, j)) {
+      return false;
+    }
+  }
+  for (uint i = 0; i < g->nb_rows; i++) {
+    for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TENT) {
         if (!game_is_neigh(g, i, j, TREE, false)) {  // Regle 4) deuxieme verification
           return false;
