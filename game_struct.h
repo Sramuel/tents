@@ -2,6 +2,7 @@
 #define __GAME_STRUCT_H__
 
 #include "game.h"
+#include "queue.h"
 
 struct game_s {
   square **board;      // Grille principale: contient TREE,TENT,GRASS,EMPTY
@@ -10,6 +11,8 @@ struct game_s {
   uint nb_rows;        // Nombre de lignes (par défaut DEFAULT_SIZE)
   uint nb_cols;        // Nombre de colonnes (par défaut DEFAULT_SIZE)
   bool wrapping;       // Est vrai si le jeu à une topologie torique (faux sinon)
+  queue *undo;
+  queue *redo;
 };
 
 #endif
