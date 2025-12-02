@@ -33,6 +33,30 @@ bool test_game_is_neigh() {
   return test1 && test2 && test3 && test4 && test5;
 }
 
+bool test_game_nb_neigh(){
+  game g = game_new_empty();
+
+  game_set_square(g, 0, 0, TREE);
+  game_set_square(g, 1, 0, TREE);
+  game_set_square(g, 2, 0, TREE);
+  game_set_square(g, 0, 1, TENT);
+  game_set_square(g, 2, 1, TENT);
+  game_set_square(g, 2, 2, GRASS);
+
+  bool test1 = game_nb_neigh(g, 1, 1, TREE, true) == 3;
+  bool test2 = game_nb_neigh(g, 1, 1, TREE, false) == 1;
+
+  bool test3 = game_nb_neigh(g, 1, 1, TENT, true) == 2;
+
+  bool test4 = game_nb_neigh(g, 1, 1, GRASS, true) == 1;
+
+  game_set_square(g, 7, 7, GRASS);
+  bool test5 = game_nb_neigh(g, 7, 6, TREE, false) == 0;
+  bool test6 = game_nb_neigh(g, 1, 1, TREE, true) == 4;
+  game_delete(g);
+  return test1 && test2 && test3 && test4 && test5 && !test6;
+}
+
 bool test_game_get_adjacent_square() {
   game g = game_new_empty();
   uint i_next;
@@ -301,6 +325,8 @@ int main(int argc, char *argv[]) {
     ok = test_dummy();
   else if (strcmp("game_is_neigh", argv[1]) == 0)
     ok = test_game_is_neigh();
+  else if (strcmp("game_nb_neigh", argv[1]) == 0)
+    ok = test_game_nb_neigh();
   else if (strcmp("game_get_adjacent_square", argv[1]) == 0)
     ok = test_game_get_adjacent_square();
   else if (strcmp("game_default_solution", argv[1]) == 0)
