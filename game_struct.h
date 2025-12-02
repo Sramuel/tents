@@ -11,8 +11,14 @@ struct game_s {
   uint nb_rows;        // Nombre de lignes (par défaut DEFAULT_SIZE)
   uint nb_cols;        // Nombre de colonnes (par défaut DEFAULT_SIZE)
   bool wrapping;       // Est vrai si le jeu à une topologie torique (faux sinon)
-  queue *undo;
-  queue *redo;
+  queue *undo;         // Pile des actions pour la fonctionnalité "undo"
+  queue *redo;         // Pile des actions pour la fonctionnalité "redo"
 };
+
+typedef struct {       // structure pour stocker une action de jeu
+  uint row;            // indice de la ligne
+  uint col;            // indice de la colonne
+  square value;        // valeur de la case avant/après l'action
+}cell;
 
 #endif

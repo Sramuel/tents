@@ -203,8 +203,19 @@ uint game_get_current_nb_tents_all(cgame g) {
   return somme;
 }
 void game_play_move(game g, uint i, uint j, square s) {
-  g->board[i][j] = s;
-}  // joue le coup en mettant la case i,j à s
+  cell* last_action = malloc(sizeof(cell)); // allocation de la cellule pour stocker l'action
+  if (last_action == NULL) {
+    return;
+  }
+  last_action->row = i;
+  last_action->col = j;
+  last_action->value = g->board[i][j];
+  queue_push_head(g->undo, last_action); // sauvegarde de l'action pour undo
+  g->board[i][j] = s; // joue le coup en mettant la case i,j à s
+  if (g->redo != NULL) { // vide la pile redo
+    queue_clear_full(g->redo, free); // libère chaque cellule de la pile redo
+  }
+}
 
 bool game_check_move(cgame g, uint i, uint j, square s) {
   if (g == NULL) {  // verifie que g n'est pas NULL
