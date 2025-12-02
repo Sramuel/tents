@@ -33,31 +33,31 @@ bool test_game_is_neigh() {
   return test1 && test2 && test3 && test4 && test5;
 }
 
-bool test_game_get_ajacent_square() {
+bool test_game_get_adjacent_square() {
   game g = game_new_empty();
   uint i_next;
   uint j_next;
 
-  if (!game_get_ajacent_square(g, 3, 3, UP, &i_next, &j_next)) return false;
+  if (!game_get_adjacent_square(g, 3, 3, UP, &i_next, &j_next)) return false;
   if (i_next != 2 || j_next != 3) return false;
 
-  if (!game_get_ajacent_square(g, 3, 3, LEFT, &i_next, &j_next)) return false;
+  if (!game_get_adjacent_square(g, 3, 3, LEFT, &i_next, &j_next)) return false;
   if (i_next != 3 || j_next != 2) return false;
 
-  if (!game_get_ajacent_square(g, 3, 3, DOWN_RIGHT, &i_next, &j_next)) return false;
+  if (!game_get_adjacent_square(g, 3, 3, DOWN_RIGHT, &i_next, &j_next)) return false;
   if (i_next != 4 || j_next != 4) return false;
 
-  if (!game_get_ajacent_square(g, 3, 3, DOWN, &i_next, &j_next)) return false;
+  if (!game_get_adjacent_square(g, 3, 3, DOWN, &i_next, &j_next)) return false;
   if (i_next != 4 || j_next != 3) return false;
 
-  if (game_get_ajacent_square(g, 0, 0, UP, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 0, 0, LEFT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 0, 0, UP_LEFT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 0, 0, UP_RIGHT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 7, 7, RIGHT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 7, 7, DOWN_LEFT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 7, 7, DOWN_RIGHT, &i_next, &j_next)) return false;
-  if (game_get_ajacent_square(g, 7, 7, DOWN, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 0, 0, UP, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 0, 0, LEFT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 0, 0, UP_LEFT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 0, 0, UP_RIGHT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 7, 7, RIGHT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 7, 7, DOWN_LEFT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 7, 7, DOWN_RIGHT, &i_next, &j_next)) return false;
+  if (game_get_adjacent_square(g, 7, 7, DOWN, &i_next, &j_next)) return false;
   game_delete(g);
   return true;
 }
@@ -301,8 +301,8 @@ int main(int argc, char *argv[]) {
     ok = test_dummy();
   else if (strcmp("game_is_neigh", argv[1]) == 0)
     ok = test_game_is_neigh();
-  else if (strcmp("game_get_ajacent_square", argv[1]) == 0)
-    ok = test_game_get_ajacent_square();
+  else if (strcmp("game_get_adjacent_square", argv[1]) == 0)
+    ok = test_game_get_adjacent_square();
   else if (strcmp("game_default_solution", argv[1]) == 0)
     ok = test_game_default_solution();
   else if (strcmp("game_default", argv[1]) == 0)

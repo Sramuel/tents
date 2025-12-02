@@ -162,7 +162,7 @@ game game_default_solution(void) {
   return g;
 }
 
-bool game_get_ajacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) {
+bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) {
   if (g == NULL) {  // verifie que g n'est pas NULL
     return false;
   }
