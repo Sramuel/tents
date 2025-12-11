@@ -6,6 +6,7 @@
 
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 /* ********** TEST ********** */
 
@@ -185,6 +186,47 @@ bool test_play_move() {
   return true;
 }
 
+bool test_game_undo(){
+  game g = game_new_empty();
+  if (g == NULL) return false;
+  game_play_move(g, 4, 3, TENT);
+  game_play_move(g, 0, 1, GRASS);
+  game_undo(g);
+  if (game_get_square(g, 0, 1) != EMPTY) {
+    game_delete(g);
+    return false;
+  }
+  game_undo(g);
+  if (game_get_square(g, 4, 3) != EMPTY) {
+    game_delete(g);
+    return false;
+  }
+  game_delete(g);
+  return true;
+}
+
+
+bool test_game_redo(){
+  game g = game_new_empty();
+  if (g == NULL) return false;
+  game_play_move(g, 4, 3, TENT);
+  game_play_move(g, 0, 1, GRASS);
+  game_undo(g);
+  game_undo(g);
+  game_redo(g);
+  if (game_get_square(g, 4, 3) != TENT) {
+    game_delete(g);
+    return false;
+  }
+  game_redo(g);
+  if (game_get_square(g, 0, 1) != GRASS) {
+    game_delete(g);
+    return false;
+  }
+  game_delete(g);
+  return true;
+}
+
 /* ********** USAGE ********** */
 
 void usage(int argc, char *argv[]) {
@@ -220,6 +262,10 @@ int main(int argc, char *argv[]) {
     ok = test_get_current_nb_tents_all();
   else if (strcmp("play_move", argv[1]) == 0)
     ok = test_play_move();
+  else if (strcmp("game_undo", argv[1]) == 0)
+    ok = test_game_undo();
+  else if (strcmp("game_redo", argv[1]) == 0)
+    ok = test_game_redo();
   else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);

@@ -42,6 +42,8 @@ add_test(test_sguillaumin_get_current_nb_tents_col ./game_test_sguillaumin get_c
 add_test(test_sguillaumin_get_current_nb_tents_row ./game_test_sguillaumin get_current_nb_tents_row)
 add_test(test_sguillaumin_get_current_nb_tents_all ./game_test_sguillaumin get_current_nb_tents_all)
 add_test(test_sguillaumin_play_move ./game_test_sguillaumin play_move)
+add_test(test_sguillaumin_game_undo ./game_test_sguillaumin game_undo)
+add_test(test_sguillaumin_game_redo ./game_test_sguillaumin game_redo)
 
 add_test(test_amassie_dummy ./game_test_amassie dummy)
 add_test(test_amassie_game_is_neigh ./game_test_amassie game_is_neigh)

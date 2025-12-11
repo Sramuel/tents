@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 int main(void) {
   char c;
@@ -16,7 +17,7 @@ int main(void) {
     if (c == 'h') {
       printf(
           "Si 't', met une pièce TENT dans la case (<i>,<j>)\nSi 'g', met la pièce GRASS dans la case (<i>,<j>)\nSi "
-          "'e', met la pièce EMPTY dans la case (<i>,<j>)\nSi 'f', remplie la grille avec de l'herbe (fill grass)\nSi "
+          "'e', met la pièce EMPTY dans la case (<i>,<j>)\nSi 'f', remplie la grille avec de l'herbe (fill grass)\nSi 'z', annule le dernier coup (undo)\nSi 'y', refait le dernier coup annulé (redo)\nSi "
           "'r', le jeu redémarre\nSi 'q', quitter le jeu\n");
     } else if (c == 't' || c == 'g' || c == 'e') {
       scanf(" %d %d", &i, &j);
@@ -27,6 +28,10 @@ int main(void) {
       game_restart(g);
     else if (c == 'f')
       game_fill_grass(g);
+    else if (c == 'z')
+      game_undo(g);
+    else if (c == 'y')
+      game_redo(g);
     else if (c == 'q') {
       game_delete(g);
       printf("shame\n");
