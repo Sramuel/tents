@@ -190,11 +190,11 @@ bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
   if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
     return false;
   }
-  
-  return (game_nb_neigh(g,i,j,s,diag)>0); 
+
+  return (game_nb_neigh(g, i, j, s, diag) > 0);
 }
 
-uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag){
+uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
   if (g == NULL) {  // verifie que g n'est pas NULL
     return 0;
   }
@@ -202,7 +202,7 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag){
     return 0;
   }
 
-  uint neigh_count=0;
+  uint neigh_count = 0;
 
   if (diag) {
     const int di[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
@@ -212,23 +212,25 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag){
       int nj = j + dj[k];
 
       if (g->wrapping) {  // implementation de l'option wrapping
-        if (ni < 0) ni = g->nb_rows -1;
-        else if (ni >= g->nb_rows) ni = 0;
+        if (ni < 0)
+          ni = g->nb_rows - 1;
+        else if (ni >= g->nb_rows)
+          ni = 0;
 
-        if (nj < 0) nj = g->nb_cols -1;
-        else if (nj >= g->nb_cols) nj = 0;
+        if (nj < 0)
+          nj = g->nb_cols - 1;
+        else if (nj >= g->nb_cols)
+          nj = 0;
       }
       if (ni >= 0 && ni < g->nb_rows && nj >= 0 && nj < g->nb_cols) {
         if (g->board[ni][nj] == s) {
           neigh_count++;
-        }
-        else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
+        } else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
           neigh_count++;
         }
       }
     }
-  }
-  else {
+  } else {
     const int di[] = {0, 0, -1, 1};
     const int dj[] = {-1, 1, 0, 0};
     for (int k = 0; k < 4; k++) {
@@ -236,17 +238,20 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag){
       int nj = j + dj[k];
 
       if (g->wrapping) {  // implementation de l'option wrapping
-        if (ni < 0) ni = g->nb_rows -1;
-        else if (ni >= g->nb_rows) ni = 0;
+        if (ni < 0)
+          ni = g->nb_rows - 1;
+        else if (ni >= g->nb_rows)
+          ni = 0;
 
-        if (nj < 0) nj = g->nb_cols -1;
-        else if (nj >= g->nb_cols) nj = 0;
+        if (nj < 0)
+          nj = g->nb_cols - 1;
+        else if (nj >= g->nb_cols)
+          nj = 0;
       }
       if (ni >= 0 && ni < g->nb_rows && nj >= 0 && nj < g->nb_cols) {
         if (g->board[ni][nj] == s) {
           neigh_count++;
-        }
-        else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
+        } else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
           neigh_count++;
         }
       }

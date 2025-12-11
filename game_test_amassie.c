@@ -33,7 +33,7 @@ bool test_game_is_neigh() {
   return test1 && test2 && test3 && test4 && test5;
 }
 
-bool test_game_nb_neigh(){
+bool test_game_nb_neigh() {
   game g = game_new_empty();
 
   game_set_square(g, 0, 0, TREE);

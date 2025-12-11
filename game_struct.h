@@ -15,10 +15,10 @@ struct game_s {
   queue *redo;         // Pile des actions pour la fonctionnalité "redo"
 };
 
-typedef struct {       // structure pour stocker une action de jeu
-  uint row;            // indice de la ligne
-  uint col;            // indice de la colonne
-  square value;        // valeur de la case avant/après l'action
-}cell;
+typedef struct {  // structure pour stocker une action de jeu
+  uint row;       // indice de la ligne
+  uint col;       // indice de la colonne
+  square value;   // valeur de la case avant/après l'action
+} cell;
 
 #endif
