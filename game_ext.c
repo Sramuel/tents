@@ -18,7 +18,7 @@ game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
   if (g == NULL) {
     return NULL;
   }
-  g->board = malloc(nb_rows * sizeof(square*));  // allocation du premier tableau (première ligne)
+  g->board = calloc(nb_rows, sizeof(square*));  // allocation du premier tableau (première ligne)
   if (g->board == NULL) {
     game_delete(g);
     return NULL;
