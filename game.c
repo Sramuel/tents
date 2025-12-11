@@ -56,6 +56,14 @@ bool game_equal(cgame g1, cgame g2) {
 
 void game_delete(game g) {
   if (g) {
+    if (g->undo != NULL) {
+      queue_clear_full(g->undo, free);  // Libération de la pile undo
+      queue_free(g->undo);
+    }
+    if (g->redo != NULL) {
+      queue_clear_full(g->redo, free);  // Libération de la pile redo
+      queue_free(g->redo);
+    }
     for (uint i = 0; i < g->nb_rows; i++) {  // Libération de chaque ligne du tableau
       free(g->board[i]);
     }

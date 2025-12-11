@@ -14,7 +14,7 @@ game game_new_ext(uint nb_rows, uint nb_cols, square* squares, uint* nb_tents_ro
 }
 
 game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) {
-  game g = malloc(sizeof(struct game_s));
+  game g = calloc(1, sizeof(struct game_s));
   if (g == NULL) {
     return NULL;
   }
