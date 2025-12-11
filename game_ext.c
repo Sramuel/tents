@@ -7,10 +7,57 @@
 #include "game_struct.h"
 
 game game_new_ext(uint nb_rows, uint nb_cols, square* squares, uint* nb_tents_row, uint* nb_tents_col, bool wrapping) {
-  return NULL;
+  game g = game_new_empty_ext(nb_rows, nb_cols, wrapping);
+  g = init_game(g, nb_tents_row, nb_tents_col, squares);
+  return g;
 }
 
-game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) { return NULL; }
+game game_new_empty_ext(uint nb_rows, uint nb_cols, bool wrapping) { 
+  game g = malloc(sizeof(struct game_s));
+  if (g == NULL) {
+    return NULL;
+  }
+  g->board = malloc(nb_cols * sizeof(square*));  // allocation du premier tableau (première ligne)
+  if (g->board == NULL) {
+    game_delete(g);
+    return NULL;
+  }
+  g->nb_rows = nb_rows;  // nombre de lignes
+  g->nb_cols = nb_cols;  // nombre de colonnes
+
+  g->nb_tents_row =
+      calloc(nb_rows, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par ligne
+  if (g->nb_tents_row == NULL) {
+    game_delete(g);
+    return NULL;
+  }
+  g->nb_tents_col =
+      calloc(nb_cols, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par colonne
+  if (g->nb_tents_col == NULL) {
+    game_delete(g);
+    return NULL;
+  }
+  for (uint i = 0; i < nb_cols;
+       i++) {  // allocation de toutes les cases (une colonne pour chaque case de la première ligne)
+    g->board[i] = calloc(nb_rows, sizeof(square));
+    if (g->board[i] == NULL) {
+      game_delete(g);
+      return NULL;
+    }
+  }
+  g->wrapping = wrapping;
+  g->undo = malloc(sizeof(queue*));
+  if (g->undo == NULL){
+      game_delete(g);
+      return NULL;
+    }
+  g->redo = malloc(sizeof(queue*));
+  if (g->redo == NULL){
+      game_delete(g);
+      return NULL;
+    }
+  return g;
+}
 
 uint game_nb_rows(cgame g) {
   if (g == NULL) {  // verifie que g n'est pas NULL

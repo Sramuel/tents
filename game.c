@@ -1,82 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "game_aux.h"
-#include "game_struct.h"
-
-//////////////////////////////////////////////////////////////////////////AUXILIAIRES/////////////////////////////////////////////////////////////////////////////
-
-square** square_to_board_aux(game g, square* squares, uint nb_rows, uint nb_cols) {
-  for (uint i = 0; i < g->nb_rows; i++) {
-    for (uint j = 0; j < g->nb_cols; j++) {
-      g->board[i][j] = squares[i * nb_cols + j];  // Squares est un simple tableau, il faut alors traduire ces indices
-    }
-  }
-  return g->board;
-}
-
-square* board_to_square_aux(cgame g, uint nb_rows, uint nb_cols) {
-  square* squares = malloc(nb_cols * nb_rows * sizeof(square));
-  if (squares == NULL) {
-    exit(EXIT_FAILURE);
-  }
-  for (uint i = 0; i < g->nb_rows; i++) {
-    for (uint j = 0; j < g->nb_cols; j++) {
-      squares[i * nb_cols + j] = g->board[i][j];  // Squares est un simple tableau, il faut alors traduire ces indices
-    }
-  }
-  return squares;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "game_aux2.h"
 
 game game_new(square* squares, uint* nb_tents_row, uint* nb_tents_col) {
   game g = game_new_empty();
-  for (uint i = 0; i < g->nb_rows;
-       i++) {  // Initialisation du tableau avec le nombre de tentes attendu pour chaque ligne
-    g->nb_tents_row[i] = nb_tents_row[i];
-  }
-  for (uint i = 0; i < g->nb_cols;
-       i++) {  // Initialisation du tableau avec le nombre de tentes attendu pour chaque colonne
-    g->nb_tents_col[i] = nb_tents_col[i];
-  }
-  g->board = square_to_board_aux(g, squares, g->nb_rows, g->nb_cols);
+  g = init_game(g, nb_tents_row, nb_tents_col, squares);
   return g;
 }
 
 game game_new_empty(void) {
-  game g = malloc(sizeof(struct game_s));
-  if (g == NULL) {
-    return NULL;
-  }
-  g->board = malloc(DEFAULT_SIZE * sizeof(square*));  // allocation du premier tableau (première ligne)
-  if (g->board == NULL) {
-    game_delete(g);
-    return NULL;
-  }
-  g->nb_rows = DEFAULT_SIZE;  // nombre de lignes
-  g->nb_cols = DEFAULT_SIZE;  // nombre de colonnes
-
-  g->nb_tents_row =
-      calloc(DEFAULT_SIZE, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par ligne
-  if (g->nb_tents_row == NULL) {
-    game_delete(g);
-    return NULL;
-  }
-  g->nb_tents_col =
-      calloc(DEFAULT_SIZE, sizeof(uint));  // allocation du tableau qui contient le nombre de tentes par colonne
-  if (g->nb_tents_col == NULL) {
-    game_delete(g);
-    return NULL;
-  }
-  for (uint i = 0; i < DEFAULT_SIZE;
-       i++) {  // allocation de toutes les cases (une colonne pour chaque case de la première ligne)
-    g->board[i] = calloc(DEFAULT_SIZE, sizeof(square));
-    if (g->board[i] == NULL) {
-      game_delete(g);
-      return NULL;
-    }
-  }
+  game g = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, false);
   return g;
 }
 
