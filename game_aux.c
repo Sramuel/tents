@@ -31,6 +31,9 @@ void game_print(cgame g) {
       if (g->board[i][j] == TENT) {
         printf("*");
       }
+      if (g->board[i][j] == BIGTREE) {
+        printf("#");
+      }
     }
     printf("| %u\n", g->nb_tents_row[i]);  // print des expected tentes dans les lignes
   }
