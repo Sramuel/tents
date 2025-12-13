@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "game_aux2.h"
+#include "game_ext.h"
 
 game game_new(square* squares, uint* nb_tents_row, uint* nb_tents_col) {
   game g = game_new_empty();
@@ -75,7 +76,7 @@ void game_delete(game g) {
 }
 
 void game_set_square(game g, uint i, uint j, square s) {
-  if (g == NULL || i >= g->nb_rows || j >= g->nb_cols || s < 0 || s > 3) {  // Vérification des paramètres
+  if (g == NULL || i >= g->nb_rows || j >= g->nb_cols || s < 0 || s > 4) {  // Vérification des paramètres
     return;
   }
   g->board[i][j] = s;  // Mise à jour de la case
@@ -179,18 +180,26 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 }
 
 bool game_won(cgame g) {
-  uint nb_trees = 0;
+  if (g == NULL){
+    return false;
+  }
+  uint nb_trees = 0;  // compte les TREE et les BIGTREE
+  uint nb_bigtrees = 0;  // compte uniquement les BIGTREE
   for (uint i = 0; i < g->nb_rows; i++) {
     for (uint j = 0; j < g->nb_cols; j++) {
-      if (game_get_square(g, i, j) == TREE) {
-        nb_trees++;                                  // Compteur d'arbre
-        if (!game_is_neigh(g, i, j, TENT, false)) {  // Regle 4)
-          return false;
+      if (game_get_square(g, i, j) == TREE || game_get_square(g, i, j) == BIGTREE) {
+        nb_trees++;
+        if (game_get_square(g, i, j) == TREE){
+          if (game_nb_neigh(g, i, j, TENT, false) < 1) return false;
+        }
+        else {
+          nb_bigtrees++;
+          if (game_nb_neigh(g, i, j, TENT, false) != 2) return false;
         }
       }
     }
   }
-  if (game_get_current_nb_tents_all(g) != nb_trees) {  // Regle 3)
+  if (game_get_current_nb_tents_all(g) != (nb_trees + nb_bigtrees)) {  // Regle 3)
     return false;
   }
   for (uint i = 0; i < g->nb_rows; i++) {  // Regle 2)
@@ -206,7 +215,10 @@ bool game_won(cgame g) {
   for (uint i = 0; i < g->nb_rows; i++) {
     for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TENT) {
-        if (!game_is_neigh(g, i, j, TREE, false)) {  // Regle 4) deuxieme verification
+        bool has_tree = game_is_neigh(g, i, j, TREE, false);
+        bool has_bigtree = game_is_neigh(g, i, j, BIGTREE, false);
+
+        if (!(has_tree || has_bigtree)) {  // Regle 4) deuxieme verification
           return false;
         }
         if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1)
@@ -231,6 +243,7 @@ void game_fill_grass(game g) {
   }
   return;
 }
+
 void game_restart(game g) {
   if (g == NULL) {
     return;
