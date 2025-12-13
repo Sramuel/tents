@@ -59,6 +59,7 @@ bool test_game_nb_neigh() {
 }
 
 bool test_game_get_adjacent_square() {
+  /*test sans wrapping*/
   game g = game_new_empty();
   uint i_next;
   uint j_next;
@@ -83,7 +84,32 @@ bool test_game_get_adjacent_square() {
   if (game_get_adjacent_square(g, 7, 7, DOWN_LEFT, &i_next, &j_next)) return false;
   if (game_get_adjacent_square(g, 7, 7, DOWN_RIGHT, &i_next, &j_next)) return false;
   if (game_get_adjacent_square(g, 7, 7, DOWN, &i_next, &j_next)) return false;
+
   game_delete(g);
+
+  /*test avec wrapping*/ 
+  game gw = game_new_empty_ext(8, 8, true);
+  if (gw == NULL) return false;
+
+  if (!game_get_adjacent_square(gw, 0, 0, UP, &i_next, &j_next)) return false;
+  if (i_next != 7 || j_next != 0) return false;
+
+  if (!game_get_adjacent_square(gw, 0, 0, LEFT, &i_next, &j_next)) return false;
+  if (i_next != 0 || j_next != 7) return false;
+
+  if (!game_get_adjacent_square(gw, 0, 0, UP_LEFT, &i_next, &j_next)) return false;
+  if (i_next != 7 || j_next != 7) return false;
+
+  if (!game_get_adjacent_square(gw, 7, 7, DOWN, &i_next, &j_next)) return false;
+  if (i_next != 0 || j_next != 7) return false;
+
+  if (!game_get_adjacent_square(gw, 7, 7, RIGHT, &i_next, &j_next)) return false;
+  if (i_next != 7 || j_next != 0) return false;
+
+  if (!game_get_adjacent_square(gw, 7, 0, DOWN_LEFT, &i_next, &j_next)) return false;
+  if (i_next != 0 || j_next != 7) return false;
+
+  game_delete(gw);
   return true;
 }
 

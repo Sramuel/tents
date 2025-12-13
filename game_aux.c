@@ -169,7 +169,7 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   if (g == NULL) {  // verifie que g n'est pas NULL
     return false;
   }
-  if (i >= g->nb_rows || j >= g->nb_cols || i < 0 || j < 0) {  // verifie que i et j sont bien dans la grille
+  if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
     return false;
   }
   if (d < HERE || d > DOWN_RIGHT) {  // verifie que d est valide (compris entre HERE et DOWN_RIGHT)
@@ -177,24 +177,27 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   }
   const int dj[] = {0, 0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
   const int di[] = {0, -1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
-  *pi_next = i + di[d];                             // abscisse de la case adjacente
-  *pj_next = j + dj[d];                             // ordonnée de la case adjacente
+  int ni = i + di[d];                             // abscisse de la case adjacente
+  int nj = j + dj[d];                             // ordonnée de la case adjacente
 
   if (g->wrapping) {  // implementation de l'option wrapping
-    if (*pi_next < 0)
-      *pi_next = g->nb_rows - 1;
-    else if (*pi_next >= g->nb_rows)
-      *pi_next = 0;
+    if (ni < 0)
+      ni = g->nb_rows - 1;
+    else if (ni >= g->nb_rows)
+      ni = 0;
 
-    if (*pj_next < 0)
-      *pj_next = g->nb_cols - 1;
-    else if (*pj_next >= g->nb_cols)
-      *pj_next = 0;
+    if (nj < 0)
+      nj = g->nb_cols - 1;
+    else if (nj >= g->nb_cols)
+      nj = 0;
   }
 
-  if (*pi_next >= g->nb_rows || *pj_next >= g->nb_cols || *pi_next < 0 || *pj_next < 0) {
+  if (ni<0 || nj<0 || ni >= g->nb_rows || nj >= g->nb_cols) {
     return false;
   }
+  *pi_next = (uint)ni;
+  *pj_next = (uint)nj;
+
   return true;
 }
 
