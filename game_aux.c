@@ -181,16 +181,16 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   *pj_next = j + dj[d];                             // ordonnée de la case adjacente
 
   if (g->wrapping) {  // implementation de l'option wrapping
-        if (*pi_next < 0)
-          *pi_next = g->nb_rows - 1;
-        else if (*pi_next >= g->nb_rows)
-          *pi_next = 0;
+    if (*pi_next < 0)
+      *pi_next = g->nb_rows - 1;
+    else if (*pi_next >= g->nb_rows)
+      *pi_next = 0;
 
-        if (*pj_next < 0)
-          *pj_next = g->nb_cols - 1;
-        else if (*pj_next >= g->nb_cols)
-          *pj_next = 0;
-      }
+    if (*pj_next < 0)
+      *pj_next = g->nb_cols - 1;
+    else if (*pj_next >= g->nb_cols)
+      *pj_next = 0;
+  }
 
   if (*pi_next >= g->nb_rows || *pj_next >= g->nb_cols || *pi_next < 0 || *pj_next < 0) {
     return false;

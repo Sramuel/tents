@@ -260,12 +260,8 @@ bool test_new_ext() {
   uint cols = 4;
   bool wrapping = false;
 
-  square squares[16] = {
-    EMPTY, TREE, TENT, EMPTY,
-    TREE, EMPTY, EMPTY, EMPTY,
-    EMPTY, EMPTY, TREE, EMPTY,
-    TENT, EMPTY, EMPTY, EMPTY
-  };
+  square squares[16] = {EMPTY, TREE,  TENT, EMPTY, TREE, EMPTY, EMPTY, EMPTY,
+                        EMPTY, EMPTY, TREE, EMPTY, TENT, EMPTY, EMPTY, EMPTY};
 
   uint tents_row[4] = {1, 0, 0, 1};
   uint tents_col[4] = {1, 0, 1, 0};
@@ -310,7 +306,6 @@ bool test_new_ext() {
   return true;
 }
 
-
 bool test_new_empty_ext() {
   uint rows = 5;
   uint cols = 7;
@@ -351,7 +346,6 @@ bool test_new_empty_ext() {
   game_delete(g);
   return true;
 }
-
 
 /* ********** USAGE ********** */
 

@@ -186,7 +186,7 @@ bool test_play_move() {
   return true;
 }
 
-bool test_game_undo(){
+bool test_game_undo() {
   game g = game_new_empty();
   if (g == NULL) return false;
   game_play_move(g, 4, 3, TENT);
@@ -205,8 +205,7 @@ bool test_game_undo(){
   return true;
 }
 
-
-bool test_game_redo(){
+bool test_game_redo() {
   game g = game_new_empty();
   if (g == NULL) return false;
   game_play_move(g, 4, 3, TENT);
