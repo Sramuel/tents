@@ -6,6 +6,7 @@
 
 #include "game.h"
 #include "game_aux.h"
+#include "game_ext.h"
 
 bool test_dummy() { return true; }
 
@@ -310,6 +311,60 @@ bool test_game_check_move() {
   game_delete(g);
   return true;
 }
+bool test_game_nb_rows(){
+  uint rows = 3;
+  uint cols = 7;
+  bool wrapping = false;
+
+  game g = game_new_empty_ext(rows, cols, wrapping);
+  if (g == NULL){
+    return false;
+  }
+    bool test1 = (game_nb_rows(g) == rows);
+    bool test2 = (game_nb_rows(NULL) == 0);
+
+    game_delete(g);
+    return test1 && test2;
+}
+
+bool test_game_nb_cols(){
+  uint rows = 6;
+  uint cols = 4;
+  bool wrapping = false;
+
+  game g = game_new_empty_ext(rows, cols, wrapping);
+  if (g == NULL){
+    return false;
+  }
+    bool test1 = (game_nb_cols(g) == cols);
+    bool test2 = (game_nb_cols(NULL) == 0);
+
+    game_delete(g);
+    return test1 && test2;
+}
+
+bool test_game_is_wrapping(){
+  uint rows = 5;
+  uint cols = 5;
+
+  game g_wrap = game_new_empty_ext(rows, cols ,true);
+  if (g_wrap == NULL){
+    return false;
+  }
+  game g_nowrap = game_new_empty_ext(rows, cols, false);
+  if (g_nowrap == NULL){
+    game_delete(g_wrap);
+    return false;
+  }
+  bool test1 = (game_is_wrapping(g_wrap) == true);
+  bool test2 = (game_is_wrapping(g_nowrap) == false);
+  bool test3 = (game_is_wrapping(NULL) == false);
+
+  game_delete(g_wrap);
+  game_delete(g_nowrap);
+  return test1 && test2 && test3;
+}
+
 
 void usage(int argc, char *argv[]) {
   fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
@@ -341,6 +396,12 @@ int main(int argc, char *argv[]) {
     ok = test_game_won();
   else if (strcmp("game_check_move", argv[1]) == 0)
     ok = test_game_check_move();
+  else if (strcmp("game_nb_rows", argv[1]) == 0)
+    ok = test_game_nb_rows();
+  else if (strcmp("game_nb_cols", argv[1]) == 0)
+    ok = test_game_nb_cols();
+  else if (strcmp("game_is_wrapping", argv[1]) == 0)
+    ok = test_game_is_wrapping();
   else {
     fprintf(stderr, "Error: test \"%s\" not found!\n", argv[1]);
     exit(EXIT_FAILURE);

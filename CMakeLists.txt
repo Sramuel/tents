@@ -55,5 +55,6 @@ add_test(test_amassie_game_fill_grass ./game_test_amassie game_fill_grass)
 add_test(test_amassie_game_won ./game_test_amassie game_won)
 add_test(test_amassie_game_check_move ./game_test_amassie game_check_move)
 add_test(test_amassie_game_nb_neigh ./game_test_amassie game_nb_neigh)
-
-
+add_test(test_amassie_game_nb_rows ./game_test_amassie game_nb_rows)
+add_test(test_amassie_game_nb_cols ./game_test_amassie game_nb_cols)
+add_test(test_amassie_game_is_wrapping ./game_test_amassie game_is_wrapping)
