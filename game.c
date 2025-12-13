@@ -180,19 +180,18 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 }
 
 bool game_won(cgame g) {
-  if (g == NULL){
+  if (g == NULL) {
     return false;
   }
-  uint nb_trees = 0;  // compte les TREE et les BIGTREE
+  uint nb_trees = 0;     // compte les TREE et les BIGTREE
   uint nb_bigtrees = 0;  // compte uniquement les BIGTREE
   for (uint i = 0; i < g->nb_rows; i++) {
     for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TREE || game_get_square(g, i, j) == BIGTREE) {
         nb_trees++;
-        if (game_get_square(g, i, j) == TREE){
+        if (game_get_square(g, i, j) == TREE) {
           if (game_nb_neigh(g, i, j, TENT, false) < 1) return false;
-        }
-        else {
+        } else {
           nb_bigtrees++;
           if (game_nb_neigh(g, i, j, TENT, false) != 2) return false;
         }

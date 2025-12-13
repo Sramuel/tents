@@ -177,8 +177,8 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   }
   const int dj[] = {0, 0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
   const int di[] = {0, -1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
-  int ni = i + di[d];                             // abscisse de la case adjacente
-  int nj = j + dj[d];                             // ordonnée de la case adjacente
+  int ni = i + di[d];                               // abscisse de la case adjacente
+  int nj = j + dj[d];                               // ordonnée de la case adjacente
 
   if (g->wrapping) {  // implementation de l'option wrapping
     if (ni < 0)
@@ -192,7 +192,7 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
       nj = 0;
   }
 
-  if (ni<0 || nj<0 || ni >= g->nb_rows || nj >= g->nb_cols) {
+  if (ni < 0 || nj < 0 || ni >= g->nb_rows || nj >= g->nb_cols) {
     return false;
   }
   *pi_next = (uint)ni;

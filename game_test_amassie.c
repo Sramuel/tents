@@ -87,7 +87,7 @@ bool test_game_get_adjacent_square() {
 
   game_delete(g);
 
-  /*test avec wrapping*/ 
+  /*test avec wrapping*/
   game gw = game_new_empty_ext(8, 8, true);
   if (gw == NULL) return false;
 
@@ -288,11 +288,10 @@ bool test_game_fill_grass() {
 }
 
 bool test_game_won() {
-
-//  CAS 1 : Grille gagnante Avec BIGTREE Sans Wrapping
+  //  CAS 1 : Grille gagnante Avec BIGTREE Sans Wrapping
 
   game g1 = game_new_empty_ext(3, 3, false);
-  if (g1 == NULL ) return false;
+  if (g1 == NULL) return false;
 
   game_set_square(g1, 1, 1, BIGTREE);
   game_set_square(g1, 1, 0, TENT);
@@ -304,7 +303,7 @@ bool test_game_won() {
   game_set_expected_nb_tents_col(g1, 1, 0);
   game_set_expected_nb_tents_col(g1, 2, 1);
 
-  if (!game_won(g1)){
+  if (!game_won(g1)) {
     game_delete(g1);
     return false;
   }
@@ -312,13 +311,13 @@ bool test_game_won() {
   //  CAS 2 : GRILLE PERDANTE (BIGTREE avec 1 seule tente) Sans Wrapping
 
   game g2 = game_copy(g1);
-  if (g2 == NULL){
+  if (g2 == NULL) {
     game_delete(g1);
     return false;
   }
   game_set_square(g2, 1, 2, GRASS);  // enlève une tente
 
-  if (game_won(g2)){
+  if (game_won(g2)) {
     game_delete(g1);
     game_delete(g2);
     return false;
@@ -327,14 +326,14 @@ bool test_game_won() {
   //  CAS 3 : GRILLE GAGNANTE (TREE et TENT séparés mais voisins grâce au wrapping)
 
   game g3 = game_new_empty_ext(2, 3, true);
-  if (g3 == NULL){
+  if (g3 == NULL) {
     game_delete(g1);
     game_delete(g2);
     return false;
   }
 
   game_set_square(g3, 0, 0, TREE);
-  game_set_square(g3,0, 2, TENT);
+  game_set_square(g3, 0, 2, TENT);
   game_set_expected_nb_tents_row(g3, 0, 1);
   game_set_expected_nb_tents_row(g3, 1, 0);
   game_set_expected_nb_tents_col(g3, 0, 0);
@@ -343,17 +342,17 @@ bool test_game_won() {
 
   game_print(g3);
   printf("is_neigh tent/tent diag = %d\n", game_is_neigh(g3, 0, 2, TENT, true));
-  if (!game_won(g3)){
+  if (!game_won(g3)) {
     game_delete(g1);
     game_delete(g2);
     game_delete(g3);
     return false;
   }
 
-//  CAS 4 : GRILLE PERDANTE (meme grille que g3 mais sans wrapping)
+  //  CAS 4 : GRILLE PERDANTE (meme grille que g3 mais sans wrapping)
 
   game g4 = game_new_empty_ext(2, 3, false);
-  if (g4 == NULL){
+  if (g4 == NULL) {
     game_delete(g1);
     game_delete(g2);
     game_delete(g3);
@@ -368,14 +367,13 @@ bool test_game_won() {
   game_set_expected_nb_tents_col(g4, 1, 0);
   game_set_expected_nb_tents_col(g4, 2, 1);
 
-  if (game_won(g4)){
+  if (game_won(g4)) {
     game_delete(g1);
     game_delete(g2);
     game_delete(g3);
     game_delete(g4);
     return false;
   }
-
 
   game_delete(g1);
   game_delete(g2);
@@ -407,48 +405,48 @@ bool test_game_check_move() {
   game_delete(g);
   return true;
 }
-bool test_game_nb_rows(){
+bool test_game_nb_rows() {
   uint rows = 3;
   uint cols = 7;
   bool wrapping = false;
 
   game g = game_new_empty_ext(rows, cols, wrapping);
-  if (g == NULL){
+  if (g == NULL) {
     return false;
   }
-    bool test1 = (game_nb_rows(g) == rows);
-    bool test2 = (game_nb_rows(NULL) == 0);
+  bool test1 = (game_nb_rows(g) == rows);
+  bool test2 = (game_nb_rows(NULL) == 0);
 
-    game_delete(g);
-    return test1 && test2;
+  game_delete(g);
+  return test1 && test2;
 }
 
-bool test_game_nb_cols(){
+bool test_game_nb_cols() {
   uint rows = 6;
   uint cols = 4;
   bool wrapping = false;
 
   game g = game_new_empty_ext(rows, cols, wrapping);
-  if (g == NULL){
+  if (g == NULL) {
     return false;
   }
-    bool test1 = (game_nb_cols(g) == cols);
-    bool test2 = (game_nb_cols(NULL) == 0);
+  bool test1 = (game_nb_cols(g) == cols);
+  bool test2 = (game_nb_cols(NULL) == 0);
 
-    game_delete(g);
-    return test1 && test2;
+  game_delete(g);
+  return test1 && test2;
 }
 
-bool test_game_is_wrapping(){
+bool test_game_is_wrapping() {
   uint rows = 5;
   uint cols = 5;
 
-  game g_wrap = game_new_empty_ext(rows, cols ,true);
-  if (g_wrap == NULL){
+  game g_wrap = game_new_empty_ext(rows, cols, true);
+  if (g_wrap == NULL) {
     return false;
   }
   game g_nowrap = game_new_empty_ext(rows, cols, false);
-  if (g_nowrap == NULL){
+  if (g_nowrap == NULL) {
     game_delete(g_wrap);
     return false;
   }
@@ -460,7 +458,6 @@ bool test_game_is_wrapping(){
   game_delete(g_nowrap);
   return test1 && test2 && test3;
 }
-
 
 void usage(int argc, char *argv[]) {
   fprintf(stderr, "Usage: %s <testname> [<...>]\n", argv[0]);
