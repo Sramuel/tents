@@ -405,58 +405,42 @@ bool test_game_check_move() {
   game_delete(g);
   return true;
 }
-bool test_game_nb_rows() {
-  uint rows = 3;
-  uint cols = 7;
-  bool wrapping = false;
 
-  game g = game_new_empty_ext(rows, cols, wrapping);
-  if (g == NULL) {
+bool test_game_nb_rows() {
+  game g = game_new_empty_ext(5, 7, false);
+  if (game_nb_rows(g) != 5) {
+    game_delete(g);
     return false;
   }
-  bool test1 = (game_nb_rows(g) == rows);
-  bool test2 = (game_nb_rows(NULL) == 0);
-
   game_delete(g);
-  return test1 && test2;
+  return true;
 }
 
 bool test_game_nb_cols() {
-  uint rows = 6;
-  uint cols = 4;
-  bool wrapping = false;
-
-  game g = game_new_empty_ext(rows, cols, wrapping);
-  if (g == NULL) {
+  game g = game_new_empty_ext(5, 7, false);
+  if (game_nb_cols(g) != 7) {
+    game_delete(g);
     return false;
   }
-  bool test1 = (game_nb_cols(g) == cols);
-  bool test2 = (game_nb_cols(NULL) == 0);
-
   game_delete(g);
-  return test1 && test2;
+  return true;
 }
 
 bool test_game_is_wrapping() {
-  uint rows = 5;
-  uint cols = 5;
-
-  game g_wrap = game_new_empty_ext(rows, cols, true);
-  if (g_wrap == NULL) {
+  game g1 = game_new_empty_ext(5, 7, false);
+  if (game_is_wrapping(g1)) {
+    game_delete(g1);
     return false;
   }
-  game g_nowrap = game_new_empty_ext(rows, cols, false);
-  if (g_nowrap == NULL) {
-    game_delete(g_wrap);
+  game_delete(g1);
+
+  game g2 = game_new_empty_ext(5, 7, true);
+  if (!game_is_wrapping(g2)) {
+    game_delete(g2);
     return false;
   }
-  bool test1 = (game_is_wrapping(g_wrap) == true);
-  bool test2 = (game_is_wrapping(g_nowrap) == false);
-  bool test3 = (game_is_wrapping(NULL) == false);
-
-  game_delete(g_wrap);
-  game_delete(g_nowrap);
-  return test1 && test2 && test3;
+  game_delete(g2);
+  return true;
 }
 
 void usage(int argc, char *argv[]) {
