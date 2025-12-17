@@ -16,9 +16,12 @@ game game_new_empty(void) {
 }
 
 game game_copy(cgame g) {
+  if (g == NULL) {
+    return NULL;
+  }
   square* squares = board_to_square_aux(g, g->nb_rows, g->nb_cols);  // Traduction du Double tableau en Simple tableau
-  game g_copy = game_new(squares, g->nb_tents_row,
-                         g->nb_tents_col);  // Création d'une game avec un Simple tableau et modifiée en Double tableau
+  game g_copy = game_new_ext(g->nb_rows, g->nb_cols, squares, g->nb_tents_row, g->nb_tents_col,
+                             g->wrapping);  // Création d'une game avec toutes les propriétés
   free(squares);
   return g_copy;
 }
@@ -31,6 +34,9 @@ bool game_equal(cgame g1, cgame g2) {
     return false;
   }
   if (g1->nb_cols != g2->nb_cols) {  // Vérification du nombre de colonnes
+    return false;
+  }
+  if (g1->wrapping != g2->wrapping) {  // Vérification de l'option wrapping
     return false;
   }
   for (uint i = 0; i < g1->nb_rows;
@@ -167,13 +173,13 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
   if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
     return false;
   }
-  if (s < 0 || s > 3) {  // verifie la validité de la case (EMPTY, GRASS, TENT or TREE)
+  if (s < 0 || s > 4) {  // verifie la validité de la case (EMPTY, GRASS, TENT, TREE or BIGTREE)
     return false;
   }
-  if (s == TREE) {  // on ne peux pas poser un nouvel arbre
+  if (s == TREE || s == BIGTREE) {  // on ne peux pas poser un nouvel arbre ou un gros arbre
     return false;
   }
-  if (g->board[i][j] == TREE) {  // on ne peux remplacer un arbre par une autre case
+  if (g->board[i][j] == TREE || g->board[i][j] == BIGTREE) {  // on ne peux remplacer un arbre par une autre case
     return false;
   }
   return true;
@@ -249,10 +255,16 @@ void game_restart(game g) {
   }
   for (int i = 0; i < g->nb_rows; i++) {
     for (int j = 0; j < g->nb_cols; j++) {
-      if (g->board[i][j] != TREE) {
-        game_set_square(g, i, j, EMPTY);  // transforme toutes les cases non TREE en case EMPTY
+      if (g->board[i][j] != TREE && g->board[i][j] != BIGTREE) {
+        game_set_square(g, i, j, EMPTY);  // transforme toutes les cases non TREE/BIGTREE en case EMPTY
       }
     }
+  }
+  if (g->undo != NULL) {
+    queue_clear_full(g->undo, free);  // Vide la pile undo
+  }
+  if (g->redo != NULL) {
+    queue_clear_full(g->redo, free);  // Vide la pile redo
   }
   return;
 }
