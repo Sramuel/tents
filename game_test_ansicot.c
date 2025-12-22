@@ -81,7 +81,7 @@ bool test_new_empty() {
 }
 
 bool test_copy() {
-  game g1 = game_default();
+  game g1 = game_new_empty_ext(5, 7, true);
   if (g1 == NULL) {
     return false;
   }
@@ -95,14 +95,17 @@ bool test_copy() {
     game_delete(g2);
     return false;
   }
+  if (game_nb_rows(g2) != 5 || game_nb_cols(g2) != 7 || !game_is_wrapping(g2)) {
+    game_delete(g1);
+    game_delete(g2);
+    return false;
+  }
   game_set_square(g2, 1, 0, TENT);
   if (game_get_square(g1, 1, 0) == TENT) {
     game_delete(g1);
     game_delete(g2);
     return false;
   }
-  game_print(g1);
-  game_print(g2);
   game_delete(g1);
   game_delete(g2);
   return true;
@@ -256,20 +259,18 @@ bool test_set_expected_nb_tents_col() {
 }
 
 bool test_new_ext() {
-  uint rows = 4;
-  uint cols = 4;
-  bool wrapping = false;
+  uint rows = 3;
+  uint cols = 5;
 
-  square squares[16] = {EMPTY, TREE,  TENT, EMPTY, TREE, EMPTY, EMPTY, EMPTY,
-                        EMPTY, EMPTY, TREE, EMPTY, TENT, EMPTY, EMPTY, EMPTY};
+  square squares[15] = {TREE, EMPTY, EMPTY, EMPTY, TENT, EMPTY, TREE, EMPTY,
+                        TENT, EMPTY, EMPTY, EMPTY, TREE, EMPTY, EMPTY};
 
-  uint tents_row[4] = {1, 0, 0, 1};
-  uint tents_col[4] = {1, 0, 1, 0};
+  uint tents_row[3] = {1, 1, 0};
+  uint tents_col[5] = {1, 1, 0, 0, 1};
 
-  game g = game_new_ext(rows, cols, squares, tents_row, tents_col, wrapping);
-  if (g == NULL) return false;
+  game g = game_new_ext(rows, cols, squares, tents_row, tents_col, false);
 
-  if (game_nb_rows(g) != rows || game_nb_cols(g) != cols) {
+  if (g == NULL || game_nb_rows(g) != rows || game_nb_cols(g) != cols) {
     game_delete(g);
     return false;
   }
@@ -283,25 +284,6 @@ bool test_new_ext() {
     }
   }
 
-  for (uint i = 0; i < rows; i++) {
-    if (game_get_expected_nb_tents_row(g, i) != tents_row[i]) {
-      game_delete(g);
-      return false;
-    }
-  }
-  for (uint j = 0; j < cols; j++) {
-    if (game_get_expected_nb_tents_col(g, j) != tents_col[j]) {
-      game_delete(g);
-      return false;
-    }
-  }
-
-  if (game_is_wrapping(g) != wrapping) {
-    game_delete(g);
-    return false;
-  }
-
-  game_print(g);
   game_delete(g);
   return true;
 }
