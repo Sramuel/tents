@@ -204,8 +204,7 @@ bool game_won(cgame g) {
       }
     }
   }
-  uint expected_tents = (nb_trees - nb_bigtrees) + 2 * nb_bigtrees;
-  if (game_get_current_nb_tents_all(g) != expected_tents) {  // Regle 3)
+  if (game_get_current_nb_tents_all(g) != (nb_trees + nb_bigtrees)) {  // Regle 3)
     return false;
   }
   for (uint i = 0; i < g->nb_rows; i++) {  // Regle 2)
