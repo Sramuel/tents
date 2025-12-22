@@ -54,18 +54,21 @@ bool test_get_expected_nb_tents_col() {
 }
 
 bool test_get_expected_nb_tents_all() {
-  game g = game_default();
+  square squares[6] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+  uint row[2] = {1, 2};
+  uint col[3] = {0, 2, 1};
+  game g = game_new_ext(2, 3, squares, row, col, false);
   if (g == NULL) return false;
-  uint val = 0;
-  for (uint i = 0; i < DEFAULT_SIZE; i++) {
-    val += game_get_expected_nb_tents_row(g, i);
+  uint expected_total = 0;
+  for (uint i = 0; i < 2; i++) {
+    expected_total += game_get_expected_nb_tents_row(g, i);
   }
-  uint total = game_get_expected_nb_tents_all(g);
+  if (expected_total != game_get_expected_nb_tents_all(g)) {
+    game_delete(g);
+    return false;
+  }
   game_delete(g);
-  if (val == total) {
-    return true;
-  }
-  return false;
+  return true;
 }
 
 bool test_get_current_nb_tents_row() {
