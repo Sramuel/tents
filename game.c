@@ -116,6 +116,7 @@ uint game_get_expected_nb_tents_col(cgame g, uint j) {
   return g->nb_tents_col[j];
 }  // retourne le nombre de tentes attendu sur la colonne
 uint game_get_expected_nb_tents_all(cgame g) {
+  if (g == NULL) return 0;
   uint somme = 0;
   for (uint i = 0; i < g->nb_rows; i++) {  // somme du nombre de tentes attendu pour chaque ligne
     somme = somme + g->nb_tents_row[i];
@@ -218,16 +219,12 @@ bool game_won(cgame g) {
       return false;
     }
   }
-  for (uint i = 0; i < g->nb_rows; i++) {
+  for (uint i = 0; i < g->nb_rows; i++) {  // Regle sur les tentes
     for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TENT) {
-        bool has_tree = game_is_neigh(g, i, j, TREE, false);
-        bool has_bigtree = game_is_neigh(g, i, j, BIGTREE, false);
-
-        if (!(has_tree || has_bigtree)) {  // Regle 4) deuxieme verification
-          return false;
-        }
-        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1)
+        uint nb_adj_trees = game_nb_neigh(g, i, j, TREE, false);
+        if (nb_adj_trees != 1) return false;
+        if (game_is_neigh(g, i, j, TENT, true)) {
           return false;
         }
       }
