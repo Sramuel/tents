@@ -116,7 +116,6 @@ uint game_get_expected_nb_tents_col(cgame g, uint j) {
   return g->nb_tents_col[j];
 }  // retourne le nombre de tentes attendu sur la colonne
 uint game_get_expected_nb_tents_all(cgame g) {
-  if (g == NULL) return 0;
   uint somme = 0;
   for (uint i = 0; i < g->nb_rows; i++) {  // somme du nombre de tentes attendu pour chaque ligne
     somme = somme + g->nb_tents_row[i];
@@ -205,8 +204,7 @@ bool game_won(cgame g) {
       }
     }
   }
-  uint expected_tents = (nb_trees - nb_bigtrees) + 2 * nb_bigtrees;
-  if (game_get_current_nb_tents_all(g) != expected_tents) {  // Regle 3)
+  if (game_get_current_nb_tents_all(g) != (nb_trees + nb_bigtrees)) {  // Regle 3)
     return false;
   }
   for (uint i = 0; i < g->nb_rows; i++) {  // Regle 2)

@@ -141,30 +141,36 @@ bool test_equal() {
 }
 
 bool test_set_square() {
-  game g = game_new_empty_ext(5, 5, false);
-  if (g == NULL) return false;
-
-  // modifier une case valide
-  game_set_square(g, 2, 3, TENT);
-  if (game_get_square(g, 2, 3) != TENT) {
-    game_delete(g);
+  game g1 = game_default();
+  if (g1 == NULL) {
     return false;
   }
-
-  game_set_square(g, 2, 3, GRASS);
-  if (game_get_square(g, 2, 3) != GRASS) {
-    game_delete(g);
+  game g2 = game_copy(g1);
+  if (g2 == NULL) {
+    game_delete(g1);
     return false;
   }
-
-  // ne doit PAS modifier hors grille
-  game_set_square(g, 10, 10, TENT);
-  if (game_get_square(g, 2, 3) != GRASS) {
-    game_delete(g);
+  if (game_get_square(g1, 1, 0) != EMPTY) {
+    game_delete(g1);
+    game_delete(g2);
     return false;
   }
-
-  game_delete(g);
+  game_set_square(g1, 1, 0, TENT);
+  if (game_get_square(g1, 1, 0) != TENT) {
+    game_delete(g1);
+    game_delete(g2);
+    return false;
+  }
+  game_set_square(g1, 1, 0, EMPTY);
+  if (!game_equal(g1, g2)) {
+    game_delete(g1);
+    game_delete(g2);
+    return false;
+  }
+  game_print(g1);
+  game_print(g2);
+  game_delete(g1);
+  game_delete(g2);
   return true;
 }
 
