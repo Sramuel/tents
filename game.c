@@ -219,12 +219,16 @@ bool game_won(cgame g) {
       return false;
     }
   }
-  for (uint i = 0; i < g->nb_rows; i++) {  // Regle sur les tentes
+  for (uint i = 0; i < g->nb_rows; i++) {
     for (uint j = 0; j < g->nb_cols; j++) {
       if (game_get_square(g, i, j) == TENT) {
-        uint nb_adj_trees = game_nb_neigh(g, i, j, TREE, false);
-        if (nb_adj_trees != 1) return false;
-        if (game_is_neigh(g, i, j, TENT, true)) {
+        bool has_tree = game_is_neigh(g, i, j, TREE, false);
+        bool has_bigtree = game_is_neigh(g, i, j, BIGTREE, false);
+
+        if (!(has_tree || has_bigtree)) {  // Regle 4) deuxieme verification
+          return false;
+        }
+        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1)
           return false;
         }
       }
