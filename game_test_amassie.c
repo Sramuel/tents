@@ -323,7 +323,7 @@ bool test_game_won() {
     return false;
   }
 
-  //  CAS 3 : GRILLE GAGNANTE (TREE et TENT séparés mais voisins grâce au wrapping)
+  //  CAS 3 : GRILLE GAGNANTE (TREE et TENT voisins grâce au wrapping)
 
   game g3 = game_new_empty_ext(2, 3, true);
   if (g3 == NULL) {
@@ -334,14 +334,16 @@ bool test_game_won() {
 
   game_set_square(g3, 0, 0, TREE);
   game_set_square(g3, 0, 2, TENT);
+
+  // sécurisation du voisinage diagonal avec wrapping
+  game_set_square(g3, 1, 1, GRASS);
+
   game_set_expected_nb_tents_row(g3, 0, 1);
   game_set_expected_nb_tents_row(g3, 1, 0);
   game_set_expected_nb_tents_col(g3, 0, 0);
   game_set_expected_nb_tents_col(g3, 1, 0);
   game_set_expected_nb_tents_col(g3, 2, 1);
 
-  game_print(g3);
-  printf("is_neigh tent/tent diag = %d\n", game_is_neigh(g3, 0, 2, TENT, true));
   if (!game_won(g3)) {
     game_delete(g1);
     game_delete(g2);
@@ -349,7 +351,7 @@ bool test_game_won() {
     return false;
   }
 
-  //  CAS 4 : GRILLE PERDANTE (meme grille que g3 mais sans wrapping)
+  //  CAS 4 : GRILLE PERDANTE (même grille que g3 mais sans wrapping)
 
   game g4 = game_new_empty_ext(2, 3, false);
   if (g4 == NULL) {
@@ -362,7 +364,7 @@ bool test_game_won() {
   game_set_square(g4, 0, 0, TREE);
   game_set_square(g4, 0, 2, TENT);
   game_set_expected_nb_tents_row(g4, 0, 1);
-  game_set_expected_nb_tents_row(g3, 1, 0);
+  game_set_expected_nb_tents_row(g4, 1, 0);
   game_set_expected_nb_tents_col(g4, 0, 0);
   game_set_expected_nb_tents_col(g4, 1, 0);
   game_set_expected_nb_tents_col(g4, 2, 1);
