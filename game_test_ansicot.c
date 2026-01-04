@@ -144,19 +144,22 @@ bool test_set_square() {
   game g = game_new_empty_ext(5, 5, false);
   if (g == NULL) return false;
 
-  if (game_get_square(g, 1, 0) != EMPTY) {
+  // modifier une case valide
+  game_set_square(g, 2, 3, TENT);
+  if (game_get_square(g, 2, 3) != TENT) {
     game_delete(g);
     return false;
   }
 
-  game_set_square(g, 1, 0, TENT);
-  if (game_get_square(g, 1, 0) != TENT) {
+  game_set_square(g, 2, 3, GRASS);
+  if (game_get_square(g, 2, 3) != GRASS) {
     game_delete(g);
     return false;
   }
 
-  game_set_square(g, 1, 0, EMPTY);
-  if (game_get_square(g, 1, 0) != EMPTY) {
+  // ne doit PAS modifier hors grille
+  game_set_square(g, 10, 10, TENT);
+  if (game_get_square(g, 2, 3) != GRASS) {
     game_delete(g);
     return false;
   }

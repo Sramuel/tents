@@ -55,18 +55,17 @@ bool test_get_expected_nb_tents_col() {
 
 bool test_get_expected_nb_tents_all() {
   square squares[6] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
-  uint row[2] = {1, 2};
+  uint row[2] = {1, 2};  // total attendu = 3
   uint col[3] = {0, 2, 1};
+
   game g = game_new_ext(2, 3, squares, row, col, false);
   if (g == NULL) return false;
-  uint expected_total = 0;
-  for (uint i = 0; i < 2; i++) {
-    expected_total += game_get_expected_nb_tents_row(g, i);
-  }
-  if (expected_total != game_get_expected_nb_tents_all(g)) {
+
+  if (game_get_expected_nb_tents_all(g) != 3) {
     game_delete(g);
     return false;
   }
+
   game_delete(g);
   return true;
 }
