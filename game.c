@@ -64,12 +64,10 @@ bool game_equal(cgame g1, cgame g2) {
 void game_delete(game g) {
   if (g) {
     if (g->undo != NULL) {
-      queue_clear_full(g->undo, free);  // Libération de la pile undo
-      queue_free(g->undo);
+      queue_free_full(g->undo, free);  // Libération de la pile undo
     }
     if (g->redo != NULL) {
-      queue_clear_full(g->redo, free);  // Libération de la pile redo
-      queue_free(g->redo);
+      queue_free_full(g->redo, free);  // Libération de la pile redo
     }
     for (uint i = 0; i < g->nb_rows; i++) {  // Libération de chaque ligne du tableau
       free(g->board[i]);
@@ -152,6 +150,9 @@ uint game_get_current_nb_tents_all(cgame g) {
   return somme;
 }
 void game_play_move(game g, uint i, uint j, square s) {
+  if (!game_check_move(g, i, j, s)) {
+    return;
+  }
   cell* last_action = malloc(sizeof(cell));  // allocation de la cellule pour stocker l'action
   if (last_action == NULL) {
     return;

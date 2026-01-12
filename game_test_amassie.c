@@ -35,7 +35,9 @@ bool test_game_is_neigh() {
 }
 
 bool test_game_nb_neigh() {
-  game g = game_new_empty();
+  uint nb_rows = 8;
+  uint nb_cols = 8;
+  game g = game_new_empty_ext(nb_rows, nb_cols, true);
 
   game_set_square(g, 0, 0, TREE);
   game_set_square(g, 1, 0, TREE);
@@ -288,50 +290,29 @@ bool test_game_fill_grass() {
 }
 
 bool test_game_won() {
-  //  CAS 1 : Grille gagnante Avec BIGTREE Sans Wrapping
+  game g1 = game_default_solution();
+  game g2 = game_default_solution();
+  game g3 = game_default_solution();
+  game_set_square(g1, 2, 2, TREE);
+  game_set_square(g1, 3, 2, TENT);
+  game_set_square(g1, 2, 6, TENT);
+  game_set_square(g1, 3, 6, TREE);
 
-  game g1 = game_new_empty_ext(3, 3, false);
-  if (g1 == NULL) return false;
+  game_set_square(g2, 5, 2, GRASS);
 
-  game_set_square(g1, 1, 1, BIGTREE);
-  game_set_square(g1, 1, 0, TENT);
-  game_set_square(g1, 1, 2, TENT);
-  game_set_expected_nb_tents_row(g1, 0, 0);
-  game_set_expected_nb_tents_row(g1, 1, 2);
-  game_set_expected_nb_tents_row(g1, 2, 0);
-  game_set_expected_nb_tents_col(g1, 0, 1);
-  game_set_expected_nb_tents_col(g1, 1, 0);
-  game_set_expected_nb_tents_col(g1, 2, 1);
-
-  if (!game_won(g1)) {
+  game_set_square(g3, 4, 4, GRASS);
+  game_set_square(g3, 1, 3, TREE);
+  game_set_square(g3, 0, 5, GRASS);
+  game_set_square(g3, 5, 7, TREE);
+  if (game_won(g1) || game_won(g2) || game_won(g3)) {
     game_delete(g1);
+    game_delete(g2);
+    game_delete(g3);
     return false;
   }
-
-  //  CAS 4 : GRILLE PERDANTE (meme grille que g3 mais sans wrapping)
-
-  game g4 = game_new_empty_ext(2, 3, false);
-  if (g4 == NULL) {
-    game_delete(g1);
-    return false;
-  }
-
-  game_set_square(g4, 0, 0, TREE);
-  game_set_square(g4, 0, 2, TENT);
-  game_set_expected_nb_tents_row(g4, 0, 1);
-  game_set_expected_nb_tents_row(g4, 1, 0);
-  game_set_expected_nb_tents_col(g4, 0, 0);
-  game_set_expected_nb_tents_col(g4, 1, 0);
-  game_set_expected_nb_tents_col(g4, 2, 1);
-
-  if (game_won(g4)) {
-    game_delete(g1);
-    game_delete(g4);
-    return false;
-  }
-
   game_delete(g1);
-  game_delete(g4);
+  game_delete(g2);
+  game_delete(g3);
   return true;
 }
 

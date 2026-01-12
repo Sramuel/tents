@@ -13,7 +13,13 @@
 bool test_dummy() { return true; }
 
 bool test_print() {
-  game g = game_default();
+  game g = game_new_empty();
+  game_set_square(g, 5, 5, GRASS);
+  game_set_square(g, 0, 0, TREE);
+  game_set_square(g, 7, 7, BIGTREE);
+  game_set_square(g, 6, 7, TENT);
+  game_set_square(g, 7, 6, TENT);
+  game_set_square(g, 0, 1, TENT);
   game_print(g);
   game_delete(g);
   return true;
@@ -169,6 +175,11 @@ bool test_play_move() {
   if (g == NULL) return false;
   game_play_move(g, 4, 3, TENT);
   if (game_get_square(g, 4, 3) != TENT) {
+    game_delete(g);
+    return false;
+  }
+  game_play_move(g, 3, 0, TENT);  // Test pour voir si il met une tent sur un arbre
+  if (game_get_square(g, 3, 0) == TENT) {
     game_delete(g);
     return false;
   }
