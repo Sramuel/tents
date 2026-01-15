@@ -10,9 +10,10 @@
 //////////////////////////////////////////////////////////////////////////AUXILIAIRES/////////////////////////////////////////////////////////////////////////////
 
 square** square_to_board_aux(game g, square* squares, uint nb_rows, uint nb_cols) {
-  for (uint i = 0; i < g->nb_rows; i++) {
-    for (uint j = 0; j < g->nb_cols; j++) {
-      g->board[i][j] = squares[i * nb_cols + j];  // Squares est un simple tableau, il faut alors traduire ces indices
+  for (uint i = 0; i < game_nb_rows(g); i++) {
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      game_set_square(g, i, j,
+                      squares[i * nb_cols + j]);  // Squares est un simple tableau, il faut alors traduire ces indices
     }
   }
   return g->board;
@@ -23,24 +24,25 @@ square* board_to_square_aux(cgame g, uint nb_rows, uint nb_cols) {
   if (squares == NULL) {
     exit(EXIT_FAILURE);
   }
-  for (uint i = 0; i < g->nb_rows; i++) {
-    for (uint j = 0; j < g->nb_cols; j++) {
-      squares[i * nb_cols + j] = g->board[i][j];  // Squares est un simple tableau, il faut alors traduire ces indices
+  for (uint i = 0; i < game_nb_rows(g); i++) {
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      squares[i * nb_cols + j] =
+          game_get_square(g, i, j);  // Squares est un simple tableau, il faut alors traduire ces indices
     }
   }
   return squares;
 }
 
 game init_game(game g, uint* nb_tents_row, uint* nb_tents_col, square* squares) {
-  for (uint i = 0; i < g->nb_rows;
+  for (uint i = 0; i < game_nb_rows(g);
        i++) {  // Initialisation du tableau avec le nombre de tentes attendu pour chaque ligne
-    g->nb_tents_row[i] = nb_tents_row[i];
+    game_set_expected_nb_tents_row(g, i, nb_tents_row[i]);
   }
-  for (uint i = 0; i < g->nb_cols;
-       i++) {  // Initialisation du tableau avec le nombre de tentes attendu pour chaque colonne
-    g->nb_tents_col[i] = nb_tents_col[i];
+  for (uint j = 0; j < game_nb_cols(g);
+       j++) {  // Initialisation du tableau avec le nombre de tentes attendu pour chaque colonne
+    game_set_expected_nb_tents_col(g, j, nb_tents_col[j]);
   }
-  g->board = square_to_board_aux(g, squares, g->nb_rows, g->nb_cols);
+  g->board = square_to_board_aux(g, squares, game_nb_rows(g), game_nb_cols(g));
   return g;
 }
 

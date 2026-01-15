@@ -93,11 +93,11 @@ void game_undo(game g) {
     queue_push_head(g->undo, undo_action);  // remet l'action dans la pile undo en cas d'erreur
     return;
   }
-  redo_action->value = g->board[undo_action->row][undo_action->col];  // valeur avant undo
+  redo_action->value = game_get_square(g, undo_action->row, undo_action->col);  // valeur avant undo
   redo_action->row = undo_action->row;
   redo_action->col = undo_action->col;
-  g->board[undo_action->row][undo_action->col] = undo_action->value;  // restauration de la valeur précédente
-  queue_push_head(g->redo, redo_action);                              // sauvegarde de l'action pour redo
+  game_set_square(g, undo_action->row, undo_action->col, undo_action->value);  // restauration de la valeur précédente
+  queue_push_head(g->redo, redo_action);                                       // sauvegarde de l'action pour redo
   free(undo_action);
 }
 
@@ -114,10 +114,10 @@ void game_redo(game g) {
     queue_push_head(g->redo, redo_action);  // remet l'action dans la pile redo en cas d'erreur
     return;
   }
-  undo_action->value = g->board[redo_action->row][redo_action->col];  // valeur avant redo
+  undo_action->value = game_get_square(g, redo_action->row, redo_action->col);  // valeur avant redo
   undo_action->row = redo_action->row;
   undo_action->col = redo_action->col;
-  g->board[redo_action->row][redo_action->col] = redo_action->value;  // restauration de la valeur précédente
-  queue_push_head(g->undo, undo_action);                              // sauvegarde de l'action pour undo
+  game_set_square(g, redo_action->row, redo_action->col, redo_action->value);  // restauration de la valeur précédente
+  queue_push_head(g->undo, undo_action);                                       // sauvegarde de l'action pour undo
   free(redo_action);
 }

@@ -2,163 +2,123 @@
 
 #include <stdio.h>
 
+#include "game.h"
+#include "game_ext.h"
 #include "game_struct.h"
 
 void game_print(cgame g) {
   uint i;
   uint j;
   printf("   ");
-  for (j = 0; j < g->nb_cols; j++) {
+  for (j = 0; j < game_nb_cols(g); j++) {
     printf("%u", j);  // print de 0 à nb colonnes -1
   }
   printf("\n   ");
-  for (j = 0; j < g->nb_cols; j++) {
+  for (j = 0; j < game_nb_cols(g); j++) {
     printf("-");  // --------
   }
   printf("\n");
-  for (i = 0; i < g->nb_rows; i++) {  // print du plateau
-    printf("%u |", i);                // print de 0 à nb lignes -1
-    for (j = 0; j < g->nb_cols; j++) {
-      if (g->board[i][j] == TREE) {
+  for (i = 0; i < game_nb_rows(g); i++) {  // print du plateau
+    printf("%u |", i);                     // print de 0 à nb lignes -1
+    for (j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) == TREE) {
         printf("x");
       }
-      if (g->board[i][j] == EMPTY) {
+      if (game_get_square(g, i, j) == EMPTY) {
         printf(" ");
       }
-      if (g->board[i][j] == GRASS) {
+      if (game_get_square(g, i, j) == GRASS) {
         printf("-");
       }
-      if (g->board[i][j] == TENT) {
+      if (game_get_square(g, i, j) == TENT) {
         printf("*");
       }
-      if (g->board[i][j] == BIGTREE) {
+      if (game_get_square(g, i, j) == BIGTREE) {
         printf("#");
       }
     }
-    printf("| %u\n", g->nb_tents_row[i]);  // print des expected tentes dans les lignes
+    printf("| %u\n", game_get_expected_nb_tents_row(g, i));  // print des expected tentes dans les lignes
   }
   printf("   ");
-  for (j = 0; j < g->nb_cols; j++) {
+  for (j = 0; j < game_nb_cols(g); j++) {
     printf("-");  // --------
   }
   printf("\n   ");
-  for (j = 0; j < g->nb_cols; j++) {
-    printf("%u", g->nb_tents_col[j]);  // print des expected tentes dans les colonnes
+  for (j = 0; j < game_nb_cols(g); j++) {
+    printf("%u", game_get_expected_nb_tents_col(g, j));  // print des expected tentes dans les colonnes
   }
   printf("\n");
 }
 
 game game_default(void) {
   game g = game_new_empty();
+  if (g == NULL) return NULL;
 
-  g->nb_tents_row[0] = 1;
-  g->nb_tents_row[1] = 2;
-  g->nb_tents_row[2] = 1;
-  g->nb_tents_row[3] = 2;
-  g->nb_tents_row[4] = 2;
-  g->nb_tents_row[5] = 0;
-  g->nb_tents_row[6] = 1;
-  g->nb_tents_row[7] = 3;
+  // Configuration du nombre de tentes attendues par ligne
+  game_set_expected_nb_tents_row(g, 0, 1);
+  game_set_expected_nb_tents_row(g, 1, 2);
+  game_set_expected_nb_tents_row(g, 2, 1);
+  game_set_expected_nb_tents_row(g, 3, 2);
+  game_set_expected_nb_tents_row(g, 4, 2);
+  game_set_expected_nb_tents_row(g, 5, 0);
+  game_set_expected_nb_tents_row(g, 6, 1);
+  game_set_expected_nb_tents_row(g, 7, 3);
 
-  g->nb_tents_col[0] = 3;
-  g->nb_tents_col[1] = 0;
-  g->nb_tents_col[2] = 2;
-  g->nb_tents_col[3] = 1;
-  g->nb_tents_col[4] = 2;
-  g->nb_tents_col[5] = 1;
-  g->nb_tents_col[6] = 2;
-  g->nb_tents_col[7] = 1;
+  // Configuration du nombre de tentes attendues par colonne
+  game_set_expected_nb_tents_col(g, 0, 3);
+  game_set_expected_nb_tents_col(g, 1, 0);
+  game_set_expected_nb_tents_col(g, 2, 2);
+  game_set_expected_nb_tents_col(g, 3, 1);
+  game_set_expected_nb_tents_col(g, 4, 2);
+  game_set_expected_nb_tents_col(g, 5, 1);
+  game_set_expected_nb_tents_col(g, 6, 2);
+  game_set_expected_nb_tents_col(g, 7, 1);
 
-  g->board[0][0] = TREE;
-  g->board[0][1] = EMPTY;
-  g->board[0][2] = EMPTY;
-  g->board[0][3] = EMPTY;
-  g->board[0][4] = EMPTY;
-  g->board[0][5] = TREE;
-  g->board[0][6] = TREE;
-  g->board[0][7] = EMPTY;
+  // Remplissage de la grille, on met uniquement les arbres
 
-  g->board[1][0] = EMPTY;
-  g->board[1][1] = EMPTY;
-  g->board[1][2] = EMPTY;
-  g->board[1][3] = EMPTY;
-  g->board[1][4] = EMPTY;
-  g->board[1][5] = EMPTY;
-  g->board[1][6] = EMPTY;
-  g->board[1][7] = EMPTY;
+  // Ligne 0
+  game_set_square(g, 0, 0, TREE);
+  game_set_square(g, 0, 5, TREE);
+  game_set_square(g, 0, 6, TREE);
 
-  g->board[2][0] = EMPTY;
-  g->board[2][1] = EMPTY;
-  g->board[2][2] = EMPTY;
-  g->board[2][3] = EMPTY;
-  g->board[2][4] = EMPTY;
-  g->board[2][5] = EMPTY;
-  g->board[2][6] = TREE;
-  g->board[2][7] = EMPTY;
+  // Ligne 2
+  game_set_square(g, 2, 6, TREE);
 
-  g->board[3][0] = TREE;
-  g->board[3][1] = EMPTY;
-  g->board[3][2] = TREE;
-  g->board[3][3] = EMPTY;
-  g->board[3][4] = EMPTY;
-  g->board[3][5] = EMPTY;
-  g->board[3][6] = EMPTY;
-  g->board[3][7] = EMPTY;
+  // Ligne 3
+  game_set_square(g, 3, 0, TREE);
+  game_set_square(g, 3, 2, TREE);
 
-  g->board[4][0] = EMPTY;
-  g->board[4][1] = EMPTY;
-  g->board[4][2] = EMPTY;
-  g->board[4][3] = EMPTY;
-  g->board[4][4] = TREE;
-  g->board[4][5] = EMPTY;
-  g->board[4][6] = EMPTY;
-  g->board[4][7] = EMPTY;
+  // Ligne 4
+  game_set_square(g, 4, 4, TREE);
 
-  g->board[5][0] = EMPTY;
-  g->board[5][1] = EMPTY;
-  g->board[5][2] = TREE;
-  g->board[5][3] = EMPTY;
-  g->board[5][4] = EMPTY;
-  g->board[5][5] = EMPTY;
-  g->board[5][6] = EMPTY;
-  g->board[5][7] = EMPTY;
+  // Ligne 5
+  game_set_square(g, 5, 2, TREE);
 
-  g->board[6][0] = EMPTY;
-  g->board[6][1] = EMPTY;
-  g->board[6][2] = EMPTY;
-  g->board[6][3] = EMPTY;
-  g->board[6][4] = EMPTY;
-  g->board[6][5] = EMPTY;
-  g->board[6][6] = EMPTY;
-  g->board[6][7] = EMPTY;
-
-  g->board[7][0] = EMPTY;
-  g->board[7][1] = TREE;
-  g->board[7][2] = TREE;
-  g->board[7][3] = EMPTY;
-  g->board[7][4] = EMPTY;
-  g->board[7][5] = TREE;
-  g->board[7][6] = TREE;
-  g->board[7][7] = EMPTY;
+  // Ligne 7
+  game_set_square(g, 7, 1, TREE);
+  game_set_square(g, 7, 2, TREE);
+  game_set_square(g, 7, 5, TREE);
+  game_set_square(g, 7, 6, TREE);
 
   return g;
 }
 
 game game_default_solution(void) {
   game g = game_default();
+  if (g == NULL) return NULL;
 
-  g->board[0][4] = TENT;
-  g->board[1][0] = TENT;
-  g->board[1][6] = TENT;
-  g->board[2][2] = TENT;
-  g->board[3][4] = TENT;
-  g->board[3][6] = TENT;
-  g->board[4][0] = TENT;
-  g->board[4][2] = TENT;
-  g->board[6][5] = TENT;
-  g->board[7][0] = TENT;
-  g->board[7][3] = TENT;
-  g->board[7][7] = TENT;
+  game_set_square(g, 0, 4, TENT);
+  game_set_square(g, 1, 0, TENT);
+  game_set_square(g, 1, 6, TENT);
+  game_set_square(g, 2, 2, TENT);
+  game_set_square(g, 3, 4, TENT);
+  game_set_square(g, 3, 6, TENT);
+  game_set_square(g, 4, 0, TENT);
+  game_set_square(g, 4, 2, TENT);
+  game_set_square(g, 6, 5, TENT);
+  game_set_square(g, 7, 0, TENT);
+  game_set_square(g, 7, 3, TENT);
+  game_set_square(g, 7, 7, TENT);
 
   game_fill_grass(g);
 
@@ -169,7 +129,7 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   if (g == NULL) {  // verifie que g n'est pas NULL
     return false;
   }
-  if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
     return false;
   }
   if (d < HERE || d > DOWN_RIGHT) {  // verifie que d est valide (compris entre HERE et DOWN_RIGHT)
@@ -180,19 +140,19 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
   int ni = i + di[d];                               // abscisse de la case adjacente
   int nj = j + dj[d];                               // ordonnée de la case adjacente
 
-  if (g->wrapping) {  // implementation de l'option wrapping
+  if (game_is_wrapping(g)) {  // implementation de l'option wrapping
     if (ni < 0)
-      ni = g->nb_rows - 1;
-    else if (ni >= g->nb_rows)
+      ni = game_nb_rows(g) - 1;
+    else if (ni >= game_nb_rows(g))
       ni = 0;
 
     if (nj < 0)
-      nj = g->nb_cols - 1;
-    else if (nj >= g->nb_cols)
+      nj = game_nb_cols(g) - 1;
+    else if (nj >= game_nb_cols(g))
       nj = 0;
   }
 
-  if (ni < 0 || nj < 0 || ni >= g->nb_rows || nj >= g->nb_cols) {
+  if (ni < 0 || nj < 0 || ni >= game_nb_rows(g) || nj >= game_nb_cols(g)) {
     return false;
   }
   *pi_next = (uint)ni;
@@ -205,7 +165,7 @@ bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
   if (g == NULL) {  // verifie que g n'est pas NULL
     return false;
   }
-  if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
     return false;
   }
 
@@ -216,7 +176,7 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
   if (g == NULL) {  // verifie que g n'est pas NULL
     return 0;
   }
-  if (i >= g->nb_rows || j >= g->nb_cols) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
     return 0;
   }
 
@@ -229,21 +189,21 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
       int ni = i + di[k];
       int nj = j + dj[k];
 
-      if (g->wrapping) {  // implementation de l'option wrapping
+      if (game_is_wrapping(g)) {  // implementation de l'option wrapping
         if (ni < 0)
-          ni = g->nb_rows - 1;
-        else if (ni >= g->nb_rows)
+          ni = game_nb_rows(g) - 1;
+        else if (ni >= game_nb_rows(g))
           ni = 0;
 
         if (nj < 0)
-          nj = g->nb_cols - 1;
-        else if (nj >= g->nb_cols)
+          nj = game_nb_cols(g) - 1;
+        else if (nj >= game_nb_cols(g))
           nj = 0;
       }
-      if (ni >= 0 && ni < g->nb_rows && nj >= 0 && nj < g->nb_cols) {
-        if (g->board[ni][nj] == s) {
+      if (ni >= 0 && ni < game_nb_rows(g) && nj >= 0 && nj < game_nb_cols(g)) {
+        if (game_get_square(g, ni, nj) == s) {
           neigh_count++;
-        } else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
+        } else if (s == TREE && game_get_square(g, ni, nj) == BIGTREE) {  // Compte BIGTREE comme un arbre
           neigh_count++;
         }
       }
@@ -255,21 +215,21 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
       int ni = i + di[k];
       int nj = j + dj[k];
 
-      if (g->wrapping) {  // implementation de l'option wrapping
+      if (game_is_wrapping(g)) {  // implementation de l'option wrapping
         if (ni < 0)
-          ni = g->nb_rows - 1;
-        else if (ni >= g->nb_rows)
+          ni = game_nb_rows(g) - 1;
+        else if (ni >= game_nb_rows(g))
           ni = 0;
 
         if (nj < 0)
-          nj = g->nb_cols - 1;
-        else if (nj >= g->nb_cols)
+          nj = game_nb_cols(g) - 1;
+        else if (nj >= game_nb_cols(g))
           nj = 0;
       }
-      if (ni >= 0 && ni < g->nb_rows && nj >= 0 && nj < g->nb_cols) {
-        if (g->board[ni][nj] == s) {
+      if (ni >= 0 && ni < game_nb_rows(g) && nj >= 0 && nj < game_nb_cols(g)) {
+        if (game_get_square(g, ni, nj) == s) {
           neigh_count++;
-        } else if (s == TREE && g->board[ni][nj] == BIGTREE) {  // Compte BIGTREE comme un arbre
+        } else if (s == TREE && game_get_square(g, ni, nj) == BIGTREE) {  // Compte BIGTREE comme un arbre
           neigh_count++;
         }
       }
