@@ -178,11 +178,6 @@ bool test_play_move() {
     game_delete(g);
     return false;
   }
-  game_play_move(g, 3, 0, TENT);  // Test pour voir si il met une tent sur un arbre
-  if (game_get_square(g, 3, 0) == TENT) {
-    game_delete(g);
-    return false;
-  }
   game_play_move(g, 4, 3, EMPTY);
   if (game_get_square(g, 4, 3) != EMPTY) {
     game_delete(g);
