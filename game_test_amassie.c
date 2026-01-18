@@ -8,6 +8,8 @@
 #include "game_aux.h"
 #include "game_ext.h"
 
+/* ********** TEST ********** */
+
 bool test_dummy() { return true; }
 
 bool test_game_is_neigh() {
@@ -275,8 +277,8 @@ bool test_game_fill_grass() {
     game_delete(g);
     return false;
   }
-  for (uint i = 0; i < DEFAULT_SIZE; i++) {
-    for (uint j = 0; j < DEFAULT_SIZE; j++) {
+  for (uint i = 0; i < game_nb_rows(g); i++) {
+    for (uint j = 0; j < game_nb_cols(g); j++) {
       if (!((i == 0 && j == 0) || (i == 1 && j == 1) || (i == 2 && j == 2))) {
         if (game_get_square(g, i, j) != GRASS) {
           game_delete(g);
@@ -291,8 +293,13 @@ bool test_game_fill_grass() {
 
 bool test_game_won() {
   game g1 = game_default_solution();
+  if (!game_won(g1)) {
+    game_delete(g1);
+    return false;
+  }
   game g2 = game_default_solution();
   game g3 = game_default_solution();
+
   game_set_square(g1, 2, 2, TREE);
   game_set_square(g1, 3, 2, TENT);
   game_set_square(g1, 2, 6, TENT);
@@ -313,6 +320,57 @@ bool test_game_won() {
   game_delete(g1);
   game_delete(g2);
   game_delete(g3);
+  return true;
+
+  // nouveaux tests pour bigtree
+
+  // new_g1 : une seule tente pour un BIGTREE (doit être PERDANT)
+  game new_g1 = game_new_empty();
+  if (!new_g1) return false;
+
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    game_set_expected_nb_tents_row(new_g1, i, 0);
+    game_set_expected_nb_tents_col(new_g1, i, 0);
+  }
+  game_set_square(new_g1, 3, 3, BIGTREE);
+  game_set_square(new_g1, 3, 4, TENT);
+
+  game_set_expected_nb_tents_row(new_g1, 3, 1);  // on attends une tente en 3:4
+  game_set_expected_nb_tents_col(new_g1, 4, 1);
+
+  game_fill_grass(new_g1);
+
+  if (game_won(new_g1)) {  // doit être faux : BIGTREE exige 2 tentes
+    game_delete(new_g1);
+    return false;
+  }
+  game_delete(new_g1);
+
+  // new_g2 : BIGTREE avec 2 tentes (doit être GAGNANT)
+  game new_g2 = game_new_empty();
+  if (!new_g2) return false;
+
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {
+    game_set_expected_nb_tents_row(new_g2, i, 0);
+    game_set_expected_nb_tents_col(new_g2, i, 0);
+  }
+
+  game_set_square(new_g2, 3, 3, BIGTREE);
+  game_set_square(new_g2, 2, 4, TENT);
+  game_set_square(new_g2, 4, 3, TENT);
+
+  game_set_expected_nb_tents_row(new_g2, 2, 1);
+  game_set_expected_nb_tents_row(new_g2, 4, 1);
+  game_set_expected_nb_tents_col(new_g2, 3, 2);
+
+  game_fill_grass(new_g2);
+
+  if (!game_won(new_g2)) {  // doit être vrai si toutes les règles sont OK
+    game_delete(new_g2);
+    return false;
+  }
+  game_delete(new_g2);
+
   return true;
 }
 

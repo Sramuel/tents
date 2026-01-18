@@ -207,10 +207,12 @@ bool game_won(cgame g) {
       }
     }
   }
-  if (game_get_current_nb_tents_all(g) != (nb_trees + nb_bigtrees)) {  // Regle 3)
+  if (game_get_current_nb_tents_all(g) !=
+      (nb_trees + nb_bigtrees)) {  // Regle 3) There are exactly as many tents as trees.
     return false;
   }
-  for (uint i = 0; i < game_nb_rows(g); i++) {  // Regle 2)
+  for (uint i = 0; i < game_nb_rows(g); i++) {  // Regle 2) The number of tents in each row, and in each column, matches
+                                                // the expected numbers given around the sides of the grid.
     if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i)) {
       return false;
     }
@@ -226,10 +228,11 @@ bool game_won(cgame g) {
         bool has_tree = game_is_neigh(g, i, j, TREE, false);
         bool has_bigtree = game_is_neigh(g, i, j, BIGTREE, false);
 
-        if (!(has_tree || has_bigtree)) {  // Regle 4) deuxieme verification
+        if (!(has_tree || has_bigtree)) {  // Regle 4) Each tent must be orthogonally adjacent (horizontally or
+                                           // vertically, but not diagonally) to at least one tree and vice versa.
           return false;
         }
-        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1)
+        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1) No two tents are adjacent, even diagonally.
           return false;
         }
       }

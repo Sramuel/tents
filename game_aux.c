@@ -107,6 +107,7 @@ game game_default_solution(void) {
   game g = game_default();
   if (g == NULL) return NULL;
 
+  // Placement des tentes correspondant à la solution complète du jeu par défaut
   game_set_square(g, 0, 4, TENT);
   game_set_square(g, 1, 0, TENT);
   game_set_square(g, 1, 6, TENT);
@@ -126,13 +127,13 @@ game game_default_solution(void) {
 }
 
 bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) {
-  if (g == NULL) {  // verifie que g n'est pas NULL
+  if (g == NULL) {  // Vérifie que g n'est pas NULL
     return false;
   }
-  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
     return false;
   }
-  if (d < HERE || d > DOWN_RIGHT) {  // verifie que d est valide (compris entre HERE et DOWN_RIGHT)
+  if (d < HERE || d > DOWN_RIGHT) {  // Vérifie que la direction d est valide (compris entre HERE et DOWN_RIGHT)
     return false;
   }
   const int dj[] = {0, 0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
@@ -162,10 +163,10 @@ bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_nex
 }
 
 bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
-  if (g == NULL) {  // verifie que g n'est pas NULL
+  if (g == NULL) {  // Vérifie que g n'est pas NULL
     return false;
   }
-  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
     return false;
   }
 
@@ -173,23 +174,23 @@ bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
 }
 
 uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
-  if (g == NULL) {  // verifie que g n'est pas NULL
+  if (g == NULL) {  // Vérifie que g n'est pas NULL
     return 0;
   }
-  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
     return 0;
   }
 
   uint neigh_count = 0;
 
   if (diag) {
-    const int di[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
-    const int dj[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
+    const int di[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions avec les diagonales
+    const int dj[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions avec les diagonales
     for (int k = 0; k < 8; k++) {
-      int ni = i + di[k];
-      int nj = j + dj[k];
+      int ni = i + di[k];  // ordonée de la case adjacente
+      int nj = j + dj[k];  // abscisse de la case adjacente
 
-      if (game_is_wrapping(g)) {  // implementation de l'option wrapping
+      if (game_is_wrapping(g)) {  // implementation de l'option wrapping avec les diag
         if (ni < 0)
           ni = game_nb_rows(g) - 1;
         else if (ni >= game_nb_rows(g))
@@ -209,13 +210,13 @@ uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
       }
     }
   } else {
-    const int di[] = {0, 0, -1, 1};
-    const int dj[] = {-1, 1, 0, 0};
+    const int di[] = {0, 0, -1, 1};  // tableau des ordonnées des directions sans les diagonales
+    const int dj[] = {-1, 1, 0, 0};  // tableau des abscisses des directions sans les diagonales
     for (int k = 0; k < 4; k++) {
-      int ni = i + di[k];
-      int nj = j + dj[k];
+      int ni = i + di[k];  // ordonée de la case adjacente
+      int nj = j + dj[k];  // abscisse de la case adjacente
 
-      if (game_is_wrapping(g)) {  // implementation de l'option wrapping
+      if (game_is_wrapping(g)) {  // implementation de l'option wrapping sans les diag
         if (ni < 0)
           ni = game_nb_rows(g) - 1;
         else if (ni >= game_nb_rows(g))
