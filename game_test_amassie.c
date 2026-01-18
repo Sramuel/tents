@@ -15,7 +15,7 @@ bool test_dummy() { return true; }
 bool test_game_is_neigh() {
   game g = game_new_empty();
 
-  // On place des arbres autour de la position 3:3 
+  // On place des arbres autour de la position 3:3
   game_set_square(g, 3, 3, TREE);
   game_set_square(g, 3, 2, TREE);
   game_set_square(g, 3, 4, TREE);
@@ -23,8 +23,9 @@ bool test_game_is_neigh() {
   game_set_square(g, 4, 3, TREE);
   game_set_square(g, 2, 2, TREE);
   game_set_square(g, 4, 4, TREE);
-  
-  // Puis on test a plusieurs emplacements si la fonction trouve bien des voisins ou non avec ou sans l'option diagonales
+
+  // Puis on test a plusieurs emplacements si la fonction trouve bien des voisins ou non avec ou sans l'option
+  // diagonales
   bool test1 = game_is_neigh(g, 3, 3, TREE, false);
 
   bool test2 = !game_is_neigh(g, 0, 0, TREE, false);
@@ -73,7 +74,7 @@ bool test_game_get_adjacent_square() {
   uint i_next;
   uint j_next;
 
-  // On test pour chaque direction qu'on obtient bien la bonne case adjacente 
+  // On test pour chaque direction qu'on obtient bien la bonne case adjacente
   if (!game_get_adjacent_square(g, 3, 3, UP, &i_next, &j_next)) return false;
   if (i_next != 2 || j_next != 3) return false;
 
@@ -127,7 +128,7 @@ bool test_game_default_solution() {
   game sol = game_default_solution();
   game def = game_default();
 
-  for (uint i = 0; i < DEFAULT_SIZE; i++) { // On vérifie qu'il ne reste aucune case EMPTY
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {  // On vérifie qu'il ne reste aucune case EMPTY
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(sol, i, j) == EMPTY) {
         game_delete(sol);
@@ -136,7 +137,7 @@ bool test_game_default_solution() {
       }
     }
   }
-  for (uint i = 0; i < DEFAULT_SIZE; i++) { // On vérifie qu'aucune TENT n'est adjacente avec une autre
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {  // On vérifie qu'aucune TENT n'est adjacente avec une autre
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(sol, i, j) == TENT) {
         if (game_is_neigh(sol, i, j, TENT, true)) {
@@ -149,7 +150,8 @@ bool test_game_default_solution() {
   }
   for (uint i = 0; i < DEFAULT_SIZE; i++) {
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
-      if (game_get_square(def, i, j) == TREE) { // On vérifie que chaque TREE est orthogonalement adjacent a au moins une TENT
+      if (game_get_square(def, i, j) ==
+          TREE) {  // On vérifie que chaque TREE est orthogonalement adjacent a au moins une TENT
         if (!game_is_neigh(sol, i, j, TENT, false)) {
           game_delete(sol);
           game_delete(def);
@@ -158,27 +160,29 @@ bool test_game_default_solution() {
       }
     }
   }
-  for (uint i = 0; i < DEFAULT_SIZE; i++) { // On compte le nombre de TENT sur une ligne
-    uint nb_tent_row= 0;
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {  // On compte le nombre de TENT sur une ligne
+    uint nb_tent_row = 0;
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(sol, i, j) == TENT) {
         nb_tent_row++;
       }
     }
-    if (nb_tent_row != game_get_expected_nb_tents_row(def, i)) {  // Et on compare ce nombre au nombre de TENT expected sur cette meme ligne
+    if (nb_tent_row != game_get_expected_nb_tents_row(
+                           def, i)) {  // Et on compare ce nombre au nombre de TENT expected sur cette meme ligne
       game_delete(sol);
       game_delete(def);
       return false;
     }
   }
-  for (uint j = 0; j < DEFAULT_SIZE; j++) { // On compte le nombre de TENT sur une colonne
+  for (uint j = 0; j < DEFAULT_SIZE; j++) {  // On compte le nombre de TENT sur une colonne
     uint nb_tent_col = 0;
     for (uint i = 0; i < DEFAULT_SIZE; i++) {
       if (game_get_square(sol, i, j) == TENT) {
         nb_tent_col++;
       }
     }
-    if (nb_tent_col != game_get_expected_nb_tents_col(def, j)) {  // Et on compare ce nombre au nombre de TENT expected sur cette meme colonne
+    if (nb_tent_col != game_get_expected_nb_tents_col(
+                           def, j)) {  // Et on compare ce nombre au nombre de TENT expected sur cette meme colonne
       game_delete(sol);
       game_delete(def);
       return false;
@@ -193,7 +197,7 @@ bool test_game_default() {
   game def = game_default();
   game sol = game_default_solution();
 
-  for (uint i = 0; i < DEFAULT_SIZE; i++) { // game_default ne doit avoir que des cases TREE et EMPTY
+  for (uint i = 0; i < DEFAULT_SIZE; i++) {  // game_default ne doit avoir que des cases TREE et EMPTY
     for (uint j = 0; j < DEFAULT_SIZE; j++) {
       if (game_get_square(def, i, j) != TREE && game_get_square(def, i, j) != EMPTY) {
         game_delete(sol);
@@ -211,7 +215,7 @@ bool test_game_default() {
       if (game_get_square(sol, i, j) == TREE) trees_sol++;
     }
   }
-  if (trees_def != trees_sol) { // Le nombre d'arbres entre game_default et sa solution doit être les mêmes
+  if (trees_def != trees_sol) {  // Le nombre d'arbres entre game_default et sa solution doit être les mêmes
     game_delete(sol);
     game_delete(def);
     return false;
@@ -288,7 +292,8 @@ bool test_game_fill_grass() {
     game_delete(g);
     return false;
   }
-  for (uint i = 0; i < game_nb_rows(g); i++) {  // Puis on regarde si toutes les cases EMPTY ont bien été modifié en GRASS
+  for (uint i = 0; i < game_nb_rows(g);
+       i++) {  // Puis on regarde si toutes les cases EMPTY ont bien été modifié en GRASS
     for (uint j = 0; j < game_nb_cols(g); j++) {
       if (!((i == 0 && j == 0) || (i == 1 && j == 1) || (i == 2 && j == 2))) {
         if (game_get_square(g, i, j) != GRASS) {
@@ -303,8 +308,8 @@ bool test_game_fill_grass() {
 }
 
 bool test_game_won() {
-  // On créer 3 jeux dans les quels on brise plusieurs règles afin d'invalidé la solution 
-  game g1 = game_default_solution(); // On s'assure d'abord que la solution par default est bien gagnante
+  // On créer 3 jeux dans les quels on brise plusieurs règles afin d'invalidé la solution
+  game g1 = game_default_solution();  // On s'assure d'abord que la solution par default est bien gagnante
   if (!game_won(g1)) {
     game_delete(g1);
     return false;
@@ -394,15 +399,15 @@ bool test_game_check_move() {
     game_delete(g);
     return false;
   }
-  if (game_check_move(g, 2, 2, TENT)) { // Verifie qu'on ne peux pas placer une TENT sur une case TREE
+  if (game_check_move(g, 2, 2, TENT)) {  // Verifie qu'on ne peux pas placer une TENT sur une case TREE
     game_delete(g);
     return false;
   }
-  if (game_check_move(g, 1, 1, TREE)) { // Test de posé un TREE (ne devrait pas etre possible)
+  if (game_check_move(g, 1, 1, TREE)) {  // Test de posé un TREE (ne devrait pas etre possible)
     game_delete(g);
     return false;
   }
-  if (game_check_move(g, 8, 8, TENT)) { // Test de posé une TENT en dehors de la grille (pas possible non plus)
+  if (game_check_move(g, 8, 8, TENT)) {  // Test de posé une TENT en dehors de la grille (pas possible non plus)
     game_delete(g);
     return false;
   }
