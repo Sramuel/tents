@@ -14,11 +14,13 @@ add_executable(game_text game_text.c)
 add_executable(game_test_sguillaumin game_test_sguillaumin.c)
 add_executable(game_test_ansicot game_test_ansicot.c)
 add_executable(game_test_amassie game_test_amassie.c)
+add_executable(game_test_tools game_test_tools.c)
 
 target_link_libraries(game_text game)
 target_link_libraries(game_test_sguillaumin game)
 target_link_libraries(game_test_ansicot game)
 target_link_libraries(game_test_amassie game)
+target_link_libraries(game_test_tools game)
 
 add_test(test_ansicot_dummy ./game_test_ansicot dummy)
 add_test(test_ansicot_new ./game_test_ansicot new)
@@ -58,3 +60,9 @@ add_test(test_amassie_game_nb_neigh ./game_test_amassie game_nb_neigh)
 add_test(test_amassie_game_nb_rows ./game_test_amassie game_nb_rows)
 add_test(test_amassie_game_nb_cols ./game_test_amassie game_nb_cols)
 add_test(test_amassie_game_is_wrapping ./game_test_amassie game_is_wrapping)
+
+add_test(test_tools_game_save ./game_test_tools game_save)
+add_test(test_tools_game_load ./game_test_tools game_load)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/levels/
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/levels/)

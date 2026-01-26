@@ -6,15 +6,15 @@
 #include "game_ext.h"
 #include "game_tools.h"
 
-int main(int argc, char* argv[]) { 
+int main(int argc, char* argv[]) {
   char c;
   int i;
   int j;
   char name[50];
   game g = NULL;
-  if (argc > 1){
+  if (argc > 1) {
     g = game_load(argv[1]);
-  } else{
+  } else {
     g = game_default();
   }
   while (!game_won(g)) {
@@ -40,11 +40,10 @@ int main(int argc, char* argv[]) {
       game_undo(g);
     else if (c == 'y')
       game_redo(g);
-    else if (c=='s'){
+    else if (c == 's') {
       scanf(" %s", name);
       game_save(g, name);
-    }
-    else if (c == 'q') {
+    } else if (c == 'q') {
       game_delete(g);
       printf("shame\n");
       return EXIT_SUCCESS;
