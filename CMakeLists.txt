@@ -11,12 +11,16 @@ add_library(game game.c game_aux.c  game_aux2.c game_ext.c game_tools.c queue.c)
 
 add_executable(game_text game_text.c)
 
+add_executable(game_random game_random.c)
+
 add_executable(game_test_sguillaumin game_test_sguillaumin.c)
 add_executable(game_test_ansicot game_test_ansicot.c)
 add_executable(game_test_amassie game_test_amassie.c)
 add_executable(game_test_tools game_test_tools.c)
 
 target_link_libraries(game_text game)
+target_link_libraries(game_random game)
+
 target_link_libraries(game_test_sguillaumin game)
 target_link_libraries(game_test_ansicot game)
 target_link_libraries(game_test_amassie game)
