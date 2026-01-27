@@ -48,13 +48,11 @@ game init_game(game g, uint* nb_tents_row, uint* nb_tents_col, square* squares) 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint nb_random(uint x){
-  return (((double)rand() * x) / RAND_MAX);
-}
+uint nb_random(uint x) { return (((double)rand() * x) / RAND_MAX); }
 
-square tree_random(){
+square tree_random() {
   uint choix = rand() % 2;
-  if (choix == 1){
+  if (choix == 1) {
     return BIGTREE;
   }
   return TREE;

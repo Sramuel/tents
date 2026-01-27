@@ -103,30 +103,30 @@ void game_save(cgame g, char* filename) {
 
 game game_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_trees, uint nb_bigtrees, bool solution) {
   game g = game_new_empty_ext(nb_rows, nb_cols, wrapping);
-  if (g==NULL){
+  if (g == NULL) {
     exit(EXIT_FAILURE);
   }
   srand(time(NULL));
   uint trees = nb_trees;
   uint big_trees = nb_bigtrees;
 
-  while (trees != 0 || big_trees !=0) {
-    square choix;
-    if (trees == 0){
-      square choix = BIGTREE;
+  while (trees != 0 || big_trees != 0) {
+    square choix = tree_random();
+    if (trees == 0) {
+      choix = BIGTREE;
     } else if (big_trees == 0) {
-      square choix = TREE;
-    } else {
-      square choix = tree_random();
+      choix = TREE;
     }
-    uint row_rand=nb_random(nb_rows);
-    uint col_rand=nb_random(nb_cols);
+    uint row_rand = nb_random(nb_rows);
+    uint col_rand = nb_random(nb_cols);
 
-    if (game_get_square(g,row_rand,col_rand)==TREE || game_get_square(g,row_rand,col_rand)==BIGTREE ){ //Sécurité pour éviter de mettre le nouvel abre au même endroit
+    if (game_get_square(g, row_rand, col_rand) == TREE ||
+        game_get_square(g, row_rand, col_rand) ==
+            BIGTREE) {  // Sécurité pour éviter de mettre le nouvel abre au même endroit
       continue;
     }
     game_set_square(g, row_rand, col_rand, choix);
-    if (choix == TREE){
+    if (choix == TREE) {
       trees--;
     } else {
       big_trees--;
