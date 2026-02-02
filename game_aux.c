@@ -174,67 +174,27 @@ bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
 }
 
 uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
-  if (g == NULL) {  // Vérifie que g n'est pas NULL
-    return 0;
-  }
-  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
-    return 0;
-  }
+  if (g == NULL) return 0;
 
-  uint neigh_count = 0;
+  uint count = 0;
+  // On définit les directions à tester
+  // Les 4 premières sont ortho, les 4 suivantes sont diag
+  direction dirs[] = {UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT};
 
-  if (diag) {
-    const int di[] = {-1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions avec les diagonales
-    const int dj[] = {0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions avec les diagonales
-    for (int k = 0; k < 8; k++) {
-      int ni = i + di[k];  // ordonée de la case adjacente
-      int nj = j + dj[k];  // abscisse de la case adjacente
+  // Si diag est false, on s'arrête à 4 (ortho seulement), sinon 8
+  int limit;
+  if (diag)
+    limit = 8;
+  else
+    limit = 4;
 
-      if (game_is_wrapping(g)) {  // implementation de l'option wrapping avec les diag
-        if (ni < 0)
-          ni = game_nb_rows(g) - 1;
-        else if (ni >= game_nb_rows(g))
-          ni = 0;
-
-        if (nj < 0)
-          nj = game_nb_cols(g) - 1;
-        else if (nj >= game_nb_cols(g))
-          nj = 0;
-      }
-      if (ni >= 0 && ni < game_nb_rows(g) && nj >= 0 && nj < game_nb_cols(g)) {
-        if (game_get_square(g, ni, nj) == s) {
-          neigh_count++;
-        } else if (s == TREE && game_get_square(g, ni, nj) == BIGTREE) {  // Compte BIGTREE comme un arbre
-          neigh_count++;
-        }
-      }
-    }
-  } else {
-    const int di[] = {0, 0, -1, 1};  // tableau des ordonnées des directions sans les diagonales
-    const int dj[] = {-1, 1, 0, 0};  // tableau des abscisses des directions sans les diagonales
-    for (int k = 0; k < 4; k++) {
-      int ni = i + di[k];  // ordonée de la case adjacente
-      int nj = j + dj[k];  // abscisse de la case adjacente
-
-      if (game_is_wrapping(g)) {  // implementation de l'option wrapping sans les diag
-        if (ni < 0)
-          ni = game_nb_rows(g) - 1;
-        else if (ni >= game_nb_rows(g))
-          ni = 0;
-
-        if (nj < 0)
-          nj = game_nb_cols(g) - 1;
-        else if (nj >= game_nb_cols(g))
-          nj = 0;
-      }
-      if (ni >= 0 && ni < game_nb_rows(g) && nj >= 0 && nj < game_nb_cols(g)) {
-        if (game_get_square(g, ni, nj) == s) {
-          neigh_count++;
-        } else if (s == TREE && game_get_square(g, ni, nj) == BIGTREE) {  // Compte BIGTREE comme un arbre
-          neigh_count++;
-        }
+  for (int k = 0; k < limit; k++) {  // Pour chaque direction à tester
+    uint ni, nj;
+    if (game_get_adjacent_square(g, i, j, dirs[k], &ni, &nj)) {  // Si la case adjacente existe avec cette direction
+      if (game_get_square(g, ni, nj) == s) {                     // Si la case adjacente correspond au square recherché
+        count++;                                                 // On incrémente le compteur
       }
     }
   }
-  return neigh_count;
+  return count;
 }

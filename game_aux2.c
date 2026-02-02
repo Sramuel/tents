@@ -50,7 +50,7 @@ game init_game(game g, uint* nb_tents_row, uint* nb_tents_col, square* squares) 
 
 uint nb_random(uint x) { return (((double)rand() * x) / RAND_MAX); }
 
-square tree_random() {
+square tree_random() {  // renvoie aléatoirement TREE ou BIGTREE
   uint choix = rand() % 2;
   if (choix == 1) {
     return BIGTREE;
@@ -58,17 +58,13 @@ square tree_random() {
   return TREE;
 }
 
-direction opp_simple(direction d){
-  if (d <= HERE || d > RIGHT){
+direction opp_simple(direction d) {  // renvoie la direction opposée à d (uniquement pour UP, DOWN, LEFT, RIGHT)
+  if (d <= HERE || d > RIGHT) {
     exit(EXIT_FAILURE);
   }
-  if (d == UP)
-    return DOWN;
-  if (d == DOWN)
-    return UP;
-  if (d == RIGHT)
-    return LEFT;
-  if (d == LEFT)
-    return RIGHT;
+  if (d == UP) return DOWN;
+  if (d == DOWN) return UP;
+  if (d == RIGHT) return LEFT;
+  if (d == LEFT) return RIGHT;
   return HERE;
 }
