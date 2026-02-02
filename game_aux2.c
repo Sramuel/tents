@@ -57,3 +57,18 @@ square tree_random() {
   }
   return TREE;
 }
+
+direction opp_simple(direction d){
+  if (d <= HERE || d > RIGHT){
+    exit(EXIT_FAILURE);
+  }
+  if (d == UP)
+    return DOWN;
+  if (d == DOWN)
+    return UP;
+  if (d == RIGHT)
+    return LEFT;
+  if (d == LEFT)
+    return RIGHT;
+  return HERE;
+}

@@ -11,4 +11,5 @@ game init_game(game g, uint* nb_tents_row, uint* nb_tents_col, square* squares);
 
 uint nb_random(uint x);
 square tree_random();
+direction opp_simple(direction d);
 #endif

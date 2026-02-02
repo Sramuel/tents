@@ -106,30 +106,96 @@ game game_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_trees, uint 
   if (g == NULL) {
     exit(EXIT_FAILURE);
   }
+  if ((nb_bigtrees*3 + nb_trees*2) > nb_cols*nb_rows){
+    exit(EXIT_FAILURE);
+  }
+
   srand(time(NULL));
   uint trees = nb_trees;
   uint big_trees = nb_bigtrees;
+  uint try_tree = 0;
 
-  while (trees != 0 || big_trees != 0) {
-    square choix = tree_random();
-    if (trees == 0) {
-      choix = BIGTREE;
-    } else if (big_trees == 0) {
-      choix = TREE;
-    }
-    uint row_rand = nb_random(nb_rows);
-    uint col_rand = nb_random(nb_cols);
+  while (try_tree<100){
+    while (trees != 0 || big_trees != 0) {
+      square choix = tree_random();
+      if (trees == 0) {
+        choix = BIGTREE;
+      } else if (big_trees == 0) {
+        choix = TREE;
+      }
+      uint row_rand = nb_random(nb_rows);
+      uint col_rand = nb_random(nb_cols);
 
-    if (game_get_square(g, row_rand, col_rand) == TREE ||
-        game_get_square(g, row_rand, col_rand) ==
-            BIGTREE) {  // Sécurité pour éviter de mettre le nouvel abre au même endroit
-      continue;
+      if (game_get_square(g, row_rand, col_rand) == TREE ||
+          game_get_square(g, row_rand, col_rand) ==
+              BIGTREE || game_get_square(g, row_rand, col_rand) ==
+              TENT) {  // Sécurité pour éviter de mettre le nouvel abre au même endroit ou la où il y a une tente
+        continue;
+      }
+
+
+      if (choix ==TREE){
+        uint try_dir=0;
+        while(try_dir<50){ //nombre de tentatives pour trouver une bonne direction
+          direction d = rand() % 4 + 1;
+          uint i;
+          uint j;
+          game_get_adjacent_square(g,row_rand,col_rand,d,&i,&j);
+          if (game_check_move(g,i,j,TENT)){
+            game_set_square(g,i,j,TENT);
+            game_set_square(g, row_rand, col_rand, choix);
+            uint nb_tents_row = game_get_expected_nb_tents_row(g,i);
+            game_set_expected_nb_tents_row(g,i,nb_tents_row++);
+            uint nb_tents_col = game_get_expected_nb_tents_col(g,j);
+            game_set_expected_nb_tents_col(g,j,nb_tents_col++);
+            trees--;
+            break;
+          }
+          try_dir++;
+        }
+      }
+      
+      else{
+        uint try_dir=0;
+        while(try_dir<50){ //nombre de tentatives pour trouver une bonne direction
+          direction d = rand() % 4 + 1;
+          direction d_opp = opp_simple(d); 
+          uint i,i_opp;
+          uint j,j_opp;
+          game_get_adjacent_square(g,row_rand,col_rand,d,&i,&j);
+          game_get_adjacent_square(g,row_rand,col_rand,d_opp,&i_opp,&j_opp);
+          if (game_check_move(g,i,j,TENT) && game_check_move(g,i_opp,j_opp,TENT)){
+            game_set_square(g,i,j,TENT);
+            game_set_square(g,i_opp,j_opp,TENT);
+            game_set_square(g, row_rand, col_rand, choix);
+            uint nb_tents_row = game_get_expected_nb_tents_row(g,i);
+            game_set_expected_nb_tents_row(g,i,nb_tents_row++);
+            uint nb_tents_col = game_get_expected_nb_tents_col(g,j);
+            game_set_expected_nb_tents_col(g,j,nb_tents_col++);
+            nb_tents_row = game_get_expected_nb_tents_row(g,i_opp);
+            game_set_expected_nb_tents_row(g,i_opp,nb_tents_row++);
+            nb_tents_col = game_get_expected_nb_tents_col(g,j_opp);
+            game_set_expected_nb_tents_col(g,j_opp,nb_tents_col++);
+
+            big_trees--;
+            break;
+          }
+          try_dir++;
+        }
+      }
+      try_tree++;
     }
-    game_set_square(g, row_rand, col_rand, choix);
-    if (choix == TREE) {
-      trees--;
-    } else {
-      big_trees--;
+  }
+  if (solution){
+    game_fill_grass(g);
+  }
+  else {
+    for (uint i = 0; i < nb_rows; i++){
+      for (uint j = 0; j < nb_cols; j++){
+        if (game_get_square(g,i,j)==TENT){
+          game_set_square(g,i,j,EMPTY);
+        }
+      }
     }
   }
   return g;
