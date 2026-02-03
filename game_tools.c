@@ -31,7 +31,7 @@ game game_load(char* filename) {
     game_set_expected_nb_tents_row(g, i, expected_tent);
   }
   for (uint j = 0; j < game_nb_cols(g); j++) {
-    fscanf(f, "%d ", &expected_tent);  // lecture du nombre de tentes attendu par ligne
+    fscanf(f, "%d ", &expected_tent);  // lecture du nombre de tentes attendu par colonne
     game_set_expected_nb_tents_col(g, j, expected_tent);
   }
   for (uint i = 0; i < game_nb_rows(g); i++) {  // lecture de chaque case du jeu
