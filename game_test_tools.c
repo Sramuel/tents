@@ -62,6 +62,18 @@ bool test_game_load() {
     game_delete(g);
     return false;
   }
+  if (game_nb_rows(g) != 8) {
+    game_delete(g);
+    return false;
+  }
+  if (game_nb_cols(g) != 8) {
+    game_delete(g);
+    return false;
+  }
+  if (game_is_wrapping(g)) {
+    game_delete(g);
+    return false;
+  }
 
   game_delete(g);
   return true;
