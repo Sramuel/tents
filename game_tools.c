@@ -37,7 +37,11 @@ game game_load(char* filename) {
   for (uint i = 0; i < game_nb_rows(g); i++) {  // lecture de chaque case du jeu
     for (uint j = 0; j < game_nb_cols(g); j++) {
       char c;
-      fscanf(f, "%c ", &c);
+      if (fscanf(f, " %c", &c) != 1) {
+        fclose(f);
+        game_delete(g);
+        exit(EXIT_FAILURE);
+      }
       if (c == 'X') {
         game_set_square(g, i, j, TREE);
       }
