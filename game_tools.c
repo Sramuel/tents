@@ -8,11 +8,11 @@
 
 game game_load(char* filename) {
   if (filename == NULL) {
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   FILE* f = fopen(filename, "r");
   if (f == NULL) {
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   uint rows = 0;
   uint cols = 0;
@@ -23,7 +23,7 @@ game game_load(char* filename) {
   game g = game_new_empty_ext(rows, cols, (bool)wrapped);
   if (g == NULL) {
     fclose(f);
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   uint expected_tent = 0;
   for (uint i = 0; i < game_nb_rows(g); i++) {
@@ -61,11 +61,11 @@ game game_load(char* filename) {
 
 void game_save(cgame g, char* filename) {
   if (g == NULL || filename == NULL) {
-    exit(EXIT_FAILURE);
+    return;
   }
   FILE* f = fopen(filename, "w");
   if (f == NULL) {
-    exit(EXIT_FAILURE);
+    return;
   }
   fprintf(f, "%d ", game_nb_rows(g));        //écriture du nombre de lignes
   fprintf(f, "%d ", game_nb_cols(g));        //écriture du nombre de colonnes
