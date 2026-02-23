@@ -13,6 +13,8 @@ add_executable(game_text game_text.c)
 
 add_executable(game_random game_random.c)
 
+add_executable(game_solve game_solve.c)
+
 add_executable(game_test_sguillaumin game_test_sguillaumin.c)
 add_executable(game_test_ansicot game_test_ansicot.c)
 add_executable(game_test_amassie game_test_amassie.c)
@@ -20,6 +22,7 @@ add_executable(game_test_tools game_test_tools.c)
 
 target_link_libraries(game_text game)
 target_link_libraries(game_random game)
+target_link_libraries(game_solve game)
 
 target_link_libraries(game_test_sguillaumin game)
 target_link_libraries(game_test_ansicot game)

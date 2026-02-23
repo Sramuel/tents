@@ -246,3 +246,53 @@ game game_random(uint nb_rows, uint nb_cols, bool wrapping, uint nb_trees, uint 
   }
   return g;
 }
+
+void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
+  if ((*count) == 1 && show) {
+    return;
+  }
+  // Arret des appels recursifs
+  if (pos == len) {
+    if (game_won(g)) {
+      (*count)++;
+      if (show) {
+        // Affichage de la game gagnée si c'est pour la fonction game_solve
+        game_print(g);
+      }
+    }
+    return;
+  }
+  // A chaque appel recursif, la pos est incrementee, on calcule ensuite le i et le j en fonction de la pos et de la
+  // largeur de la game soit le nombre de colonnes
+  if (game_get_square(g, pos % game_nb_cols(g), pos / game_nb_cols(g)) == TREE ||
+      game_get_square(g, pos % game_nb_cols(g), pos / game_nb_cols(g)) == BIGTREE) {
+    // On evite les arbres et gros arbres
+    game_solve_aux(g, pos + 1, len, count, show);
+  } else {
+    game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), GRASS);
+    // On rempli la case avec de l'herbe
+    game_solve_aux(g, pos + 1, len, count, show);
+
+    game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), TENT);
+    // On rempli la case avec une tente
+    game_solve_aux(g, pos + 1, len, count, show);
+  }
+}
+
+bool game_solve(game g) {
+  uint len = game_nb_rows(g) * game_nb_cols(g);
+  uint pos = 0;
+  uint count = 0;
+  bool show = true;
+  game_solve_aux(g, pos, len, &count, show);
+  return count == 1;
+}
+
+uint game_nb_solutions(cgame g) {
+  uint len = game_nb_rows(g) * game_nb_cols(g);
+  uint pos = 0;
+  uint count = 0;
+  bool show = false;
+  game_solve_aux(g, pos, len, &count, show);
+  return count;
+}

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -189,55 +190,49 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 }
 
 bool game_won(cgame g) {
-  if (g == NULL) {
-    return false;
-  }
-  uint nb_trees = 0;     // compte les TREE et les BIGTREE
-  uint nb_bigtrees = 0;  // compte uniquement les BIGTREE
-  for (uint i = 0; i < game_nb_rows(g); i++) {
-    for (uint j = 0; j < game_nb_cols(g); j++) {
-      if (game_get_square(g, i, j) == TREE || game_get_square(g, i, j) == BIGTREE) {
-        nb_trees++;
-        if (game_get_square(g, i, j) == TREE) {
-          if (game_nb_neigh(g, i, j, TENT, false) < 1) return false;
-        } else {
-          nb_bigtrees++;
-          if (game_nb_neigh(g, i, j, TENT, false) != 2) return false;
-        }
-      }
-    }
-  }
-  if (game_get_current_nb_tents_all(g) !=
-      (nb_trees + nb_bigtrees)) {  // Regle 3) There are exactly as many tents as trees.
-    return false;
-  }
-  for (uint i = 0; i < game_nb_rows(g); i++) {  // Regle 2) The number of tents in each row, and in each column, matches
-                                                // the expected numbers given around the sides of the grid.
-    if (game_get_current_nb_tents_row(g, i) != game_get_expected_nb_tents_row(g, i)) {
-      return false;
-    }
-  }
-  for (uint j = 0; j < game_nb_cols(g); j++) {  // Regle 2)
-    if (game_get_current_nb_tents_col(g, j) != game_get_expected_nb_tents_col(g, j)) {
-      return false;
-    }
-  }
-  for (uint i = 0; i < game_nb_rows(g); i++) {
-    for (uint j = 0; j < game_nb_cols(g); j++) {
-      if (game_get_square(g, i, j) == TENT) {
-        bool has_tree = game_is_neigh(g, i, j, TREE, false);
-        bool has_bigtree = game_is_neigh(g, i, j, BIGTREE, false);
+  assert(g);
 
-        if (!(has_tree || has_bigtree)) {  // Regle 4) Each tent must be orthogonally adjacent (horizontally or
-                                           // vertically, but not diagonally) to at least one tree and vice versa.
-          return false;
-        }
-        if (game_is_neigh(g, i, j, TENT, true)) {  // Regle 1) No two tents are adjacent, even diagonally.
-          return false;
-        }
-      }
-    }
+  // check rule 1) "No two tents are adjacent, not even diagonally."
+  for (uint i = 0; i < g->nb_rows; i++)
+    for (uint j = 0; j < g->nb_cols; j++)
+      if ((game_get_square(g, i, j) == TENT) && game_is_neigh(g, i, j, TENT, true)) return false;
+
+  // check rule 2.a) "In each row, the number of current tents is equal to the
+  // expected number."
+  for (uint i = 0; i < g->nb_rows; i++) {
+    int nb_expected_tents_row = game_get_expected_nb_tents_row(g, i);
+    int nb_current_tents_row = game_get_current_nb_tents_row(g, i);
+    if (nb_expected_tents_row != nb_current_tents_row) return false;
   }
+
+  // check rule 2.b) "In each column, the number of current tents is equal to
+  // the expected number."
+  for (uint j = 0; j < g->nb_cols; j++) {
+    int nb_expected_tents_col = game_get_expected_nb_tents_col(g, j);
+    int nb_current_tents_col = game_get_current_nb_tents_col(g, j);
+    if (nb_expected_tents_col != nb_current_tents_col) return false;
+  }
+
+  // check rule 3) "The total number of tents is equal to the total expected
+  // number."
+  int nb_expected_tents = game_get_expected_nb_tents_all(g);
+  int nb_current_tents = game_get_current_nb_tents_all(g);
+  if (nb_expected_tents != nb_current_tents) return false;
+
+  // check rule 4) Check tree-tent adjacency.
+  for (uint i = 0; i < g->nb_rows; i++)
+    for (uint j = 0; j < g->nb_cols; j++) {
+      // 4.a) for tents, check there is at least one neigh tree (or big tree).
+      if (game_get_square(g, i, j) == TENT) {
+        if (!game_is_neigh(g, i, j, TREE, false) && !game_is_neigh(g, i, j, BIGTREE, false)) return false;
+      }
+
+      // 4.b) for trees, check there is the correct number of neigh tents.
+      uint nb_neigh_tents = game_nb_neigh(g, i, j, TENT, false);
+      if ((game_get_square(g, i, j) == TREE) && nb_neigh_tents == 0) return false;
+      if ((game_get_square(g, i, j) == BIGTREE) && nb_neigh_tents != 2) return false;
+    }
+
   return true;
 }
 
