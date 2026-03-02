@@ -269,10 +269,9 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
     // On evite les arbres et gros arbres
     game_solve_aux(g, pos + 1, len, count, show);
   } else {
-
     if ((*count) == 1 && show) {
       return;
-    }else{
+    } else {
       // On rempli la case avec de l'herbe
       game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), GRASS);
     }
@@ -281,7 +280,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
 
     if ((*count) == 1 && show) {
       return;
-    }else{
+    } else {
       // On rempli la case avec une tente
       game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), TENT);
     }
@@ -304,6 +303,6 @@ uint game_nb_solutions(cgame g) {
   uint pos = 0;
   uint count = 0;
   bool show = false;
-  game_solve_aux((game) g, pos, len, &count, show);
+  game_solve_aux((game)g, pos, len, &count, show);
   return count;
 }
