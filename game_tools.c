@@ -17,9 +17,18 @@ game game_load(char* filename) {
   uint rows = 0;
   uint cols = 0;
   uint wrapped = 0;
-  fscanf(f, "%d ", &rows);     // lecture du nombre de lignes
-  fscanf(f, "%d ", &cols);     // lecture du nombre de colonnes
-  fscanf(f, "%d ", &wrapped);  // lecture du mode de jeu (wrapping ou non)
+  if (fscanf(f, "%d ", &rows) != 1) {  // lecture du nombre de lignes
+    fclose(f);
+    return NULL;
+  }
+  if (fscanf(f, "%d ", &cols) != 1) {  // lecture du nombre de colonnes
+    fclose(f);
+    return NULL;
+  }
+  if (fscanf(f, "%d ", &wrapped) != 1) {  // lecture du mode de jeu (wrapping ou non)
+    fclose(f);
+    return NULL;
+  }
   game g = game_new_empty_ext(rows, cols, (bool)wrapped);
   if (g == NULL) {
     fclose(f);
@@ -27,17 +36,29 @@ game game_load(char* filename) {
   }
   uint expected_tent = 0;
   for (uint i = 0; i < game_nb_rows(g); i++) {
-    fscanf(f, "%d ", &expected_tent);  // lecture du nombre de tentes attendu par ligne
+    if (fscanf(f, "%d ", &expected_tent) != 1) {
+      fclose(f);
+      game_delete(g);
+      return NULL;
+    }
     game_set_expected_nb_tents_row(g, i, expected_tent);
   }
   for (uint j = 0; j < game_nb_cols(g); j++) {
-    fscanf(f, "%d ", &expected_tent);  // lecture du nombre de tentes attendu par colonne
+    if (fscanf(f, "%d ", &expected_tent) != 1) {
+      fclose(f);
+      game_delete(g);
+      return NULL;
+    }
     game_set_expected_nb_tents_col(g, j, expected_tent);
   }
   for (uint i = 0; i < game_nb_rows(g); i++) {  // lecture de chaque case du jeu
     for (uint j = 0; j < game_nb_cols(g); j++) {
       char c;
-      fscanf(f, "%c ", &c);
+      if (fscanf(f, "%c ", &c) != 1) {
+        fclose(f);
+        game_delete(g);
+        return NULL;
+      }
       if (c == 'X') {
         game_set_square(g, i, j, TREE);
       }

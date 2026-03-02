@@ -13,6 +13,10 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
   game g = game_load(argv[2]);
+  if (g == NULL) {
+    fprintf(stderr, "Error loading game from file: %s\n", argv[2]);
+    return EXIT_FAILURE;
+  }
   if (strcmp(argv[1], "-s") == 0) {
     if (!game_solve(g)) {
       printf("No Solution\n");

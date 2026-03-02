@@ -20,7 +20,10 @@ int main(int argc, char* argv[]) {
   while (!game_won(g)) {
     game_print(g);
     printf("? [h pour aide]\n");
-    scanf(" %c", &c);
+    if (scanf(" %c", &c) != 1) {
+      printf("Entrée invalide, réessayez\n");
+      continue;
+    }
     if (c == 'h') {
       printf(
           "Si 't', met une pièce TENT dans la case (<i>,<j>)\nSi 'g', met la pièce GRASS dans la case (<i>,<j>)\nSi "
@@ -28,7 +31,10 @@ int main(int argc, char* argv[]) {
           "'z', annule le dernier coup (undo)\nSi 'y', refait le dernier coup annulé (redo)\nSi "
           "'r', le jeu redémarre\nSi 's <filename>', sauve le jeu en cours\nSi 'q', quitter le jeu\n");
     } else if (c == 't' || c == 'g' || c == 'e') {
-      scanf(" %d %d", &i, &j);
+      if (scanf(" %d %d", &i, &j) != 2) {
+        printf("Entrée invalide, réessayez\n");
+        continue;
+      }
       if (c == 't') game_play_move(g, i, j, TENT);
       if (c == 'g') game_play_move(g, i, j, GRASS);
       if (c == 'e') game_play_move(g, i, j, EMPTY);
@@ -41,7 +47,10 @@ int main(int argc, char* argv[]) {
     else if (c == 'y')
       game_redo(g);
     else if (c == 's') {
-      scanf(" %s", name);
+      if (scanf(" %s", name) != 1) {
+        printf("Entrée invalide, réessayez\n");
+        continue;
+      }
       game_save(g, name);
     } else if (c == 'q') {
       game_delete(g);
