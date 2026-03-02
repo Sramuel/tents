@@ -14,14 +14,17 @@ int main(int argc, char* argv[]) {
   }
   game g = game_load(argv[2]);
   if (strcmp(argv[1], "-s") == 0) {
-    game_solve(g);
+    if (!game_solve(g)){
+      printf("No Solution\n");
+      exit(EXIT_FAILURE); // Il n'y a pas de solution au jeu donc on quitte le programme
+    } // Si on a une solution on l'affiche
     if (argc == 4) {  // Sauvegarde si le nom de fichier est fourni (optionnel)
-      game_save(g, argv[4]);
+      game_save(g, argv[3]);
     }
   } else if (strcmp(argv[1], "-c") == 0) {
     uint nb_sols = game_nb_solutions(g);
     if (argc == 4) {  // Sauvegarde si le nom de fichier est fourni (optionnel)
-      FILE* f = fopen(argv[4], "w");
+      FILE* f = fopen(argv[3], "w");
       if (f == NULL) {
         exit(EXIT_FAILURE);
       }
