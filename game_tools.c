@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <assert.h>
 
 #include "game_aux2.h"
 #include "game_ext.h"
@@ -297,7 +298,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
       game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), GRASS);
     }
 
-    game_solve_aux(g, pos + 1, len, count, show);
+    if (game_winable(g)) game_solve_aux(g, pos + 1, len, count, show);
 
     if ((*count) == 1 && show) {
       return;
@@ -306,7 +307,13 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
       game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), TENT);
     }
 
-    game_solve_aux(g, pos + 1, len, count, show);
+    if (game_winable(g)) game_solve_aux(g, pos + 1, len, count, show);
+
+    if ((*count) == 1 && show) {
+      return;
+    }
+    
+    game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), EMPTY);
   }
 }
 
@@ -326,4 +333,68 @@ uint game_nb_solutions(cgame g) {
   bool show = false;
   game_solve_aux((game)g, pos, len, &count, show);
   return count;
+}
+
+bool game_winable(cgame g){
+  assert(g);
+
+  // Règles 1 : Pas de tentes adjacentes même diagonalement
+  for (uint i = 0; i < game_nb_rows(g); i++)
+    for (uint j = 0; j < game_nb_cols(g); j++)
+      if ((game_get_square(g, i, j) == TENT) && game_is_neigh(g, i, j, TENT, true)) return false;
+
+  // verification par ligne : pas trop de tente et tent_expected pas "impossible a compléter"
+  for (uint i = 0; i < game_nb_rows(g); i++) {
+    int nb_expected_tents_row = game_get_expected_nb_tents_row(g, i);
+    int nb_current_tents_row = game_get_current_nb_tents_row(g, i);
+    if (nb_current_tents_row > nb_expected_tents_row) return false;
+
+    // on compte le nombre de case vide restantes pour savoir si le expected est possible
+    int empty = 0;
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) == EMPTY) empty++;
+    }
+    if (nb_current_tents_row + empty < nb_expected_tents_row) return false;
+  }
+
+  // pareil pour les colonnes 
+  for (uint j = 0; j < game_nb_cols(g); j++) {
+    int nb_expected_tents_col = game_get_expected_nb_tents_col(g, j);
+    int nb_current_tents_col = game_get_current_nb_tents_col(g, j);
+    if (nb_current_tents_col > nb_expected_tents_col) return false;
+
+    int empty = 0;
+    for (uint i = 0; i < game_nb_rows(g); i++) {
+      if (game_get_square(g, i, j) == EMPTY) empty++;
+    }
+    if (nb_current_tents_col + empty < nb_expected_tents_col) return false;
+  }
+
+  // Régle 4 : Chaque tente doit toucher un arbre (ou bigtree) orthogonalement.
+  for (uint i = 0; i < game_nb_rows(g); i++)
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      // chaque tente devrait deja avoir au moins un voisin TREE ou BIGTREE orthogonalement.
+      if (game_get_square(g, i, j) == TENT) {
+        if (!game_is_neigh(g, i, j, TREE, false) && !game_is_neigh(g, i, j, BIGTREE, false)) return false;
+      }
+
+      // On verifie qu'au moins une tente potentielle peut encore être placé pres d'un arbre.
+      if (game_get_square(g, i, j) == TREE) {
+        uint nb_tents = game_nb_neigh(g, i, j, TENT, false);
+        if (nb_tents == 0) {
+          uint nb_empty = game_nb_neigh(g, i, j, EMPTY, false);
+          if (nb_empty == 0) return false;  // Pas de tente deja placé et pas de place pour une nouvelle.
+        }
+      }
+
+      // On verifie la meme chose pour BIGTREE avec exactement 2 tentes potentielles
+      if (game_get_square(g, i, j) == BIGTREE) {
+        uint nb_tents = game_nb_neigh(g, i, j, TENT, false);
+        if (nb_tents > 2) return false; // Faux si plus de 2 tentes
+
+        uint nb_empty = game_nb_neigh(g, i, j, EMPTY, false);
+        if (nb_tents + nb_empty < 2) return false;  // Manque de place pour avoir exactement 2 tentes orthogonalement adjacentes
+      }
+    }
+  return true;
 }

@@ -68,6 +68,16 @@ bool game_solve(game g);
 uint game_nb_solutions(cgame g);
 
 /**
+ * @brief Checks whether the current game configuration can still lead to a solution.
+ * @param g the current game
+ * @details Verifies that the current grid does not violate the game rules and
+ * that it is still possible to complete it to obtain a valid solution.
+ * This function is used by the solver to prune impossible branches.
+ * @return true if the game is still winnable, false otherwise
+ */
+bool game_winable(cgame g);
+
+/**
  * @}
  */
 
