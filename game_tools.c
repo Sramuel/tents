@@ -1,8 +1,8 @@
 #include "game_tools.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <time.h>
-#include <assert.h>
 
 #include "game_aux2.h"
 #include "game_ext.h"
@@ -312,7 +312,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
     if ((*count) == 1 && show) {
       return;
     }
-    
+
     game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), EMPTY);
   }
 }
@@ -335,7 +335,7 @@ uint game_nb_solutions(cgame g) {
   return count;
 }
 
-bool game_winable(cgame g){
+bool game_winable(cgame g) {
   assert(g);
 
   // Règles 1 : Pas de tentes adjacentes même diagonalement
@@ -357,7 +357,7 @@ bool game_winable(cgame g){
     if (nb_current_tents_row + empty < nb_expected_tents_row) return false;
   }
 
-  // pareil pour les colonnes 
+  // pareil pour les colonnes
   for (uint j = 0; j < game_nb_cols(g); j++) {
     int nb_expected_tents_col = game_get_expected_nb_tents_col(g, j);
     int nb_current_tents_col = game_get_current_nb_tents_col(g, j);
@@ -390,10 +390,11 @@ bool game_winable(cgame g){
       // On verifie la meme chose pour BIGTREE avec exactement 2 tentes potentielles
       if (game_get_square(g, i, j) == BIGTREE) {
         uint nb_tents = game_nb_neigh(g, i, j, TENT, false);
-        if (nb_tents > 2) return false; // Faux si plus de 2 tentes
+        if (nb_tents > 2) return false;  // Faux si plus de 2 tentes
 
         uint nb_empty = game_nb_neigh(g, i, j, EMPTY, false);
-        if (nb_tents + nb_empty < 2) return false;  // Manque de place pour avoir exactement 2 tentes orthogonalement adjacentes
+        if (nb_tents + nb_empty < 2)
+          return false;  // Manque de place pour avoir exactement 2 tentes orthogonalement adjacentes
       }
     }
   return true;
