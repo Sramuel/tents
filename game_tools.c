@@ -351,8 +351,8 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
   }
   // A chaque appel recursif, la pos est incrementee, on calcule ensuite le i et le j en fonction de la pos et de la
   // largeur de la game soit le nombre de colonnes
-  if (game_get_square(g, pos % game_nb_cols(g), pos / game_nb_cols(g)) == TREE ||
-      game_get_square(g, pos % game_nb_cols(g), pos / game_nb_cols(g)) == BIGTREE) {
+  if (game_get_square(g, pos / game_nb_cols(g), pos % game_nb_cols(g)) == TREE ||
+      game_get_square(g, pos / game_nb_cols(g), pos % game_nb_cols(g)) == BIGTREE) {
     // On evite les arbres et gros arbres
     game_solve_aux(g, pos + 1, len, count, show);
   } else {
@@ -360,7 +360,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
       return;
     } else {
       // On rempli la case avec de l'herbe
-      game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), GRASS);
+      game_play_move(g, pos / game_nb_cols(g), pos % game_nb_cols(g), GRASS);
     }
 
     if (game_winable(g)) game_solve_aux(g, pos + 1, len, count, show);
@@ -369,7 +369,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
       return;
     } else {
       // On rempli la case avec une tente
-      game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), TENT);
+      game_play_move(g, pos / game_nb_cols(g), pos % game_nb_cols(g), TENT);
     }
 
     if (game_winable(g)) game_solve_aux(g, pos + 1, len, count, show);
@@ -378,7 +378,7 @@ void game_solve_aux(game g, uint pos, uint len, uint* count, bool show) {
       return;
     }
 
-    game_play_move(g, pos % game_nb_cols(g), pos / game_nb_cols(g), EMPTY);
+    game_play_move(g, pos / game_nb_cols(g), pos % game_nb_cols(g), EMPTY);
   }
 }
 
