@@ -7,6 +7,11 @@ enable_testing()
 
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall -O3")
 
+## find SDL2
+include(sdl2.cmake)
+message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
+message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
+
 add_library(game game.c game_aux.c  game_aux2.c game_ext.c game_tools.c queue.c)
 
 add_executable(game_text game_text.c)
