@@ -1,6 +1,5 @@
 // SDL2 Demo by aurelien.esnard@u-bordeaux.fr
 
-#include "model.h"
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
 #include <SDL_ttf.h>    // required to use TTF fonts
@@ -8,10 +7,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "model.h"
+
+/* **************************************************************** */
+
+#define FONT "res/arial.ttf"
+#define FONTSIZE 36
+#define BACKGROUND "res/background.png"
+#define MARIO "res/mario.png"
+#define BOMB "res/bomb.png"
+
 /* **************************************************************** */
 
 struct Env_t {
-  /* PUT YOUR VARIABLES HERE */
+  SDL_Texture *background;
+  SDL_Texture *board;
+  SDL_Texture *tent;
+  SDL_Texture *tree;
+  SDL_Texture *bigtree;
+  SDL_Texture *grass;
+  SDL_Texture *empty;
 };
 
 /* **************************************************************** */
