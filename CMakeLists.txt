@@ -9,8 +9,7 @@ set(CMAKE_C_FLAGS "-std=c99 -g -Wall -O3")
 
 ## find SDL2
 include(sdl2.cmake)
-message(STATUS "SDL2 include dir: ${SDL2_ALL_INC}")
-message(STATUS "SDL2 all libraries: ${SDL2_ALL_LIBS}")
+include_directories(${SDL2_ALL_INC})
 
 add_library(game game.c game_aux.c  game_aux2.c game_ext.c game_tools.c queue.c)
 
@@ -20,6 +19,8 @@ add_executable(game_random game_random.c)
 
 add_executable(game_solve game_solve.c)
 
+add_executable(game_sdl game_sdl.c game_sdl_model.c)
+
 add_executable(game_test_sguillaumin game_test_sguillaumin.c)
 add_executable(game_test_ansicot game_test_ansicot.c)
 add_executable(game_test_amassie game_test_amassie.c)
@@ -28,6 +29,7 @@ add_executable(game_test_tools game_test_tools.c)
 target_link_libraries(game_text game)
 target_link_libraries(game_random game)
 target_link_libraries(game_solve game)
+target_link_libraries(game_sdl game ${SDL2_ALL_LIBS})
 
 target_link_libraries(game_test_sguillaumin game)
 target_link_libraries(game_test_ansicot game)

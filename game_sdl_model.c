@@ -1,13 +1,13 @@
 // SDL2 Demo by aurelien.esnard@u-bordeaux.fr
 
+#include "game_sdl_model.h"
+
 #include <SDL.h>
 #include <SDL_image.h>  // required to load transparent texture from PNG
 #include <SDL_ttf.h>    // required to use TTF fonts
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "model.h"
 
 /* **************************************************************** */
 
@@ -41,8 +41,7 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
 
 /* **************************************************************** */
 
-void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HERE TO RENDER TEXTURES, ... */
-}
+void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HERE TO RENDER TEXTURES, ... */ }
 
 /* **************************************************************** */
 
