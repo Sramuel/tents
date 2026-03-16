@@ -80,3 +80,6 @@ add_test(test_tools_game_load ./game_test_tools game_load)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/levels/
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/levels/)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res/
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/res/)
