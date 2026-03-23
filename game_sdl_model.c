@@ -154,8 +154,8 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
     int souris_x = mouse.x;
     int souris_y = mouse.y;
     if (souris_x >= decalage_x && souris_x < decalage_x + (nb_colonnes * taille_case) && souris_y >= decalage_y &&
-        souris_y < decalage_y + (nb_lignes * taille_case)) {
-      uint colonne = (souris_x - decalage_x) / taille_case;
+        souris_y < decalage_y + (nb_lignes * taille_case)) { // si la souris est dans la grille
+      uint colonne = (souris_x - decalage_x) / taille_case; // on trouve la colonne et la ligne de la case sur laquelle on a cliqué
       uint ligne = (souris_y - decalage_y) / taille_case;
       square s = game_get_square(env->g, ligne, colonne);
       if (e->button.button == SDL_BUTTON_LEFT) {
