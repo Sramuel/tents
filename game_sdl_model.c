@@ -122,10 +122,59 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HER
 
 bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   if (e->type == SDL_QUIT) {
+    // SHAME
     return true;
   }
 
-  /* PUT YOUR CODE HERE TO PROCESS EVENTS */
+  if (e->type == SDL_KEYDOWN) {
+    if (e->key.keysym.sym == SDLK_ESCAPE) {
+      // SHAME
+      return true;
+    }
+  }
+
+  if (e->type == SDL_MOUSEBUTTONDOWN) {
+    SDL_Point mouse;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+    int largeur_fenetre;
+    int hauteur_fenetre;
+    SDL_GetWindowSize(win, &largeur_fenetre, &hauteur_fenetre);
+    uint nb_lignes = game_nb_rows(env->g);
+    uint nb_colonnes = game_nb_cols(env->g);
+    int largeur_case = (largeur_fenetre * 0.8) / nb_colonnes;
+    int hauteur_case = (hauteur_fenetre * 0.8) / nb_lignes;
+    int taille_case;
+    if (largeur_case < hauteur_case) {
+      taille_case = largeur_case;
+    } else {
+      taille_case = hauteur_case;
+    }
+    int decalage_x = (largeur_fenetre - (nb_colonnes * taille_case)) / 2;
+    int decalage_y = (hauteur_fenetre - (nb_lignes * taille_case)) / 2;
+    int souris_x = mouse.x;
+    int souris_y = mouse.y;
+    if (souris_x >= decalage_x && souris_x < decalage_x + (nb_colonnes * taille_case) && souris_y >= decalage_y &&
+        souris_y < decalage_y + (nb_lignes * taille_case)) {
+      uint colonne = (souris_x - decalage_x) / taille_case;
+      uint ligne = (souris_y - decalage_y) / taille_case;
+      square s = game_get_square(env->g, ligne, colonne);
+      if (e->button.button == SDL_BUTTON_LEFT) {
+        if (s == GRASS || s == EMPTY) {
+          game_play_move(env->g, ligne, colonne, TENT);
+        } else {
+          game_play_move(env->g, ligne, colonne, GRASS);
+        }
+      }
+      if (e->button.button == SDL_BUTTON_RIGHT) {
+        game_play_move(env->g, ligne, colonne, EMPTY);
+      }
+    }
+  }
+
+  if (game_won(env->g)) {
+    // CONGRATULATION
+    return true;
+  }
 
   return false;
 }
