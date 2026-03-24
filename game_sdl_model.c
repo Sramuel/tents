@@ -123,37 +123,38 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HER
     }
   }
 
-  SDL_Color couleur_texte = {0, 255, 255, 255};  // Couleur cyan pour le texte
-  char texte_a_afficher[10];                     // Pour convertir le nombre en texte (ex: "3")
+  SDL_Color couleur_texte = {0, 255, 255, 255};  // couleur cyan pour le texte
+  char texte_a_afficher[10];                     // pour convertir le nombre en texte (ex: "3")
 
-  // 1. Les numéros à DROITE des lignes
+  // on affiche le nombre de tentes attendues pour chaque ligne
   for (uint i = 0; i < nb_lignes; i++) {
     uint nb_tents = game_get_expected_nb_tents_row(env->g, i);
-    sprintf(texte_a_afficher, "%u", nb_tents);  // Convertit l'entier en chaine
+    sprintf(texte_a_afficher, "%u", nb_tents);  // convertit l'entier en chaine
 
-    // Création de la texture du texte
+    // création de la texture du texte
     SDL_Surface *surf = TTF_RenderText_Blended(env->font, texte_a_afficher, couleur_texte);
     SDL_Texture *text = SDL_CreateTextureFromSurface(ren, surf);
 
-    // Récupération des dimensions du texte généré
+    // récupération des dimensions du texte généré
     int w_texte, h_texte;
     SDL_QueryTexture(text, NULL, NULL, &w_texte, &h_texte);
 
-    // Positionnement à droite de la grille
+    // positionnement à droite de la grille
     SDL_Rect rect_texte;
     rect_texte.x = decalage_x + (nb_colonnes * taille_case) + 10;  // +10 de marge après la dernière case
     rect_texte.y = decalage_y + (i * taille_case) + (taille_case / 2) -
-                   (h_texte / 2);  // Centré verticalement par rapport à la case
+                   (h_texte / 2);  // centré verticalement par rapport à la case
     rect_texte.w = w_texte;
     rect_texte.h = h_texte;
 
     SDL_RenderCopy(ren, text, NULL, &rect_texte);
 
-    // On nettoie les surfaces/textures temporaires créées pour ce texte
+    // on nettoie les surfaces/textures temporaires créées pour ce texte
     SDL_FreeSurface(surf);
     SDL_DestroyTexture(text);
   }
 
+  // on affiche le nombre de tentes attendues pour chaque colonne
   for (uint j = 0; j < nb_colonnes; j++) {
     uint nb_tents = game_get_expected_nb_tents_col(env->g, j);
     sprintf(texte_a_afficher, "%u", nb_tents);
@@ -164,10 +165,10 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HER
     int w_texte, h_texte;
     SDL_QueryTexture(text, NULL, NULL, &w_texte, &h_texte);
 
-    // Positionnement en bas de la grille
+    // positionnement en bas de la grille
     SDL_Rect rect_texte;
     rect_texte.x = decalage_x + (j * taille_case) + (taille_case / 2) -
-                   (w_texte / 2);                                // Centré horizontalement par rapport à la case
+                   (w_texte / 2);                                // centré horizontalement par rapport à la case
     rect_texte.y = decalage_y + (nb_lignes * taille_case) + 10;  // +10 de marge sous la dernière ligne
     rect_texte.w = w_texte;
     rect_texte.h = h_texte;
