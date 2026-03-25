@@ -17,10 +17,11 @@
 /* **************************************************************** */
 
 #define BACKGROUND "res/background.png"
-#define TENT_IMG "res/tent.png"
-#define TREE_IMG "res/tree.png"
-#define BIGTREE_IMG "res/bigtree.png"
-#define GRASS_IMG "res/grass.png"
+#define GRID "res/grid.png"
+#define TENT_IMG "res/tent_printemps.png"
+#define TREE_IMG "res/tree32_32.png"
+#define BIGTREE_IMG "res/bigtree32_32.png"
+#define GRASS_IMG "res/grass32_32.png"
 #define FONT "res/arial.ttf"
 #define FONTSIZE 36
 
@@ -28,6 +29,7 @@
 
 struct Env_t {
   SDL_Texture *background;
+  SDL_Texture *grid;
   SDL_Texture *tent;
   SDL_Texture *tree;
   SDL_Texture *bigtree;
@@ -40,17 +42,17 @@ struct Env_t {
 
 Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   Env *env = malloc(sizeof(struct Env_t));
-
-  // initialiser le jeu soit avec un fichier, soit par défaut
-  if (argc > 1) {
+  if (argc > 1) {  // initialiser le jeu soit avec un fichier, soit par défaut
     env->g = game_load(argv[1]);
-  } else {
-    // si pas de fichier fourni on peut charger le jeu par défaut
+  } else {  // si pas de fichier fourni on peut charger le jeu par défaut
     env->g = game_default();
   }
 
   env->background = IMG_LoadTexture(ren, BACKGROUND);
   if (!env->background) ERROR("IMG_LoadTexture: %s\n", BACKGROUND);
+
+  env->grid = IMG_LoadTexture(ren, GRID);
+  if (!env->grid) ERROR("IMG_LoadTexture: %s\n", GRID);
 
   env->tree = IMG_LoadTexture(ren, TREE_IMG);
   if (!env->tree) ERROR("IMG_LoadTexture: %s\n", TREE_IMG);
@@ -72,23 +74,29 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
 
 /* **************************************************************** */
 
-void render(SDL_Window *win, SDL_Renderer *ren, Env *env) { /* PUT YOUR CODE HERE TO RENDER TEXTURES, ... */
+void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   SDL_RenderCopy(ren, env->background, NULL, NULL);
+
   int largeur_fenetre;
   int hauteur_fenetre;
   SDL_GetWindowSize(win, &largeur_fenetre, &hauteur_fenetre);  // on prend la largeur et la hauteur réel de la fenêtre
+
   uint nb_lignes = game_nb_rows(env->g);
   uint nb_colonnes = game_nb_cols(env->g);
-  int largeur_case =
-      (largeur_fenetre * 0.7) / nb_colonnes;  // 0.7, donc 70% de l'écran pour pas que ca prenne toute la fenêtre car on
-                                              // va mettre des chiffres pour le nb de tent_expected etc...
-  int hauteur_case = (hauteur_fenetre * 0.7) / nb_lignes;
-  int taille_case;
-  if (largeur_case < hauteur_case) {
-    taille_case = largeur_case;
-  } else {
-    taille_case = hauteur_case;
-  }
+
+  float ratio_plateau = 0.7;
+  int cote_max_plateau =
+      (largeur_fenetre < hauteur_fenetre) ? largeur_fenetre : hauteur_fenetre;  // trouver le plus grand côté
+  int taille_plateau_px = cote_max_plateau * ratio_plateau;
+
+  SDL_Rect rect_plateau;  // position et taille du plateau de jeu "grid" (toujours centré et carré)
+  rect_plateau.w = taille_plateau_px;
+  rect_plateau.h = taille_plateau_px;
+  rect_plateau.x = (largeur_fenetre - taille_plateau_px) / 2;
+  rect_plateau.y = (hauteur_fenetre - taille_plateau_px) / 2;
+  SDL_RenderCopy(ren, env->grid, NULL, &rect_plateau);  // on affiche le plateau du jeu
+
+  int taille_case = taille_plateau_px / ((nb_lignes > nb_colonnes) ? nb_lignes : nb_colonnes);
 
   // pour centre la grille au milieu
   int decalage_x = (largeur_fenetre - (nb_colonnes * taille_case)) / 2;
