@@ -20,7 +20,7 @@
 #define GRID_SPRING "res/grid_spring.png"
 #define GRID_AUTUMN "res/grid_autumn.png"
 
-#define TENT_SPRING "res/tent_printemps.png"
+#define TENT_SPRING "res/tent_spring.png"
 #define TENT_AUTUMN "res/tent_autumn.png"
 
 #define TREE_SPRING "res/tree_spring.png"
@@ -58,6 +58,7 @@ struct Env_t {
 
   TTF_Font *font;
   game g;
+  bool spring;
 };
 
 /* **************************************************************** */
@@ -149,6 +150,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
     arbre_a_utiliser = env->tree_spring;
     gros_arbre_a_utiliser = env->bigtree_spring;
     herbe_a_utiliser = env->grass_spring;
+    env->spring = true;
   } else {
     fond_a_utiliser = env->background_rectangle;
     grille_a_utiliser = env->grid_autumn;
@@ -156,6 +158,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
     arbre_a_utiliser = env->tree_autumn;
     gros_arbre_a_utiliser = env->bigtree_autumn;
     herbe_a_utiliser = env->grass_autumn;
+    env->spring = false;
   }
   SDL_RenderCopy(ren, fond_a_utiliser, NULL, NULL);
 
@@ -175,6 +178,9 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
         SDL_RenderCopy(ren, grille_a_utiliser, NULL, &rect);  // on met le fond "grid" sous chaque case du plateau
       }
       SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);  // on initialise la couleur rouge au stylo
+      if (!env->spring) {
+        SDL_SetRenderDrawColor(ren, 41, 71, 204, 255);  // on initialise la couleur bleue au stylo
+      }
       SDL_RenderDrawRect(ren, &rect);               // on dessine un rectangle au x,y et h,w donné
 
       square s = game_get_square(env->g, i, j);  // si il contient quelque chose alors...
@@ -193,7 +199,9 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   }
 
   /////////////////////////////////////// NUMEROS DES TENTES ATTENDUES ///////////////////////////////////////
-  SDL_Color couleur_texte = {0, 255, 255, 255};  // couleur cyan pour le texte
+  SDL_Color couleur_texte = {255, 0, 0, 255};                       // couleur rouge pour le texte
+  if (!env->spring) couleur_texte = (SDL_Color){41, 71, 204, 255};  // couleur bleue pour le texte
+
   char texte_a_afficher[10];                     // pour convertir le nombre en texte (ex: "3")
 
   // on affiche le nombre de tentes attendues pour chaque ligne

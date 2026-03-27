@@ -163,3 +163,23 @@ $ ctest
 
 To run tests for a specific author: Use the -R flag followed by the author's username:
 $ ctest -R <username>   # Example: ctest -R ansicot
+
+## Crédits Graphiques & Direction Artistique
+
+L'intégralité des sprites utilisés pour ce projet ont été réalisée sur mesure, à l'exception d'une ressource de base.
+
+Sprites Originaux (fait main) :
+
+# Grille de jeu : Tentes dynamiques (Rouge/Bleue), Arbres (Grands & Petits), Herbes hautes.
+# Environnement : Chemins de terre, Poteaux, Lacs et Arbustes.
+# Variantes Saisonnières : Certains sprites possèdent une version Printemps et Automne.
+
+Auteur : Anthony Sicot
+
+# Fond de carte (grid.png) :
+
+Inspiration & Direction Artistique : Ce projet rend hommage au travail de Ken Sugimori (Directeur Artistique historique de Pokémon) et Hironobu Yoshida (Graphic Designer principal sur Pokémon FireRed / LeafGreen). Le style visuel de l'Île 4 (Four Island) a servi de référence majeure pour la gestion des contrastes et des palettes de couleurs.
+
+Base Technique : Fond extrait des ressources communautaires de The Spriters Resource.
+
+Modifications apportées : Retouche complète des couleurs pour s'adapter aux thèmes Printemps/Automne et mise à l'échelle pour une intégration fluide dans le moteur SDL. Cette ressource n'occupe qu'une partie mineure mais importante de l'affichage final.
