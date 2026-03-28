@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Error loading game from file: %s\n", argv[2]);
     return EXIT_FAILURE;
   }
-  if (strcmp(argv[1], "-s") == 0) {
+  if (strcmp(argv[1], "-s") == 0) {  //-s pour solve, on résout le jeu et on affiche la solution
     if (!game_solve(g)) {
       printf("No Solution\n");
       exit(EXIT_FAILURE);  // Il n'y a pas de solution au jeu donc on quitte le programme
@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
     if (argc == 4) {       // Sauvegarde si le nom de fichier est fourni (optionnel)
       game_save(g, argv[3]);
     }
-  } else if (strcmp(argv[1], "-c") == 0) {
+  } else if (strcmp(argv[1], "-c") ==
+             0) {  //-c pour compter le nombre de solutions sans les afficher et sans les sauvegarder
     uint nb_sols = game_nb_solutions(g);
     if (argc == 4) {  // Sauvegarde si le nom de fichier est fourni (optionnel)
       FILE* f = fopen(argv[3], "w");

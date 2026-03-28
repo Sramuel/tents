@@ -38,6 +38,10 @@
 /* **************************************************************** */
 
 struct Env_t {
+  Uint32 temps;
+  bool quitting;
+  bool show_help;
+
   SDL_Texture *background_square;
   SDL_Texture *background_rectangle;
 
@@ -65,6 +69,9 @@ struct Env_t {
 
 Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   Env *env = malloc(sizeof(struct Env_t));
+  env->temps = 0;
+  env->quitting = false;
+  env->show_help = false;
   if (argc > 1) {  // initialiser le jeu soit avec un fichier, soit par défaut
     env->g = game_load(argv[1]);
   } else {  // si pas de fichier fourni on peut charger le jeu par défaut
@@ -181,7 +188,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
       if (!env->spring) {
         SDL_SetRenderDrawColor(ren, 41, 71, 204, 255);  // on initialise la couleur bleue au stylo
       }
-      SDL_RenderDrawRect(ren, &rect);               // on dessine un rectangle au x,y et h,w donné
+      SDL_RenderDrawRect(ren, &rect);  // on dessine un rectangle au x,y et h,w donné
 
       square s = game_get_square(env->g, i, j);  // si il contient quelque chose alors...
 
@@ -202,7 +209,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   SDL_Color couleur_texte = {255, 0, 0, 255};                       // couleur rouge pour le texte
   if (!env->spring) couleur_texte = (SDL_Color){41, 71, 204, 255};  // couleur bleue pour le texte
 
-  char texte_a_afficher[10];                     // pour convertir le nombre en texte (ex: "3")
+  char texte_a_afficher[10];  // pour convertir le nombre en texte (ex: "3")
 
   // on affiche le nombre de tentes attendues pour chaque ligne
   for (uint i = 0; i < nb_lignes; i++) {
@@ -256,11 +263,167 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
     SDL_FreeSurface(surf);
     SDL_DestroyTexture(text);
   }
+
+  ///////////////////////////////////////// MESSAGE DE VICTOIRE ET DE SHAME ///////////////////////////////////////
+
+  if (game_won(env->g)) {
+    // on met le style de la police en italique et gras pour le message de victoire
+    TTF_SetFontStyle(env->font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD);
+
+    SDL_Color couleur_or = {255, 215, 0, 255};  // on met la couleur or pour le texte de victoire
+
+    // on crée le message CONGRATULATIONS et on lui applique la couleur or
+    SDL_Surface *surf_victoire = TTF_RenderText_Blended(env->font, "CONGRATULATIONS !", couleur_or);
+    SDL_Texture *text_victoire = SDL_CreateTextureFromSurface(ren, surf_victoire);
+
+    // on crée les dimensions du texte de victoire pour pouvoir le positionner correctement par la suite
+    int w_victoire, h_victoire;
+    SDL_QueryTexture(text_victoire, NULL, NULL, &w_victoire, &h_victoire);
+
+    // on agrandit le texte de victoire pour qu'il soit plus visible, on multiplie sa taille par 2
+    w_victoire = w_victoire * 2;
+    h_victoire = h_victoire * 2;
+
+    // on positionne le texte au centre de la fenêtre
+    SDL_Rect rect_victoire;
+    rect_victoire.x = (largeur_fenetre / 2) - (w_victoire / 2);
+    rect_victoire.y = (hauteur_fenetre / 2) - (h_victoire / 2);
+    rect_victoire.w = w_victoire;
+    rect_victoire.h = h_victoire;
+
+    SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);  // activer la transparence
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 150);             // noir avec 150 d'opacité
+
+    // le fond noir prend toute la largeur, mais juste la hauteur du texte avec un peu de marge
+    SDL_Rect rect_fond_noir = {0, rect_victoire.y - 10, largeur_fenetre, h_victoire + 20};
+    SDL_RenderFillRect(ren, &rect_fond_noir);
+
+    SDL_RenderCopy(ren, text_victoire, NULL, &rect_victoire);  // on dessine le texte par dessus le fond noir
+
+    // on free toutes les surfaces/textures temporaires créées pour ce texte de victoire
+    SDL_FreeSurface(surf_victoire);
+    SDL_DestroyTexture(text_victoire);
+
+    // On rénitialise le style de la police pour les prochains textes
+    TTF_SetFontStyle(env->font, TTF_STYLE_NORMAL);
+  }
+
+  if (env->quitting) {
+    TTF_SetFontStyle(env->font, TTF_STYLE_ITALIC | TTF_STYLE_BOLD);
+
+    SDL_Color couleur_violet = {128, 0, 128, 255};
+
+    SDL_Surface *surf_shame = TTF_RenderText_Blended(env->font, "SHAME !", couleur_violet);
+    SDL_Texture *text_shame = SDL_CreateTextureFromSurface(ren, surf_shame);
+
+    int w_shame, h_shame;
+    SDL_QueryTexture(text_shame, NULL, NULL, &w_shame, &h_shame);
+
+    w_shame = w_shame * 2;
+    h_shame = h_shame * 2;
+
+    SDL_Rect rect_shame;
+    rect_shame.x = (largeur_fenetre / 2) - (w_shame / 2);
+    rect_shame.y = (hauteur_fenetre / 2) - (h_shame / 2);
+    rect_shame.w = w_shame;
+    rect_shame.h = h_shame;
+
+    SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 150);
+
+    SDL_Rect rect_fond_noir = {0, rect_shame.y - 10, largeur_fenetre, h_shame + 20};
+    SDL_RenderFillRect(ren, &rect_fond_noir);
+
+    SDL_RenderCopy(ren, text_shame, NULL, &rect_shame);
+
+    SDL_FreeSurface(surf_shame);
+    SDL_DestroyTexture(text_shame);
+
+    TTF_SetFontStyle(env->font, TTF_STYLE_NORMAL);
+  }
+
+  ///////////////////////////////////////// BOUTON HELP ///////////////////////////////////////
+
+  // on met le bouton HELP en haut à gauche de la fenêtre
+  SDL_Rect rect_bouton_help = {10, 10, 100, 40};  // x=10, y=10, largeur=100, hauteur=40
+
+  // on met le bouton en gris foncé
+  SDL_SetRenderDrawColor(ren, 100, 100, 100, 255);
+  SDL_RenderFillRect(ren, &rect_bouton_help);
+
+  // on met le texte "HELP" en blanc sur le bouton
+  SDL_Color couleur_blanche = {255, 255, 255, 255};
+  SDL_Surface *surf_bouton = TTF_RenderText_Blended(env->font, "HELP", couleur_blanche);
+  SDL_Texture *text_bouton = SDL_CreateTextureFromSurface(ren, surf_bouton);
+  int w_btn, h_btn;
+  SDL_QueryTexture(text_bouton, NULL, NULL, &w_btn, &h_btn);
+
+  // centre le texte sur le bouton
+  SDL_Rect rect_texte_btn = {rect_bouton_help.x + (rect_bouton_help.w - w_btn) / 2,
+                             rect_bouton_help.y + (rect_bouton_help.h - h_btn) / 2, w_btn, h_btn};
+  SDL_RenderCopy(ren, text_bouton, NULL, &rect_texte_btn);
+  SDL_FreeSurface(surf_bouton);
+  SDL_DestroyTexture(text_bouton);
+
+  /////////////////////////////////////// PANNEAU D'AIDE ///////////////////////////////////////
+
+  if (env->show_help) {
+    // on met un fond noir transparent pour faire ressortir le panneau d'aide
+    SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 200);  // 200 d'opacité
+    SDL_Rect plein_ecran = {0, 0, largeur_fenetre, hauteur_fenetre};
+    SDL_RenderFillRect(ren, &plein_ecran);
+
+    // préparation du texte d'aide (ligne par ligne car SDL_ttf ne gère pas bien les \n)
+    char *lignes_aide[] = {"Aide au jeu Tents",
+                           "Clic Gauche : Poser une TENTE / HERBE",
+                           "Clic Droit : Effacer (EMPTY)",
+                           "Touche 'F' : Remplir la grille d'herbe",
+                           "Touche 'R' : Recommencer le niveau",
+                           "Touche 'Z' : Annuler (Undo)",
+                           "Touche 'Y' : Refaire (Redo)",
+                           "Touche 'Q' : Quitter (Shame)"};
+    int nb_lignes_aide = 8;
+    int hauteur_ligne = 40;                                                        // espace vertical entre chaque ligne
+    int debut_y = (hauteur_fenetre / 2) - ((nb_lignes_aide * hauteur_ligne) / 2);  // centré verticalement
+
+    // on dessine chaque ligne du texte d'aide au centre de la fenêtre
+    for (int i = 0; i < nb_lignes_aide; i++) {
+      SDL_Surface *surf_ligne = TTF_RenderText_Blended(env->font, lignes_aide[i], couleur_blanche);
+      SDL_Texture *text_ligne = SDL_CreateTextureFromSurface(ren, surf_ligne);
+
+      int w_ligne, h_ligne;
+      SDL_QueryTexture(text_ligne, NULL, NULL, &w_ligne, &h_ligne);
+
+      SDL_Rect rect_ligne = {(largeur_fenetre / 2) - (w_ligne / 2), debut_y + (i * hauteur_ligne), w_ligne, h_ligne};
+
+      SDL_RenderCopy(ren, text_ligne, NULL, &rect_ligne);
+      SDL_FreeSurface(surf_ligne);
+      SDL_DestroyTexture(text_ligne);
+    }
+  }
 }
 
 /* **************************************************************** */
 
 bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
+  if (game_won(env->g) || env->quitting) {
+    // si on vient de gagner ou de quitter et que le chrono n'est pas encore démarré, on le démarre en enregistrant le
+    // temps actuel
+    if (env->temps == 0) {
+      env->temps =
+          SDL_GetTicks();  // on démarre le chrono en enregistrant le temps actuel en millisecondes depuis la victoire
+    }
+    // on vérifie si 2 secondes (2000 ms) se sont écoulées depuis la victoire ou le quit
+    if (SDL_GetTicks() - env->temps >= 2000) {
+      return true;  // on quitte le jeu après 2 secondes
+    }
+  } else {
+    // si on annule une victoire en faisant un undo par exemple, on réinitialise le chrono et one le remet a sa valeur
+    // sentinelle 0
+    env->temps = 0;
+  }
+
   int largeur_fenetre;
   int hauteur_fenetre;
   SDL_GetWindowSize(win, &largeur_fenetre, &hauteur_fenetre);  // on prend la largeur et la hauteur réel de la fenêtre
@@ -303,7 +466,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   if (e->type == SDL_KEYDOWN) {
     if (e->key.keysym.sym == SDLK_q) {  // quand on presse la touche "q" le jeu est quitté
       // SHAME
-      return true;
+      env->quitting = true;
     } else if (e->key.keysym.sym == SDLK_f) {  // quand on presse la touche "f" le jeu est rempli d'herbe
       game_fill_grass(env->g);
     } else if (e->key.keysym.sym == SDLK_r) {  // quand on presse la touche "r" le jeu redémarre
@@ -320,6 +483,25 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
     SDL_GetMouseState(&mouse.x, &mouse.y);
     int souris_x = mouse.x;
     int souris_y = mouse.y;
+
+    if (souris_x >= 10 && souris_x <= 100 && souris_y >= 10 &&
+        souris_y <= 40) {  // si on clique dans la zone du bouton HELP
+      if (e->button.button == SDL_BUTTON_LEFT) {
+        env->show_help = !(env->show_help);  // alterne entre vrai et faux à chaque clic sur le bouton
+        return false;  // on ne fait rien d'autre que d'ouvrir ou fermer le panneau d'aide, on ne veut pas que le clic
+                       // fasse aussi une action sur la grille en dessous (ce qui ne devrait pas arriver car le bouton
+                       // est en dehors de la grille)
+      }
+    }
+
+    if (env->show_help) {
+      if (e->button.button == SDL_BUTTON_LEFT) {  // si on clique n'importe où et que le panneau d'aide est ouvert alors
+                                                  // on ferme le panneau d'aide
+        env->show_help = false;
+      }
+      return false;  // on laisse le panneau d'aide ouvert tant que l'utilisateur n'a pas cliqué pour le fermer
+    }
+
     if (souris_x >= decalage_x && souris_x < decalage_x + (nb_colonnes * taille_case) && souris_y >= decalage_y &&
         souris_y < decalage_y + (nb_lignes * taille_case)) {  // si la souris est dans la grille
       uint colonne = (souris_x - decalage_x) /
@@ -338,12 +520,6 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
       }
     }
   }
-
-  if (game_won(env->g)) {
-    // CONGRATULATION
-    return true;
-  }
-
   return false;
 }
 
