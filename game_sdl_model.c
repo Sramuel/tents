@@ -14,26 +14,37 @@
 
 /* **************************************************************** */
 
-#define BACKGROUND_SQUARE "res/background_square.png"
-#define BACKGROUND_RECTANGLE "res/background_rectangle.png"
+#define BACKGROUND_SPRING "res/background_spring.png"
+#define BACKGROUND_AUTUMN "res/background_autumn.png"
+#define BACKGROUND_WINTER "res/background_winter.png"
 
 #define GRID_SPRING "res/grid_spring.png"
 #define GRID_AUTUMN "res/grid_autumn.png"
+#define GRID_WINTER "res/grid_winter.png"
 
 #define TENT_SPRING "res/tent_spring.png"
 #define TENT_AUTUMN "res/tent_autumn.png"
+#define TENT_WINTER "res/tent_winter.png"
 
 #define TREE_SPRING "res/tree_spring.png"
 #define TREE_AUTUMN "res/tree_autumn.png"
+#define TREE_WINTER "res/tree_winter.png"
 
 #define BIGTREE_SPRING "res/bigtree_spring.png"
 #define BIGTREE_AUTUMN "res/bigtree_autumn.png"
+#define BIGTREE_WINTER "res/bigtree_winter.png"
 
 #define GRASS_SPRING "res/grass_spring.png"
 #define GRASS_AUTUMN "res/grass_autumn.png"
+#define GRASS_WINTER "res/grass_winter.png"
 
 #define FONT "res/arial.ttf"
 #define FONTSIZE 36
+
+// Coordonnées de tes zones de jeu (x, y, w, h)
+const SDL_Rect ZONE_CARRE = {582, 162, 756, 756};
+const SDL_Rect ZONE_PAYSAGE = {291, 205, 1338, 670};
+const SDL_Rect ZONE_PORTRAIT = {670, 105, 580, 870};
 
 /* **************************************************************** */
 
@@ -42,27 +53,33 @@ struct Env_t {
   bool quitting;
   bool show_help;
 
-  SDL_Texture *background_square;
-  SDL_Texture *background_rectangle;
+  SDL_Texture *background_spring;
+  SDL_Texture *background_autumn;
+  SDL_Texture *background_winter;
 
   SDL_Texture *grid_spring;
   SDL_Texture *grid_autumn;
+  SDL_Texture *grid_winter;
 
   SDL_Texture *tent_spring;
   SDL_Texture *tent_autumn;
+  SDL_Texture *tent_winter;
 
   SDL_Texture *tree_spring;
   SDL_Texture *tree_autumn;
+  SDL_Texture *tree_winter;
 
   SDL_Texture *bigtree_spring;
   SDL_Texture *bigtree_autumn;
+  SDL_Texture *bigtree_winter;
 
   SDL_Texture *grass_spring;
   SDL_Texture *grass_autumn;
+  SDL_Texture *grass_winter;
 
   TTF_Font *font;
   game g;
-  bool spring;
+  int season;
 };
 
 /* **************************************************************** */
@@ -77,41 +94,53 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[]) {
   } else {  // si pas de fichier fourni on peut charger le jeu par défaut
     env->g = game_default();
   }
-  // les 2 fonds du jeu
-  env->background_square = IMG_LoadTexture(ren, BACKGROUND_SQUARE);
-  if (!env->background_square) ERROR("IMG_LoadTexture: %s\n", BACKGROUND_SQUARE);
-  env->background_rectangle = IMG_LoadTexture(ren, BACKGROUND_RECTANGLE);
-  if (!env->background_rectangle) ERROR("IMG_LoadTexture: %s\n", BACKGROUND_RECTANGLE);
+  // les 3 fonds du jeu
+  env->background_spring = IMG_LoadTexture(ren, BACKGROUND_SPRING);
+  if (!env->background_spring) ERROR("IMG_LoadTexture: %s\n", BACKGROUND_SPRING);
+  env->background_autumn = IMG_LoadTexture(ren, BACKGROUND_AUTUMN);
+  if (!env->background_autumn) ERROR("IMG_LoadTexture: %s\n", BACKGROUND_AUTUMN);
+  env->background_winter = IMG_LoadTexture(ren, BACKGROUND_WINTER);
+  if (!env->background_winter) ERROR("IMG_LoadTexture: %s\n", BACKGROUND_WINTER);
 
-  // les 2 plateaux
+  // les 3 plateaux
   env->grid_spring = IMG_LoadTexture(ren, GRID_SPRING);
   if (!env->grid_spring) ERROR("IMG_LoadTexture: %s\n", GRID_SPRING);
   env->grid_autumn = IMG_LoadTexture(ren, GRID_AUTUMN);
   if (!env->grid_autumn) ERROR("IMG_LoadTexture: %s\n", GRID_AUTUMN);
+  env->grid_winter = IMG_LoadTexture(ren, GRID_WINTER);
+  if (!env->grid_winter) ERROR("IMG_LoadTexture: %s\n", GRID_WINTER);
 
-  // les 2 tentes
+  // les 3 tentes
   env->tent_spring = IMG_LoadTexture(ren, TENT_SPRING);
   if (!env->tent_spring) ERROR("IMG_LoadTexture: %s\n", TENT_SPRING);
   env->tent_autumn = IMG_LoadTexture(ren, TENT_AUTUMN);
   if (!env->tent_autumn) ERROR("IMG_LoadTexture: %s\n", TENT_AUTUMN);
+  env->tent_winter = IMG_LoadTexture(ren, TENT_WINTER);
+  if (!env->tent_winter) ERROR("IMG_LoadTexture: %s\n", TENT_WINTER);
 
-  // les 2 abres normaux
+  // les 3 abres normaux
   env->tree_spring = IMG_LoadTexture(ren, TREE_SPRING);
   if (!env->tree_spring) ERROR("IMG_LoadTexture: %s\n", TREE_SPRING);
   env->tree_autumn = IMG_LoadTexture(ren, TREE_AUTUMN);
   if (!env->tree_autumn) ERROR("IMG_LoadTexture: %s\n", TREE_AUTUMN);
+  env->tree_winter = IMG_LoadTexture(ren, TREE_WINTER);
+  if (!env->tree_winter) ERROR("IMG_LoadTexture: %s\n", TREE_WINTER);
 
-  // les 2 gros arbres
+  // les 3 gros arbres
   env->bigtree_spring = IMG_LoadTexture(ren, BIGTREE_SPRING);
   if (!env->bigtree_spring) ERROR("IMG_LoadTexture: %s\n", BIGTREE_SPRING);
   env->bigtree_autumn = IMG_LoadTexture(ren, BIGTREE_AUTUMN);
   if (!env->bigtree_autumn) ERROR("IMG_LoadTexture: %s\n", BIGTREE_AUTUMN);
+  env->bigtree_winter = IMG_LoadTexture(ren, BIGTREE_WINTER);
+  if (!env->bigtree_winter) ERROR("IMG_LoadTexture: %s\n", BIGTREE_WINTER);
 
-  // les 2 herbes
+  // les 3 herbes
   env->grass_spring = IMG_LoadTexture(ren, GRASS_SPRING);
   if (!env->grass_spring) ERROR("IMG_LoadTexture: %s\n", GRASS_SPRING);
   env->grass_autumn = IMG_LoadTexture(ren, GRASS_AUTUMN);
   if (!env->grass_autumn) ERROR("IMG_LoadTexture: %s\n", GRASS_AUTUMN);
+  env->grass_winter = IMG_LoadTexture(ren, GRASS_WINTER);
+  if (!env->grass_winter) ERROR("IMG_LoadTexture: %s\n", GRASS_WINTER);
 
   env->font = TTF_OpenFont(FONT, FONTSIZE);
   if (!env->font) ERROR("TTF_OpenFont: %s\n", FONT);
@@ -125,24 +154,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   int largeur_fenetre;
   int hauteur_fenetre;
   SDL_GetWindowSize(win, &largeur_fenetre, &hauteur_fenetre);  // on prend la largeur et la hauteur réel de la fenêtre
-
   uint nb_lignes = game_nb_rows(env->g);
   uint nb_colonnes = game_nb_cols(env->g);
-  int largeur_case =
-      (largeur_fenetre * 0.7) / nb_colonnes;  // 0.7, donc 70% de l'écran pour pas que ca prenne toute la fenêtre car on
-                                              // va mettre des chiffres pour le nb de tent_expected etc...
-  int hauteur_case = (hauteur_fenetre * 0.7) / nb_lignes;
-  int taille_case;
-  if (largeur_case < hauteur_case) {
-    taille_case = largeur_case;
-  } else {
-    taille_case = hauteur_case;
-  }
-  // pour centre la grille au milieu
-  int decalage_x = (largeur_fenetre - (nb_colonnes * taille_case)) / 2;
-  int decalage_y = (hauteur_fenetre - (nb_lignes * taille_case)) / 2;
 
-  /////////////////////////////////////// TEXTURES A UTILISER ///////////////////////////////////////
+  /////////////////////////////////////// TEXTURES/ZONE A UTILISER ///////////////////////////////////////
+  SDL_Rect zone_jeu_a_utiliser;
   SDL_Texture *fond_a_utiliser;
   SDL_Texture *grille_a_utiliser;
   SDL_Texture *tente_a_utiliser;
@@ -151,23 +167,54 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   SDL_Texture *herbe_a_utiliser;
 
   if (nb_lignes == nb_colonnes) {
-    fond_a_utiliser = env->background_square;
+    zone_jeu_a_utiliser = ZONE_CARRE;
+    fond_a_utiliser = env->background_spring;
     grille_a_utiliser = env->grid_spring;
     tente_a_utiliser = env->tent_spring;
     arbre_a_utiliser = env->tree_spring;
     gros_arbre_a_utiliser = env->bigtree_spring;
     herbe_a_utiliser = env->grass_spring;
-    env->spring = true;
-  } else {
-    fond_a_utiliser = env->background_rectangle;
+    env->season = 0;
+  } else if (nb_lignes < nb_colonnes) {
+    zone_jeu_a_utiliser = ZONE_PAYSAGE;
+    fond_a_utiliser = env->background_autumn;
     grille_a_utiliser = env->grid_autumn;
     tente_a_utiliser = env->tent_autumn;
     arbre_a_utiliser = env->tree_autumn;
     gros_arbre_a_utiliser = env->bigtree_autumn;
     herbe_a_utiliser = env->grass_autumn;
-    env->spring = false;
+    env->season = 1;
+  } else {
+    zone_jeu_a_utiliser = ZONE_PORTRAIT;
+    fond_a_utiliser = env->background_winter;
+    grille_a_utiliser = env->grid_winter;
+    tente_a_utiliser = env->tent_winter;
+    arbre_a_utiliser = env->tree_winter;
+    gros_arbre_a_utiliser = env->bigtree_winter;
+    herbe_a_utiliser = env->grass_winter;
+    env->season = 2;
   }
   SDL_RenderCopy(ren, fond_a_utiliser, NULL, NULL);
+
+  /////////////////////////////////////// CALCULS ///////////////////////////////////////
+  float echelle_x = (float)largeur_fenetre / 1920.0f;
+  float echelle_y = (float)hauteur_fenetre / 1080.0f;
+
+  // on adapte la zone de jeu à la taille de la fenêtre
+  SDL_Rect zone_adaptee;
+  zone_adaptee.x = (int)(zone_jeu_a_utiliser.x * echelle_x);
+  zone_adaptee.y = (int)(zone_jeu_a_utiliser.y * echelle_y);
+  zone_adaptee.w = (int)(zone_jeu_a_utiliser.w * echelle_x);
+  zone_adaptee.h = (int)(zone_jeu_a_utiliser.h * echelle_y);
+
+  // on calcule la taille des cases dans cette zone adaptée
+  int largeur_case = zone_adaptee.w / nb_colonnes;
+  int hauteur_case = zone_adaptee.h / nb_lignes;
+  int taille_case = (largeur_case < hauteur_case) ? largeur_case : hauteur_case;
+
+  // pour centre la grille au milieu
+  int decalage_x = zone_adaptee.x + (zone_adaptee.w - (nb_colonnes * taille_case)) / 2;
+  int decalage_y = zone_adaptee.y + (zone_adaptee.h - (nb_lignes * taille_case)) / 2;
 
   /////////////////////////////////////// GRILLE DE JEU ///////////////////////////////////////
   SDL_Rect rect;  // rappel : x et y : la position du rectangle par rapport au repère de votre fenêtre, w: la largeur du
@@ -184,9 +231,12 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
       if (grille_a_utiliser != NULL) {
         SDL_RenderCopy(ren, grille_a_utiliser, NULL, &rect);  // on met le fond "grid" sous chaque case du plateau
       }
-      SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);  // on initialise la couleur rouge au stylo
-      if (!env->spring) {
-        SDL_SetRenderDrawColor(ren, 41, 71, 204, 255);  // on initialise la couleur bleue au stylo
+      if (env->season == 1) {
+        SDL_SetRenderDrawColor(ren, 41, 71, 204, 255);  // on initialise la couleur bleu au stylo
+      } else if (env->season == 2) {
+        SDL_SetRenderDrawColor(ren, 102, 51, 153, 255);  // on initialise la couleur violet au stylo
+      } else {
+        SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);  // on initialise la couleur rouge au stylo (printemps par défaut)
       }
       SDL_RenderDrawRect(ren, &rect);  // on dessine un rectangle au x,y et h,w donné
 
@@ -206,9 +256,14 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   }
 
   /////////////////////////////////////// NUMEROS DES TENTES ATTENDUES ///////////////////////////////////////
-  SDL_Color couleur_texte = {255, 0, 0, 255};                       // couleur rouge pour le texte
-  if (!env->spring) couleur_texte = (SDL_Color){41, 71, 204, 255};  // couleur bleue pour le texte
-
+  SDL_Color couleur_texte;  // couleur du texte en fonciton du thème
+  if (env->season == 1) {
+    couleur_texte = (SDL_Color){41, 71, 204, 255};  // on initialise la couleur bleu au stylo
+  } else if (env->season == 2) {
+    couleur_texte = (SDL_Color){102, 51, 153, 255};  // on initialise la couleur violet au stylo
+  } else {
+    couleur_texte = (SDL_Color){255, 0, 0, 255};  // on initialise la couleur rouge au stylo (printemps par défaut)
+  }
   char texte_a_afficher[10];  // pour convertir le nombre en texte (ex: "3")
 
   // on affiche le nombre de tentes attendues pour chaque ligne
@@ -427,23 +482,41 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
   int largeur_fenetre;
   int hauteur_fenetre;
   SDL_GetWindowSize(win, &largeur_fenetre, &hauteur_fenetre);  // on prend la largeur et la hauteur réel de la fenêtre
-
   uint nb_lignes = game_nb_rows(env->g);
   uint nb_colonnes = game_nb_cols(env->g);
-  int largeur_case =
-      (largeur_fenetre * 0.7) / nb_colonnes;  // 0.7, donc 70% de l'écran pour pas que ca prenne toute la fenêtre car on
-                                              // va mettre des chiffres pour le nb de tent_expected etc...
-  int hauteur_case = (hauteur_fenetre * 0.7) / nb_lignes;
-  int taille_case;
-  if (largeur_case < hauteur_case) {
-    taille_case = largeur_case;
-  } else {
-    taille_case = hauteur_case;
-  }
-  // pour centre la grille au milieu
-  int decalage_x = (largeur_fenetre - (nb_colonnes * taille_case)) / 2;
-  int decalage_y = (hauteur_fenetre - (nb_lignes * taille_case)) / 2;
 
+  /////////////////////////////////////// TEXTURES/ZONE A UTILISER ///////////////////////////////////////
+  SDL_Rect zone_jeu_a_utiliser;
+
+  if (env->season == 0) {
+    zone_jeu_a_utiliser = ZONE_CARRE;
+  } else if (env->season == 1) {
+    zone_jeu_a_utiliser = ZONE_PAYSAGE;
+  } else {
+    zone_jeu_a_utiliser = ZONE_PORTRAIT;
+  }
+
+  /////////////////////////////////////// CALCULS ///////////////////////////////////////
+  float echelle_x = (float)largeur_fenetre / SCREEN_WIDTH;
+  float echelle_y = (float)hauteur_fenetre / SCREEN_HEIGHT;
+
+  // on adapte la zone de jeu à la taille de la fenêtre
+  SDL_Rect zone_adaptee;
+  zone_adaptee.x = (int)(zone_jeu_a_utiliser.x * echelle_x);
+  zone_adaptee.y = (int)(zone_jeu_a_utiliser.y * echelle_y);
+  zone_adaptee.w = (int)(zone_jeu_a_utiliser.w * echelle_x);
+  zone_adaptee.h = (int)(zone_jeu_a_utiliser.h * echelle_y);
+
+  // on calcule la taille des cases dans cette zone adaptée
+  int largeur_case = zone_adaptee.w / nb_colonnes;
+  int hauteur_case = zone_adaptee.h / nb_lignes;
+  int taille_case = (largeur_case < hauteur_case) ? largeur_case : hauteur_case;
+
+  // pour centre la grille au milieu
+  int decalage_x = zone_adaptee.x + (zone_adaptee.w - (nb_colonnes * taille_case)) / 2;
+  int decalage_y = zone_adaptee.y + (zone_adaptee.h - (nb_lignes * taille_case)) / 2;
+
+  /////////////////////////////////////// REDIMENSIONNEMENT DE LA FENETRE ///////////////////////////////////////
   float aspect_ratio = 16.0f / 9.0f;
   if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED) {
     static bool resizing = false;  // empêche la boucle infinie
@@ -463,6 +536,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
     }
   }
 
+  /////////////////////////////////////// EVENEMENTS CLAVIER ///////////////////////////////////////
   if (e->type == SDL_KEYDOWN) {
     if (e->key.keysym.sym == SDLK_q) {  // quand on presse la touche "q" le jeu est quitté
       // SHAME
@@ -478,6 +552,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
     }
   }
 
+  /////////////////////////////////////// EVENEMENTS SOURIS ///////////////////////////////////////
   if (e->type == SDL_MOUSEBUTTONDOWN) {
     SDL_Point mouse;
     SDL_GetMouseState(&mouse.x, &mouse.y);
@@ -526,48 +601,42 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
 /* **************************************************************** */
 
 void clean(SDL_Window *win, SDL_Renderer *ren, Env *env) {
-  if (env->background_square != NULL) {
-    SDL_DestroyTexture(env->background_square);
-  }
-  if (env->background_rectangle != NULL) {
-    SDL_DestroyTexture(env->background_rectangle);
-  }
-  if (env->grid_spring != NULL) {
-    SDL_DestroyTexture(env->grid_spring);
-  }
-  if (env->grid_autumn != NULL) {
-    SDL_DestroyTexture(env->grid_autumn);
-  }
-  if (env->tree_spring != NULL) {
-    SDL_DestroyTexture(env->tree_spring);
-  }
-  if (env->tree_autumn != NULL) {
-    SDL_DestroyTexture(env->tree_autumn);
-  }
-  if (env->tent_spring != NULL) {
-    SDL_DestroyTexture(env->tent_spring);
-  }
-  if (env->tent_autumn != NULL) {
-    SDL_DestroyTexture(env->tent_autumn);
-  }
-  if (env->bigtree_spring != NULL) {
-    SDL_DestroyTexture(env->bigtree_spring);
-  }
-  if (env->bigtree_autumn != NULL) {
-    SDL_DestroyTexture(env->bigtree_autumn);
-  }
-  if (env->grass_spring != NULL) {
-    SDL_DestroyTexture(env->grass_spring);
-  }
-  if (env->grass_autumn != NULL) {
-    SDL_DestroyTexture(env->grass_autumn);
-  }
-  if (env->g != NULL) {
-    game_delete(env->g);
-  }
-  if (env->font != NULL) {
-    TTF_CloseFont(env->font);
-  }
+  if (env == NULL) return;
+
+  // nettoyage des fonds (Backgrounds)
+  if (env->background_spring) SDL_DestroyTexture(env->background_spring);
+  if (env->background_autumn) SDL_DestroyTexture(env->background_autumn);
+  if (env->background_winter) SDL_DestroyTexture(env->background_winter);
+
+  // nettoyage des plateaux (Grids)
+  if (env->grid_spring) SDL_DestroyTexture(env->grid_spring);
+  if (env->grid_autumn) SDL_DestroyTexture(env->grid_autumn);
+  if (env->grid_winter) SDL_DestroyTexture(env->grid_winter);
+
+  // nettoyage des tentes (Tents)
+  if (env->tent_spring) SDL_DestroyTexture(env->tent_spring);
+  if (env->tent_autumn) SDL_DestroyTexture(env->tent_autumn);
+  if (env->tent_winter) SDL_DestroyTexture(env->tent_winter);
+
+  // nettoyage des arbres normaux (Trees)
+  if (env->tree_spring) SDL_DestroyTexture(env->tree_spring);
+  if (env->tree_autumn) SDL_DestroyTexture(env->tree_autumn);
+  if (env->tree_winter) SDL_DestroyTexture(env->tree_winter);
+
+  // nettoyage des gros arbres (Big Trees)
+  if (env->bigtree_spring) SDL_DestroyTexture(env->bigtree_spring);
+  if (env->bigtree_autumn) SDL_DestroyTexture(env->bigtree_autumn);
+  if (env->bigtree_winter) SDL_DestroyTexture(env->bigtree_winter);
+
+  // nettoyage des herbes (Grass)
+  if (env->grass_spring) SDL_DestroyTexture(env->grass_spring);
+  if (env->grass_autumn) SDL_DestroyTexture(env->grass_autumn);
+  if (env->grass_winter) SDL_DestroyTexture(env->grass_winter);
+
+  // nettoyage du reste (Police, Jeu et Structure)
+  if (env->font) TTF_CloseFont(env->font);
+  if (env->g) game_delete(env->g);
+
   free(env);
 }
 

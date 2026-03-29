@@ -147,14 +147,14 @@ About Const Pointer:
 ## Usage
 To compile and run the project, we recommend using a dedicated build directory to keep the source tree clean.
 
-Compilation :
+# Compilation
 From the project root, run the following commands:
 
 $ mkdir build && cd build
 $ cmake ..
 $ make
 
-Running Tests :
+# Running Tests
 You can execute all tests or filter them by author using the following commands:
 
 To run all tests:
@@ -164,22 +164,31 @@ $ ctest
 To run tests for a specific author: Use the -R flag followed by the author's username:
 $ ctest -R <username>   # Example: ctest -R ansicot
 
-## Crédits Graphiques & Direction Artistique
+## SDL2 : Artistic Direction & Graphic Credits
+The visual identity of this project was entirely designed to provide an immersive experience based on a seasonal system (Spring, Autumn, Winter).
 
-L'intégralité des sprites utilisés pour ce projet ont été réalisée sur mesure, à l'exception d'une ressource de base.
+Original Creation (Handmade)
+All graphic assets were custom-made by **Anthony Sicot**, including a complete set for each climate:
 
-Sprites Originaux (fait main) :
+# Environmental Elements:
 
-# Grille de jeu : Tentes dynamiques (Rouge/Bleue), Arbres (Grands & Petits), Herbes hautes.
-# Environnement : Chemins de terre, Poteaux, Lacs et Arbustes.
-# Variantes Saisonnières : Certains sprites possèdent une version Printemps et Automne.
+Dirt Paths: Straight lines, turns, intersections, and borders.
+Aquatic Zones: Central water, borders, and corners.
+Decoration: Wooden posts, tall grass, and background trees.
 
-Auteur : Anthony Sicot
+# Gameplay Elements:
 
-# Fond de carte (grid.png) :
+Grids: Board backgrounds adapted to the color palette of each season.
+Interactive Sprites: Tents (Red/Blue/Purple depending on the theme), Gameplay Trees, and "Big Trees".
 
-Inspiration & Direction Artistique : Ce projet rend hommage au travail de Ken Sugimori (Directeur Artistique historique de Pokémon) et Hironobu Yoshida (Graphic Designer principal sur Pokémon FireRed / LeafGreen). Le style visuel de l'Île 4 (Four Island) a servi de référence majeure pour la gestion des contrastes et des palettes de couleurs.
+Inspiration & Tribute
+The artistic direction pays tribute to the iconic style of Ken Sugimori (historical Art Director of Pokémon) and Hironobu Yoshida.
+The overall aesthetics are particularly inspired by Pokémon FireRed / LeafGreen (specifically Four Island), used here for contrast management and tile readability, while integrating brand-new winter palettes.
 
-Base Technique : Fond extrait des ressources communautaires de The Spriters Resource.
+# Technical Specifications
+Adaptation: All sprites have been edited and scaled for fluid integration under SDL2.
+Modularity: The graphics engine automatically switches between asset sets (Spring, Autumn, Winter) based on the dimensions of the loaded game:
 
-Modifications apportées : Retouche complète des couleurs pour s'adapter aux thèmes Printemps/Automne et mise à l'échelle pour une intégration fluide dans le moteur SDL. Cette ressource n'occupe qu'une partie mineure mais importante de l'affichage final.
+Spring: Perfectly square grid (number of columns equals number of rows).
+Autumn: Landscape format (number of columns is strictly greater than number of rows).
+Winter: Portrait format (number of columns is strictly less than number of rows).
