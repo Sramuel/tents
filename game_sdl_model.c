@@ -41,11 +41,10 @@
 #define FONT "res/arial.ttf"
 #define FONTSIZE 36
 
-// Coordonnées de tes zones de jeu (x, y, w, h)
-const SDL_Rect ZONE_CARRE = {582, 162, 756, 756};
-const SDL_Rect ZONE_PAYSAGE = {291, 205, 1338, 670};
-const SDL_Rect ZONE_PORTRAIT = {670, 105, 580, 870};
-
+// coordonnées des zones de jeu (x, y, w, h)
+const SDL_Rect ZONE_CARRE = {388, 108, 504, 504};
+const SDL_Rect ZONE_PAYSAGE = {194, 137, 892, 447};
+const SDL_Rect ZONE_PORTRAIT = {447, 70, 386, 580};
 /* **************************************************************** */
 
 struct Env_t {
@@ -197,8 +196,8 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   SDL_RenderCopy(ren, fond_a_utiliser, NULL, NULL);
 
   /////////////////////////////////////// CALCULS ///////////////////////////////////////
-  float echelle_x = (float)largeur_fenetre / 1920.0f;
-  float echelle_y = (float)hauteur_fenetre / 1080.0f;
+  float echelle_x = (float)largeur_fenetre / SCREEN_WIDTH;
+  float echelle_y = (float)hauteur_fenetre / SCREEN_HEIGHT;
 
   // on adapte la zone de jeu à la taille de la fenêtre
   SDL_Rect zone_adaptee;
