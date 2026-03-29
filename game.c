@@ -192,47 +192,40 @@ bool game_check_move(cgame g, uint i, uint j, square s) {
 bool game_won(cgame g) {
   assert(g);
 
-  // check rule 1) "No two tents are adjacent, not even diagonally."
+  // vérifier la règle 1) "Deux tentes ne peuvent pas être adjacentes, même en diagonale."
   for (uint i = 0; i < g->nb_rows; i++)
     for (uint j = 0; j < g->nb_cols; j++)
       if ((game_get_square(g, i, j) == TENT) && game_is_neigh(g, i, j, TENT, true)) return false;
 
-  // check rule 2.a) "In each row, the number of current tents is equal to the
-  // expected number."
+  // vérifier la règle 2.a) "Dans chaque ligne, le nombre de tentes actuelles est égal au nombre attendu."
   for (uint i = 0; i < g->nb_rows; i++) {
     int nb_expected_tents_row = game_get_expected_nb_tents_row(g, i);
     int nb_current_tents_row = game_get_current_nb_tents_row(g, i);
     if (nb_expected_tents_row != nb_current_tents_row) return false;
   }
-
-  // check rule 2.b) "In each column, the number of current tents is equal to
-  // the expected number."
+  // vérifier la règle 2.b) "Dans chaque colonne, le nombre de tentes actuelles est égal au nombre attendu."
   for (uint j = 0; j < g->nb_cols; j++) {
     int nb_expected_tents_col = game_get_expected_nb_tents_col(g, j);
     int nb_current_tents_col = game_get_current_nb_tents_col(g, j);
     if (nb_expected_tents_col != nb_current_tents_col) return false;
   }
-
-  // check rule 3) "The total number of tents is equal to the total expected
-  // number."
+  // vérifier la règle 3) "Le nombre total de tentes est égal au nombre total attendu."
   int nb_expected_tents = game_get_expected_nb_tents_all(g);
   int nb_current_tents = game_get_current_nb_tents_all(g);
   if (nb_expected_tents != nb_current_tents) return false;
 
-  // check rule 4) Check tree-tent adjacency.
+  // vérifier la règle 4) vérifier l'adjacence arbre-tente.
   for (uint i = 0; i < g->nb_rows; i++)
     for (uint j = 0; j < g->nb_cols; j++) {
-      // 4.a) for tents, check there is at least one neigh tree (or big tree).
+      // 4.a) Pour les tentes, vérifier qu'il y a au moins un arbre (ou gros arbre) voisin.
       if (game_get_square(g, i, j) == TENT) {
         if (!game_is_neigh(g, i, j, TREE, false) && !game_is_neigh(g, i, j, BIGTREE, false)) return false;
       }
-
-      // 4.b) for trees, check there is the correct number of neigh tents.
+      // 4.b) pour les arbres, vérifier qu'il y a le bon nombre de tentes voisines.
       uint nb_neigh_tents = game_nb_neigh(g, i, j, TENT, false);
       if ((game_get_square(g, i, j) == TREE) && nb_neigh_tents == 0) return false;
       if ((game_get_square(g, i, j) == BIGTREE) && nb_neigh_tents != 2) return false;
     }
-
   return true;
 }
 
