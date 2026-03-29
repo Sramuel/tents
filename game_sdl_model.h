@@ -35,7 +35,7 @@ typedef struct Env_t Env;
 
 /* **************************************************************** */
 
-#define APP_NAME "SDL2 Demo"
+#define APP_NAME "TENTS-B32"
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #define DELAY 100

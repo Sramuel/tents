@@ -266,6 +266,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
   }
   char texte_a_afficher[10];  // pour convertir le nombre en texte (ex: "3")
 
+  // on définit une hauteur max pour le texte en fonction de la taille de la case (50%) pour que ça respire
+  int hauteur_cible = taille_case * 0.5;
+  // on crée une marge proportionnelle à la case (10%) pour pas que le texte touche le bord
+  int marge = taille_case * 0.1;
+
   // on affiche le nombre de tentes attendues pour chaque ligne
   for (uint i = 0; i < nb_lignes; i++) {
     uint nb_tents = game_get_expected_nb_tents_row(env->g, i);
@@ -276,16 +281,26 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
     SDL_Texture *text = SDL_CreateTextureFromSurface(ren, surf);
 
     // récupération des dimensions du texte généré
-    int w_texte, h_texte;
-    SDL_QueryTexture(text, NULL, NULL, &w_texte, &h_texte);
+    int w_texte_original, h_texte_original;
+    SDL_QueryTexture(text, NULL, NULL, &w_texte_original, &h_texte_original);
 
-    // positionnement à droite de la grille
+    // on vérifie que le texte ne devienne pas plus grand que sa taille de base si la fenêtre est géante
+    int hauteur_finale = hauteur_cible;
+    if (hauteur_finale > h_texte_original) {
+      hauteur_finale = h_texte_original;
+    }
+
+    // on recalcule la largeur pour garder les bonnes proportions du chiffre
+    float ratio = (float)hauteur_finale / (float)h_texte_original;
+    int largeur_finale = (int)(w_texte_original * ratio);
+
+    // positionnement à droite de la grille avec les nouvelles tailles qui s'adaptent
     SDL_Rect rect_texte;
-    rect_texte.x = decalage_x + (nb_colonnes * taille_case) + 10;  // +10 de marge après la dernière case
+    rect_texte.x = decalage_x + (nb_colonnes * taille_case) + marge;
     rect_texte.y = decalage_y + (i * taille_case) + (taille_case / 2) -
-                   (h_texte / 2);  // centré verticalement par rapport à la case
-    rect_texte.w = w_texte;
-    rect_texte.h = h_texte;
+                   (hauteur_finale / 2);  // centré verticalement par rapport à la case
+    rect_texte.w = largeur_finale;
+    rect_texte.h = hauteur_finale;
 
     SDL_RenderCopy(ren, text, NULL, &rect_texte);
 
@@ -302,16 +317,24 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
     SDL_Surface *surf = TTF_RenderText_Blended(env->font, texte_a_afficher, couleur_texte);
     SDL_Texture *text = SDL_CreateTextureFromSurface(ren, surf);
 
-    int w_texte, h_texte;
-    SDL_QueryTexture(text, NULL, NULL, &w_texte, &h_texte);
+    int w_texte_original, h_texte_original;
+    SDL_QueryTexture(text, NULL, NULL, &w_texte_original, &h_texte_original);
+
+    int hauteur_finale = hauteur_cible;
+    if (hauteur_finale > h_texte_original) {
+      hauteur_finale = h_texte_original;
+    }
+
+    float ratio = (float)hauteur_finale / (float)h_texte_original;
+    int largeur_finale = (int)(w_texte_original * ratio);
 
     // positionnement en bas de la grille
     SDL_Rect rect_texte;
     rect_texte.x = decalage_x + (j * taille_case) + (taille_case / 2) -
-                   (w_texte / 2);                                // centré horizontalement par rapport à la case
-    rect_texte.y = decalage_y + (nb_lignes * taille_case) + 10;  // +10 de marge sous la dernière ligne
-    rect_texte.w = w_texte;
-    rect_texte.h = h_texte;
+                   (largeur_finale / 2);                            // centré horizontalement par rapport à la case
+    rect_texte.y = decalage_y + (nb_lignes * taille_case) + marge;  // la marge empeche de manger le bord
+    rect_texte.w = largeur_finale;
+    rect_texte.h = hauteur_finale;
 
     SDL_RenderCopy(ren, text, NULL, &rect_texte);
 
@@ -435,22 +458,39 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env) {
                            "Clic Droit : Effacer (EMPTY)",
                            "Touche 'F' : Remplir la grille d'herbe",
                            "Touche 'R' : Recommencer le niveau",
+                           "Touche 'S' : Sauvegarder le jeu",
                            "Touche 'Z' : Annuler (Undo)",
                            "Touche 'Y' : Refaire (Redo)",
+                           "Touche 'X' : Solution (Solve)",
                            "Touche 'Q' : Quitter (Shame)"};
-    int nb_lignes_aide = 8;
-    int hauteur_ligne = 40;                                                        // espace vertical entre chaque ligne
-    int debut_y = (hauteur_fenetre / 2) - ((nb_lignes_aide * hauteur_ligne) / 2);  // centré verticalement
-
+    int nb_lignes_aide = 10;  // nombre de lignes dans le texte d'aide
+    int hauteur_max_menu =
+        hauteur_fenetre * 0.8;  // on veut que le menu d'aide prenne au maximum 80% de la hauteur de la fenêtre
+    int hauteur_ligne =
+        hauteur_max_menu / nb_lignes_aide;  // on calcule la hauteur de chaque ligne pour que le menu d'aide prenne au
+                                            // maximum 80% de la hauteur de la fenêtre, et que les lignes soient
+                                            // espacées en fonction de cette hauteur maximale
+    if (hauteur_ligne > 40) {  // si la fenêtre est très grande, on limite la hauteur des lignes à 40 pour éviter que le
+                               // texte soit énorme et prenne trop de place
+      hauteur_ligne = 40;
+    }
+    int hauteur_totale_menu = nb_lignes_aide * hauteur_ligne;
+    int debut_y = (hauteur_fenetre / 2) - (hauteur_totale_menu / 2);  // pour centrer le menu d'aide verticalement
     // on dessine chaque ligne du texte d'aide au centre de la fenêtre
     for (int i = 0; i < nb_lignes_aide; i++) {
       SDL_Surface *surf_ligne = TTF_RenderText_Blended(env->font, lignes_aide[i], couleur_blanche);
       SDL_Texture *text_ligne = SDL_CreateTextureFromSurface(ren, surf_ligne);
 
-      int w_ligne, h_ligne;
-      SDL_QueryTexture(text_ligne, NULL, NULL, &w_ligne, &h_ligne);
+      int w_ligne_originale, h_ligne_originale;
+      SDL_QueryTexture(text_ligne, NULL, NULL, &w_ligne_originale, &h_ligne_originale);
 
-      SDL_Rect rect_ligne = {(largeur_fenetre / 2) - (w_ligne / 2), debut_y + (i * hauteur_ligne), w_ligne, h_ligne};
+      // on calcule le ratio pour réduire la largeur proportionnellement à la nouvelle hauteur
+      float ratio = (float)hauteur_ligne / (float)h_ligne_originale;
+      int w_ligne_reduite = (int)(w_ligne_originale * ratio);
+
+      // on dessine avec la nouvelle taille réduite
+      SDL_Rect rect_ligne = {(largeur_fenetre / 2) - (w_ligne_reduite / 2), debut_y + (i * hauteur_ligne),
+                             w_ligne_reduite, hauteur_ligne};
 
       SDL_RenderCopy(ren, text_ligne, NULL, &rect_ligne);
       SDL_FreeSurface(surf_ligne);
@@ -549,6 +589,13 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e) {
       game_undo(env->g);
     } else if (e->key.keysym.sym == SDLK_y) {  // quand on presse la touche "y" le coup est rejoué
       game_redo(env->g);
+    } else if (e->key.keysym.sym == SDLK_s) {  // quand on presse la touche "s" le jeu est sauvegardé
+      game_save(env->g, "./levels/game_saved.txt");
+    } else if (e->key.keysym.sym == SDLK_x) {  // quand on presse la touche "x" le jeu est résolu
+      game_restart(env->g);  // on enlève toute les tentes posées par le joueur pour pouvoir trouver la solution à
+                             // partir de la grille de départ
+      game_solve(
+          env->g);  // le jeu est résolu et on voit la solution s'afficher à l'écran (pour aider les joueurs bloqués)
     }
   }
 
