@@ -1,33 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
-<head>
-    <meta charset="utf-8">
-</head>
+    <head>
+        <meta charset="utf-8">
+        <title>Tents B_32</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 50px;
+            }
+            #game-container {
+                text-align: center;
+                margin-top: 30px;
+            }
+            button {
+                margin: 10px 0;
+                padding: 10px 20px;
+                font-size: 16px;
+                border: 1px solid;
+                background: rgb(149, 216, 149);
+            }
+        </style>
+    </head>
 
-<body>
+    <body>
+        <h1>Tents - Web Game</h1>
 
-    <!-- ********************* html ********************* -->
+        <div id="game-container">
+            <canvas id='mycanvas' width="500" height="500" style="border:1px solid #333; background-color: #fff"></canvas>
+            <div>
+                <button id="btn-undo">Undo</button>
+                <button id="btn-redo">Redo</button>
+                <button id="btn-restart">Restart</button>
+                <button id="btn-solve" style="background-color: #d8e93e">Solve</button>
+                <button id="btn-random" style="background-color: #ccbc2e">Random</button>
+            </div>
+            <p id="status-message">Let's play !</p>
+        </div>
 
-    <h1>Demo Game Web</h1>
+        <hr style="width: 80%; margin-top: 30px">
+        <p><em>Projet PT2 - Université de Bordeaux - 2026</em></p>
 
-    <p>This demo shows you the basics to call our game routines using a
-        JavaScript module based on Wasm technology... Here, the default game is
-        created at startup and then it is printed as text within a <em>pre</em>
-        element.</p>
-
-    <pre id="result"></pre>
-
-    <canvas id='mycanvas' width="400px" height="400px"></canvas>
-
-    <hr>
-    <p><em>aurelien.esnard@u-bordeaux.fr, 2026.</em></p>
-
-    <!-- ********************* script ********************* -->
-
-    <script src="game.js"></script>
-    <script src="demo.js"> </script>
-
-</body>
+        <script src="game.js"></script> 
+        <script src="demo.js"></script>
+    </body>
 
 </html>

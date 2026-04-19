@@ -1,41 +1,24 @@
-/**
- * @file game_struct.h
- * @brief Private Game Structure.
- * @copyright University of Bordeaux. All rights reserved, 2025.
- **/
-
 #ifndef __GAME_STRUCT_H__
 #define __GAME_STRUCT_H__
-
-#include <stdbool.h>
 
 #include "game.h"
 #include "queue.h"
 
-/* ************************************************************************** */
-/*                             DATA TYPES                                     */
-/* ************************************************************************** */
-
-/**
- * @brief Game structure.
- * @details This is an opaque data type.
- */
 struct game_s {
-  uint nb_rows;       /**< number of rows in the game */
-  uint nb_cols;       /**< number of columns in the game */
-  uint* nb_tents_row; /**< the expected number of tents in each row */
-  uint* nb_tents_col; /**< the expected number of tents in each col */
-  square* squares;    /**< the grid of squares */
-  bool wrapping;      /**< the wrapping option */
-  queue* undo_stack;  /**< stack to undo moves */
-  queue* redo_stack;  /**< stack to redo moves */
+  square **board;      // Grille principale: contient TREE,TENT,GRASS,EMPTY
+  uint *nb_tents_row;  // Tableau du nombre attendu de tentes par ligne
+  uint *nb_tents_col;  // Tableau du nombre attendu de tentes par colonne
+  uint nb_rows;        // Nombre de lignes (par défaut DEFAULT_SIZE)
+  uint nb_cols;        // Nombre de colonnes (par défaut DEFAULT_SIZE)
+  bool wrapping;       // Est vrai si le jeu à une topologie torique (faux sinon)
+  queue *undo;         // Pile des actions pour la fonctionnalité "undo"
+  queue *redo;         // Pile des actions pour la fonctionnalité "redo"
 };
 
-/* ************************************************************************** */
-/*                                MACRO                                       */
-/* ************************************************************************** */
+typedef struct {  // structure pour stocker une action de jeu
+  uint row;       // indice de la ligne
+  uint col;       // indice de la colonne
+  square value;   // valeur de la case avant/après l'action
+} cell;
 
-#define INDEX(g, i, j) ((i) * (g->nb_cols) + (j))
-#define SQUARE(g, i, j) ((g)->squares[(INDEX(g, i, j))])
-
-#endif  // __GAME_STRUCT_H__
+#endif

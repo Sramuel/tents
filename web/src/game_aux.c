@@ -1,161 +1,200 @@
-/**
- * @file game_aux.c
- * @copyright University of Bordeaux. All rights reserved, 2025.
- *
- **/
-
 #include "game_aux.h"
 
-#include <assert.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "game.h"
 #include "game_ext.h"
-#include "game_private.h"
 #include "game_struct.h"
 
-/* ************************************************************************** */
-
-int DIR2OFFSET[][2] = {
-    [HERE] = {0, 0},      [UP] = {-1, 0},        [DOWN] = {1, 0},
-    [LEFT] = {0, -1},     [RIGHT] = {0, 1},      [UP_LEFT] = {-1, -1},
-    [UP_RIGHT] = {-1, 1}, [DOWN_LEFT] = {1, -1}, [DOWN_RIGHT] = {1, 1},
-};
-
-/* ************************************************************************** */
-
-void game_print(cgame g)
-{
-  assert(g);
+void game_print(cgame g) {
+  uint i;
+  uint j;
   printf("   ");
-  for (uint j = 0; j < game_nb_cols(g); j++) printf("%d", j);
+  for (j = 0; j < game_nb_cols(g); j++) {
+    printf("%u", j);  // print de 0 à nb colonnes -1
+  }
+  printf("\n   ");
+  for (j = 0; j < game_nb_cols(g); j++) {
+    printf("-");  // --------
+  }
   printf("\n");
-  printf("   ");
-  for (uint j = 0; j < game_nb_cols(g); j++) printf("-");
-  printf("\n");
-  for (uint i = 0; i < game_nb_rows(g); i++) {
-    printf("%d |", i);
-    for (uint j = 0; j < game_nb_cols(g); j++) {
-      square s = game_get_square(g, i, j);
-      char c = _square2str(s);
-      printf("%c", c);
+  for (i = 0; i < game_nb_rows(g); i++) {  // print du plateau
+    printf("%u |", i);                     // print de 0 à nb lignes -1
+    for (j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) == TREE) {
+        printf("x");
+      }
+      if (game_get_square(g, i, j) == EMPTY) {
+        printf(" ");
+      }
+      if (game_get_square(g, i, j) == GRASS) {
+        printf("-");
+      }
+      if (game_get_square(g, i, j) == TENT) {
+        printf("*");
+      }
+      if (game_get_square(g, i, j) == BIGTREE) {
+        printf("#");
+      }
     }
-    printf("| %d\n", game_get_expected_nb_tents_row(g, i));
+    printf("| %u\n", game_get_expected_nb_tents_row(g, i));  // print des expected tentes dans les lignes
   }
   printf("   ");
-  for (uint j = 0; j < game_nb_cols(g); j++) printf("-");
-  printf("\n");
-  printf("   ");
-  for (uint j = 0; j < game_nb_cols(g); j++) printf("%d", game_get_expected_nb_tents_col(g, j));
+  for (j = 0; j < game_nb_cols(g); j++) {
+    printf("-");  // --------
+  }
+  printf("\n   ");
+  for (j = 0; j < game_nb_cols(g); j++) {
+    printf("%u", game_get_expected_nb_tents_col(g, j));  // print des expected tentes dans les colonnes
+  }
   printf("\n");
 }
 
-/* ************************************************************************** */
+game game_default(void) {
+  game g = game_new_empty();
+  if (g == NULL) return NULL;
 
-game game_default(void)
-{
-  square squares[] = {
-      TREE,  EMPTY, EMPTY, EMPTY, EMPTY, TREE,  TREE,  EMPTY, /* row 0 */
-      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, /* row 1 */
-      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, TREE,  EMPTY, /* row 2 */
-      TREE,  EMPTY, TREE,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, /* row 3 */
-      EMPTY, EMPTY, EMPTY, EMPTY, TREE,  EMPTY, EMPTY, EMPTY, /* row 4 */
-      EMPTY, EMPTY, TREE,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, /* row 5 */
-      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, /* row 6 */
-      EMPTY, TREE,  TREE,  EMPTY, EMPTY, TREE,  TREE,  EMPTY, /* row 7 */
-  };
-  uint nb_tents_row[] = {1, 2, 1, 2, 2, 0, 1, 3};
-  uint nb_tents_col[] = {3, 0, 2, 1, 2, 1, 2, 1};
-  return game_new(squares, nb_tents_row, nb_tents_col);
-}
+  // Configuration du nombre de tentes attendues par ligne
+  game_set_expected_nb_tents_row(g, 0, 1);
+  game_set_expected_nb_tents_row(g, 1, 2);
+  game_set_expected_nb_tents_row(g, 2, 1);
+  game_set_expected_nb_tents_row(g, 3, 2);
+  game_set_expected_nb_tents_row(g, 4, 2);
+  game_set_expected_nb_tents_row(g, 5, 0);
+  game_set_expected_nb_tents_row(g, 6, 1);
+  game_set_expected_nb_tents_row(g, 7, 3);
 
-/* ************************************************************************** */
+  // Configuration du nombre de tentes attendues par colonne
+  game_set_expected_nb_tents_col(g, 0, 3);
+  game_set_expected_nb_tents_col(g, 1, 0);
+  game_set_expected_nb_tents_col(g, 2, 2);
+  game_set_expected_nb_tents_col(g, 3, 1);
+  game_set_expected_nb_tents_col(g, 4, 2);
+  game_set_expected_nb_tents_col(g, 5, 1);
+  game_set_expected_nb_tents_col(g, 6, 2);
+  game_set_expected_nb_tents_col(g, 7, 1);
 
-game game_default_solution(void)
-{
-  square squares[] = {
-      TREE,  GRASS, GRASS, GRASS, TENT,  TREE,  TREE,  GRASS, /* row 0 */
-      TENT,  GRASS, GRASS, GRASS, GRASS, GRASS, TENT,  GRASS, /* row 1 */
-      GRASS, GRASS, TENT,  GRASS, GRASS, GRASS, TREE,  GRASS, /* row 2 */
-      TREE,  GRASS, TREE,  GRASS, TENT,  GRASS, TENT,  GRASS, /* row 3 */
-      TENT,  GRASS, TENT,  GRASS, TREE,  GRASS, GRASS, GRASS, /* row 4 */
-      GRASS, GRASS, TREE,  GRASS, GRASS, GRASS, GRASS, GRASS, /* row 5 */
-      GRASS, GRASS, GRASS, GRASS, GRASS, TENT,  GRASS, GRASS, /* row 6 */
-      TENT,  TREE,  TREE,  TENT,  GRASS, TREE,  TREE,  TENT,  /* row 7 */
-  };
-  uint nb_tents_row[] = {1, 2, 1, 2, 2, 0, 1, 3};
-  uint nb_tents_col[] = {3, 0, 2, 1, 2, 1, 2, 1};
-  game g = game_new(squares, nb_tents_row, nb_tents_col);
+  // Remplissage de la grille, on met uniquement les arbres
+
+  // Ligne 0
+  game_set_square(g, 0, 0, TREE);
+  game_set_square(g, 0, 5, TREE);
+  game_set_square(g, 0, 6, TREE);
+
+  // Ligne 2
+  game_set_square(g, 2, 6, TREE);
+
+  // Ligne 3
+  game_set_square(g, 3, 0, TREE);
+  game_set_square(g, 3, 2, TREE);
+
+  // Ligne 4
+  game_set_square(g, 4, 4, TREE);
+
+  // Ligne 5
+  game_set_square(g, 5, 2, TREE);
+
+  // Ligne 7
+  game_set_square(g, 7, 1, TREE);
+  game_set_square(g, 7, 2, TREE);
+  game_set_square(g, 7, 5, TREE);
+  game_set_square(g, 7, 6, TREE);
+
   return g;
 }
 
-/* ************************************************************************** */
+game game_default_solution(void) {
+  game g = game_default();
+  if (g == NULL) return NULL;
 
-bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  assert(j < g->nb_cols);
+  // Placement des tentes correspondant à la solution complète du jeu par défaut
+  game_set_square(g, 0, 4, TENT);
+  game_set_square(g, 1, 0, TENT);
+  game_set_square(g, 1, 6, TENT);
+  game_set_square(g, 2, 2, TENT);
+  game_set_square(g, 3, 4, TENT);
+  game_set_square(g, 3, 6, TENT);
+  game_set_square(g, 4, 0, TENT);
+  game_set_square(g, 4, 2, TENT);
+  game_set_square(g, 6, 5, TENT);
+  game_set_square(g, 7, 0, TENT);
+  game_set_square(g, 7, 3, TENT);
+  game_set_square(g, 7, 7, TENT);
 
-  // convert direction to offset
-  int i_offset = DIR2OFFSET[d][0];
-  int j_offset = DIR2OFFSET[d][1];
+  game_fill_grass(g);
 
-  // move to the next square in a given direction
-  int ii = i + i_offset;
-  int jj = j + j_offset;
+  return g;
+}
 
-  if (game_is_wrapping(g)) {
-    ii = (ii + game_nb_rows(g)) % game_nb_rows(g);
-    jj = (jj + game_nb_cols(g)) % game_nb_cols(g);
+bool game_get_adjacent_square(cgame g, uint i, uint j, direction d, uint* pi_next, uint* pj_next) {
+  if (g == NULL) {  // Vérifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
+    return false;
+  }
+  if (d < HERE || d > DOWN_RIGHT) {  // Vérifie que la direction d est valide (compris entre HERE et DOWN_RIGHT)
+    return false;
+  }
+  const int dj[] = {0, 0, 0, -1, 1, -1, 1, -1, 1};  // tableau des abscisses des directions
+  const int di[] = {0, -1, 1, 0, 0, -1, -1, 1, 1};  // tableau des ordonnées des directions
+  int ni = i + di[d];                               // abscisse de la case adjacente
+  int nj = j + dj[d];                               // ordonnée de la case adjacente
+
+  if (game_is_wrapping(g)) {  // implementation de l'option wrapping
+    if (ni < 0)
+      ni = game_nb_rows(g) - 1;
+    else if (ni >= game_nb_rows(g))
+      ni = 0;
+
+    if (nj < 0)
+      nj = game_nb_cols(g) - 1;
+    else if (nj >= game_nb_cols(g))
+      nj = 0;
   }
 
-  // check if next square at (ii,jj) is out of grid
-  if (ii < 0 || ii >= (int)g->nb_rows) return false;
-  if (jj < 0 || jj >= (int)g->nb_cols) return false;
-
-  *pi_next = ii;
-  *pj_next = jj;
+  if (ni < 0 || nj < 0 || ni >= game_nb_rows(g) || nj >= game_nb_cols(g)) {
+    return false;
+  }
+  *pi_next = (uint)ni;
+  *pj_next = (uint)nj;
 
   return true;
 }
 
-/* ************************************************************************** */
-
-uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag)
-{
-  assert(g);
-  assert(i < g->nb_rows && j < g->nb_cols);
-
-  uint count = 0;
-  uint ii, jj;
-  // orthogonally
-  if (game_get_adjacent_square(g, i, j, UP, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-  if (game_get_adjacent_square(g, i, j, DOWN, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-  if (game_get_adjacent_square(g, i, j, LEFT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-  if (game_get_adjacent_square(g, i, j, RIGHT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-
-  // diagonally
-  if (diag) {
-    if (game_get_adjacent_square(g, i, j, UP_LEFT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-    if (game_get_adjacent_square(g, i, j, UP_RIGHT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-    if (game_get_adjacent_square(g, i, j, DOWN_LEFT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
-    if (game_get_adjacent_square(g, i, j, DOWN_RIGHT, &ii, &jj) && SQUARE(g, ii, jj) == s) count++;
+bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag) {
+  if (g == NULL) {  // Vérifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérifie que i et j sont bien dans la grille
+    return false;
   }
 
+  return (game_nb_neigh(g, i, j, s, diag) > 0);
+}
+
+uint game_nb_neigh(cgame g, uint i, uint j, square s, bool diag) {
+  if (g == NULL) return 0;
+
+  uint count = 0;
+  // On définit les directions à tester
+  // Les 4 premières sont ortho, les 4 suivantes sont diag
+  direction dirs[] = {UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT};
+
+  // Si diag est false, on s'arrête à 4 (ortho seulement), sinon 8
+  int limit;
+  if (diag)
+    limit = 8;
+  else
+    limit = 4;
+
+  for (int k = 0; k < limit; k++) {  // Pour chaque direction à tester
+    uint ni, nj;
+    if (game_get_adjacent_square(g, i, j, dirs[k], &ni, &nj)) {  // Si la case adjacente existe avec cette direction
+      if (game_get_square(g, ni, nj) == s) {                     // Si la case adjacente correspond au square recherché
+        count++;                                                 // On incrémente le compteur
+      }
+    }
+  }
   return count;
 }
-
-/* ************************************************************************** */
-
-bool game_is_neigh(cgame g, uint i, uint j, square s, bool diag)
-{
-  assert(g);
-  assert(i < g->nb_rows && j < g->nb_cols);
-  uint nb_neigh = game_nb_neigh(g, i, j, s, diag);
-  return (nb_neigh > 0);
-}
-
-/* ************************************************************************** */

@@ -1,287 +1,264 @@
-/**
- * @file game.c
- * @copyright University of Bordeaux. All rights reserved, 2025.
- *
- **/
-
-#include "game.h"
-
 #include <assert.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "game_aux.h"
+#include "game_aux2.h"
 #include "game_ext.h"
-#include "game_private.h"
-#include "game_struct.h"
-#include "queue.h"
 
-/* ************************************************************************** */
-/*                                 GAME BASIC                                 */
-/* ************************************************************************** */
-
-game game_new(square* squares, uint* nb_tents_row, uint* nb_tents_col)
-{
-  return game_new_ext(DEFAULT_SIZE, DEFAULT_SIZE, squares, nb_tents_row, nb_tents_col, false);
+game game_new(square* squares, uint* nb_tents_row, uint* nb_tents_col) {
+  game g = game_new_empty();
+  g = init_game(g, nb_tents_row, nb_tents_col, squares);
+  return g;
 }
 
-/* ************************************************************************** */
-
-game game_new_empty(void) { return game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, false); }
-
-/* ************************************************************************** */
-
-game game_copy(cgame g)
-{
-  game gg = game_new_ext(g->nb_rows, g->nb_cols, g->squares, g->nb_tents_row, g->nb_tents_col,
-                         g->wrapping);
-  return gg;
+game game_new_empty(void) {
+  game g = game_new_empty_ext(DEFAULT_SIZE, DEFAULT_SIZE, false);
+  return g;
 }
 
-/* ************************************************************************** */
-
-bool game_equal(cgame g1, cgame g2)
-{
-  assert(g1 && g2);
-
-  if (g1->nb_rows != g2->nb_rows) return false;
-  if (g1->nb_cols != g2->nb_cols) return false;
-
-  for (uint i = 0; i < g1->nb_rows; i++) {
-    if (g1->nb_tents_row[i] != g2->nb_tents_row[i]) return false;
+game game_copy(cgame g) {
+  if (g == NULL) {
+    return NULL;
   }
+  square* squares =
+      board_to_square_aux(g, game_nb_rows(g), game_nb_cols(g));  // Traduction du Double tableau en Simple tableau
+  game g_copy = game_new_ext(game_nb_rows(g), game_nb_cols(g), squares, g->nb_tents_row, g->nb_tents_col,
+                             game_is_wrapping(g));  // Création d'une game avec toutes les propriétés
+  free(squares);
+  return g_copy;
+}
 
-  for (uint j = 0; j < g1->nb_cols; j++) {
-    if (g1->nb_tents_col[j] != g2->nb_tents_col[j]) return false;
+bool game_equal(cgame g1, cgame g2) {
+  if (g1 == NULL || g2 == NULL) {  // Vérification des pointeurs
+    return false;
   }
-
-  for (uint i = 0; i < g1->nb_rows; i++)
-    for (uint j = 0; j < g1->nb_cols; j++) {
-      if (SQUARE(g1, i, j) != SQUARE(g2, i, j)) return false;
+  if (game_nb_rows(g1) != game_nb_rows(g2)) {  // Vérification du nombre de lignes
+    return false;
+  }
+  if (game_nb_cols(g1) != game_nb_cols(g2)) {  // Vérification du nombre de colonnes
+    return false;
+  }
+  if (game_is_wrapping(g1) != game_is_wrapping(g2)) {  // Vérification de l'option wrapping
+    return false;
+  }
+  for (uint i = 0; i < game_nb_rows(g1);
+       i++) {  // Vérification du tableau contenant le nombre de tente attendu pour une ligne
+    if (game_get_expected_nb_tents_row(g1, i) != game_get_expected_nb_tents_row(g2, i)) {
+      return false;
     }
-
-  if (g1->wrapping != g2->wrapping) return false;
-
+  }
+  for (uint i = 0; i < game_nb_cols(g1);
+       i++) {  // Vérification du tableau contenant le nombre de tente attendu pour une colonne
+    if (game_get_expected_nb_tents_col(g1, i) != game_get_expected_nb_tents_col(g2, i)) {
+      return false;
+    }
+  }
+  for (uint i = 0; i < game_nb_rows(g1); i++) {  // Vérification du tableau contenant toutes les cases du jeu
+    for (uint j = 0; j < game_nb_cols(g1); j++) {
+      if (game_get_square(g1, i, j) != game_get_square(g2, i, j)) {
+        return false;
+      }
+    }
+  }
   return true;
 }
 
-/* ************************************************************************** */
-
-void game_delete(game g)
-{
-  free(g->squares);
-  free(g->nb_tents_col);
-  free(g->nb_tents_row);
-  queue_free_full(g->undo_stack, free);
-  queue_free_full(g->redo_stack, free);
-  free(g);
+void game_delete(game g) {
+  if (g) {
+    if (g->undo != NULL) {
+      queue_free_full(g->undo, free);  // Libération de la pile undo
+    }
+    if (g->redo != NULL) {
+      queue_free_full(g->redo, free);  // Libération de la pile redo
+    }
+    for (uint i = 0; i < game_nb_rows(g); i++) {  // Libération de chaque ligne du tableau
+      free(g->board[i]);
+    }
+    free(g->board);         // Libération du tableau de pointeurs vers les lignes
+    free(g->nb_tents_col);  // Libération du tableau contenant le nombre de tentes par colonne
+    free(g->nb_tents_row);  // Libération du tableau contenant le nombre de tentes par ligne
+    free(g);                // Libération de la structure game
+  }
 }
 
-/* ************************************************************************** */
-
-void game_set_square(game g, uint i, uint j, square s)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  assert(j < g->nb_cols);
-  assert(s == EMPTY || s == TREE || s == TENT || s == GRASS || s == BIGTREE);
-  SQUARE(g, i, j) = s;
+void game_set_square(game g, uint i, uint j, square s) {
+  if (g == NULL || i >= game_nb_rows(g) || j >= game_nb_cols(g) || s < 0 || s > 4) {  // Vérification des paramètres
+    return;
+  }
+  g->board[i][j] = s;  // Mise à jour de la case
 }
 
-/* ************************************************************************** */
-
-square game_get_square(cgame g, uint i, uint j)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  assert(j < g->nb_cols);
-  return SQUARE(g, i, j);
+square game_get_square(cgame g, uint i, uint j) {
+  if (g == NULL || i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // Vérification des paramètres
+    exit(EXIT_FAILURE);
+  }
+  return g->board[i][j];  // Récupération de la valeur contenue dans la case
 }
 
-/* ************************************************************************** */
-
-void game_set_expected_nb_tents_row(game g, uint i, uint nb_tents)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  g->nb_tents_row[i] = nb_tents;
+void game_set_expected_nb_tents_row(game g, uint i, uint nb_tents) {
+  if (g == NULL || i >= game_nb_rows(g)) {
+    return;
+  }
+  g->nb_tents_row[i] = nb_tents;  // Met le nombre de tentes attendu sur la ligne
 }
 
-/* ************************************************************************** */
-
-void game_set_expected_nb_tents_col(game g, uint j, uint nb_tents)
-{
-  assert(g);
-  assert(j < g->nb_cols);
-  g->nb_tents_col[j] = nb_tents;
+void game_set_expected_nb_tents_col(game g, uint j, uint nb_tents) {
+  if (g == NULL || j >= game_nb_cols(g)) {
+    return;
+  }
+  g->nb_tents_col[j] = nb_tents;  // Met le nombre de tentes attendu sur la colonne
 }
 
-/* ************************************************************************** */
-
-uint game_get_expected_nb_tents_row(cgame g, uint i)
-{
-  assert(g);
-  assert(i < g->nb_rows);
+uint game_get_expected_nb_tents_row(cgame g, uint i) {
   return g->nb_tents_row[i];
-}
-
-/* ************************************************************************** */
-
-uint game_get_expected_nb_tents_col(cgame g, uint j)
-{
-  assert(g);
-  assert(j < g->nb_cols);
+}  // retourne le nombre de tentes attendu sur la ligne
+uint game_get_expected_nb_tents_col(cgame g, uint j) {
   return g->nb_tents_col[j];
+}  // retourne le nombre de tentes attendu sur la colonne
+uint game_get_expected_nb_tents_all(cgame g) {
+  uint somme = 0;
+  for (uint i = 0; i < game_nb_rows(g); i++) {  // somme du nombre de tentes attendu pour chaque ligne
+    somme = somme + game_get_expected_nb_tents_row(g, i);
+  }
+  return somme;
+}
+uint game_get_current_nb_tents_row(cgame g, uint i) {
+  uint somme = 0;
+  for (uint j = 0; j < game_nb_cols(g); j++) {  // parcours de la ligne i
+    if (game_get_square(g, i, j) == TENT) {
+      somme++;
+    }
+  }
+  return somme;
+}
+uint game_get_current_nb_tents_col(cgame g, uint j) {
+  uint somme = 0;
+  for (uint i = 0; i < game_nb_rows(g); i++) {  // parcours de la colonne j
+    if (game_get_square(g, i, j) == TENT) {
+      somme++;
+    }
+  }
+  return somme;
+}
+uint game_get_current_nb_tents_all(cgame g) {
+  uint somme = 0;
+  for (uint i = 0; i < game_nb_rows(g); i++) {  // parcours de toutes les cases
+    for (uint j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) == TENT) {
+        somme++;  // compte le nombre de tentes
+      }
+    }
+  }
+  return somme;
+}
+void game_play_move(game g, uint i, uint j, square s) {
+  if (!game_check_move(g, i, j, s)) {
+    return;
+  }
+  cell* last_action = malloc(sizeof(cell));  // allocation de la cellule pour stocker l'action
+  if (last_action == NULL) {
+    return;
+  }
+  last_action->row = i;
+  last_action->col = j;
+  last_action->value = game_get_square(g, i, j);
+  queue_push_head(g->undo, last_action);  // sauvegarde de l'action pour undo
+  game_set_square(g, i, j, s);            // joue le coup en mettant la case i,j à s
+  if (g->redo != NULL) {                  // vide la pile redo
+    queue_clear_full(g->redo, free);      // libère chaque cellule de la pile redo
+  }
 }
 
-/* ************************************************************************** */
-
-uint game_get_expected_nb_tents_all(cgame g)
-{
-  assert(g);
-  return _nb_squares(g, TREE) + 2 * _nb_squares(g, BIGTREE);
-}
-
-/* ************************************************************************** */
-
-uint game_get_current_nb_tents_row(cgame g, uint i)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  return _nb_squares_row(g, i, TENT);
-}
-
-/* ************************************************************************** */
-
-uint game_get_current_nb_tents_col(cgame g, uint j)
-{
-  assert(g);
-  assert(j < g->nb_cols);
-  return _nb_squares_col(g, j, TENT);
-}
-
-/* ************************************************************************** */
-
-uint game_get_current_nb_tents_all(cgame g)
-{
-  assert(g);
-  return _nb_squares(g, TENT);
-}
-
-/* ************************************************************************** */
-
-void game_play_move(game g, uint i, uint j, square s)
-{
-  assert(g);
-  assert(i < g->nb_rows);
-  assert(j < g->nb_cols);
-  assert(s == EMPTY || s == TREE || s == TENT || s == GRASS || s == BIGTREE);
-  assert(s != TREE);
-  square ss = SQUARE(g, i, j);
-  assert(ss != TREE);
-  SQUARE(g, i, j) = s;
-
-  // save history
-  _stack_clear(g->redo_stack);
-  move m = {i, j, ss, s};
-  _stack_push_move(g->undo_stack, m);
-}
-
-/* ************************************************************************** */
-
-bool game_check_move(cgame g, uint i, uint j, square s)
-{
-  assert(g);
-  assert(s == EMPTY || s == TREE || s == TENT || s == GRASS || s == BIGTREE);
-
-  if (i >= g->nb_rows) return false;
-  if (j >= g->nb_cols) return false;
-
-  square cs = SQUARE(g, i, j);  // current square at direction (i,j)
-
-  if (s == TREE) return false;
-  if (cs == TREE) return false;
-  if (s == BIGTREE) return false;
-  if (cs == BIGTREE) return false;
-
+bool game_check_move(cgame g, uint i, uint j, square s) {
+  if (g == NULL) {  // verifie que g n'est pas NULL
+    return false;
+  }
+  if (i >= game_nb_rows(g) || j >= game_nb_cols(g)) {  // verifie que i et j sont bien dans la grille
+    return false;
+  }
+  if (s < 0 || s > 4) {  // verifie la validité de la case (EMPTY, GRASS, TENT, TREE or BIGTREE)
+    return false;
+  }
+  if (s == TREE || s == BIGTREE) {  // on ne peux pas poser un nouvel arbre ou un gros arbre
+    return false;
+  }
+  if (game_get_square(g, i, j) == TREE ||
+      game_get_square(g, i, j) == BIGTREE) {  // on ne peux remplacer un arbre par une autre case
+    return false;
+  }
   return true;
 }
 
-/* ************************************************************************** */
-
-bool game_won(cgame g)
-{
+bool game_won(cgame g) {
   assert(g);
 
-  // check rule 1) "No two tents are adjacent, not even diagonally."
+  // vérifier la règle 1) "Deux tentes ne peuvent pas être adjacentes, même en diagonale."
   for (uint i = 0; i < g->nb_rows; i++)
     for (uint j = 0; j < g->nb_cols; j++)
-      if ((SQUARE(g, i, j) == TENT) && game_is_neigh(g, i, j, TENT, true)) return false;
+      if ((game_get_square(g, i, j) == TENT) && game_is_neigh(g, i, j, TENT, true)) return false;
 
-  // check rule 2.a) "In each row, the number of current tents is equal to the
-  // expected number."
+  // vérifier la règle 2.a) "Dans chaque ligne, le nombre de tentes actuelles est égal au nombre attendu."
   for (uint i = 0; i < g->nb_rows; i++) {
     int nb_expected_tents_row = game_get_expected_nb_tents_row(g, i);
     int nb_current_tents_row = game_get_current_nb_tents_row(g, i);
     if (nb_expected_tents_row != nb_current_tents_row) return false;
   }
-
-  // check rule 2.b) "In each column, the number of current tents is equal to
-  // the expected number."
+  // vérifier la règle 2.b) "Dans chaque colonne, le nombre de tentes actuelles est égal au nombre attendu."
   for (uint j = 0; j < g->nb_cols; j++) {
     int nb_expected_tents_col = game_get_expected_nb_tents_col(g, j);
     int nb_current_tents_col = game_get_current_nb_tents_col(g, j);
     if (nb_expected_tents_col != nb_current_tents_col) return false;
   }
-
-  // check rule 3) "The total number of tents is equal to the total expected
-  // number."
+  // vérifier la règle 3) "Le nombre total de tentes est égal au nombre total attendu."
   int nb_expected_tents = game_get_expected_nb_tents_all(g);
   int nb_current_tents = game_get_current_nb_tents_all(g);
   if (nb_expected_tents != nb_current_tents) return false;
 
-  // check rule 4) Check tree-tent adjacency.
+  // vérifier la règle 4) vérifier l'adjacence arbre-tente.
   for (uint i = 0; i < g->nb_rows; i++)
     for (uint j = 0; j < g->nb_cols; j++) {
-      // 4.a) for tents, check there is at least one neigh tree (or big tree).
-      if (SQUARE(g, i, j) == TENT) {
-        if (!game_is_neigh(g, i, j, TREE, false) && !game_is_neigh(g, i, j, BIGTREE, false))
-          return false;
+      // 4.a) Pour les tentes, vérifier qu'il y a au moins un arbre (ou gros arbre) voisin.
+      if (game_get_square(g, i, j) == TENT) {
+        if (!game_is_neigh(g, i, j, TREE, false) && !game_is_neigh(g, i, j, BIGTREE, false)) return false;
       }
-
-      // 4.b) for trees, check there is the correct number of neigh tents.
+      // 4.b) pour les arbres, vérifier qu'il y a le bon nombre de tentes voisines.
       uint nb_neigh_tents = game_nb_neigh(g, i, j, TENT, false);
-      if ((SQUARE(g, i, j) == TREE) && nb_neigh_tents == 0) return false;
-      if ((SQUARE(g, i, j) == BIGTREE) && nb_neigh_tents != 2) return false;
+      if ((game_get_square(g, i, j) == TREE) && nb_neigh_tents == 0) return false;
+      if ((game_get_square(g, i, j) == BIGTREE) && nb_neigh_tents != 2) return false;
     }
-
   return true;
 }
 
-/* ************************************************************************** */
-
-void game_fill_grass(game g)
-{
-  assert(g);
-  for (uint i = 0; i < g->nb_rows; i++)
-    for (uint j = 0; j < g->nb_cols; j++)
-      if (SQUARE(g, i, j) == EMPTY) game_play_move(g, i, j, GRASS);
+void game_fill_grass(game g) {
+  if (g == NULL) {
+    return;
+  }
+  for (int i = 0; i < game_nb_rows(g); i++) {
+    for (int j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) == EMPTY) {
+        game_set_square(g, i, j, GRASS);  // transforme toutes les cases EMPTY en case GRASS
+      }
+    }
+  }
+  return;
 }
 
-/* ************************************************************************** */
-
-void game_restart(game g)
-{
-  assert(g);
-
-  for (uint i = 0; i < g->nb_rows; i++)
-    for (uint j = 0; j < g->nb_cols; j++)
-      if (SQUARE(g, i, j) != TREE && SQUARE(g, i, j) != BIGTREE) SQUARE(g, i, j) = EMPTY;
-
-  // reset history
-  _stack_clear(g->undo_stack);
-  _stack_clear(g->redo_stack);
+void game_restart(game g) {
+  if (g == NULL) {
+    return;
+  }
+  for (int i = 0; i < game_nb_rows(g); i++) {
+    for (int j = 0; j < game_nb_cols(g); j++) {
+      if (game_get_square(g, i, j) != TREE && game_get_square(g, i, j) != BIGTREE) {
+        game_set_square(g, i, j, EMPTY);  // transforme toutes les cases non TREE/BIGTREE en case EMPTY
+      }
+    }
+  }
+  if (g->undo != NULL) {
+    queue_clear_full(g->undo, free);  // Vide la pile undo
+  }
+  if (g->redo != NULL) {
+    queue_clear_full(g->redo, free);  // Vide la pile redo
+  }
+  return;
 }
-
-/* ************************************************************************** */
