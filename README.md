@@ -2,9 +2,9 @@
 
 
 ## Authors :
-- Student 2
+- Sicot Anthony
 - Project contributor
-- Student 3
+- Massié Anthony
 
 
 ## Rules :
@@ -168,7 +168,7 @@ $ ctest -R <username>   # Example: ctest -R student2
 The visual identity of this project was entirely designed to provide an immersive experience based on a seasonal system (Spring, Autumn, Winter).
 
 Original Creation (Handmade)
-All graphic assets were custom-made by **Student 2**, including a complete set for each climate:
+All graphic assets were custom-made by **Anthony Sicot**, including a complete set for each climate:
 
 # Environmental Elements:
 
