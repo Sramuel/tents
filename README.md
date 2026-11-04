@@ -3,7 +3,7 @@
 
 ## Authors :
 - Sicot Anthony
-- Project contributor
+- Guillaumin Samuel
 - Massié Anthony
 
 
