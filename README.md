@@ -2,9 +2,9 @@
 
 
 ## Authors :
-- Sicot Anthony
+- Student 2
 - Project contributor
-- Massié Anthony
+- Student 3
 
 
 ## Rules :
@@ -162,13 +162,13 @@ $ make test
 $ ctest
 
 To run tests for a specific author: Use the -R flag followed by the author's username:
-$ ctest -R <username>   # Example: ctest -R ansicot
+$ ctest -R <username>   # Example: ctest -R student2
 
 ## SDL2 : Artistic Direction & Graphic Credits
 The visual identity of this project was entirely designed to provide an immersive experience based on a seasonal system (Spring, Autumn, Winter).
 
 Original Creation (Handmade)
-All graphic assets were custom-made by **Anthony Sicot**, including a complete set for each climate:
+All graphic assets were custom-made by **Student 2**, including a complete set for each climate:
 
 # Environmental Elements:
 
