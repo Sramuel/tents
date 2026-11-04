@@ -192,3 +192,29 @@ Modularity: The graphics engine automatically switches between asset sets (Sprin
 Spring: Perfectly square grid (number of columns equals number of rows).
 Autumn: Landscape format (number of columns is strictly greater than number of rows).
 Winter: Portrait format (number of columns is strictly less than number of rows).
+## Compilation et lancement
+
+### Pré-requis
+
+- CMake 3.5 ou plus récent
+- Un compilateur C99
+- SDL2, SDL2_image, SDL2_ttf et SDL2_gfx
+
+### Version texte et tests
+
+```bash
+mkdir -p build
+cd build
+cmake ..
+cmake --build .
+ctest --output-on-failure
+./game_text
+```
+
+### Version graphique SDL2
+
+Depuis le répertoire `build/` :
+
+```bash
+./game_sdl
+```
