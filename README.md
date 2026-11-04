@@ -190,8 +190,88 @@ Adaptation: All sprites have been edited and scaled for fluid integration under 
 Modularity: The graphics engine automatically switches between asset sets (Spring, Autumn, Winter) based on the dimensions of the loaded game:
 
 Spring: Perfectly square grid (number of columns equals number of rows).
-Autumn: Landscape format (number of columns is strictly greater than number of rows).
-Winter: Portrait format (number of columns is strictly less than number of rows).
+Autumn: Landscape format (number of columns is strictly greater than the number of rows).
+Winter: Portrait format (number of columns is strictly less than the number of rows).
+
+## Random Grid Generation
+
+The `game_random` executable generates a random grid. Its syntax is:
+
+```bash
+./game_random <nb_rows> <nb_cols> <wrapping> <nb_trees> <nb_bigtrees> <solution> [filename]
+```
+
+The parameters are:
+
+- `nb_rows`: number of rows.
+- `nb_cols`: number of columns.
+- `wrapping`: toric wrapping disabled (`0`) or enabled (`1`).
+- `nb_trees`: number of regular trees.
+- `nb_bigtrees`: number of BIGTREE pieces.
+- `solution`: generate an unsolved grid (`0`) or include its solution (`1`).
+- `filename`: optional output file.
+
+The tree counts below are examples. Generation depends on whether a valid grid can be constructed with the requested dimensions and pieces.
+
+For the three SDL2 themes, use for example:
+
+**Spring (square grid):**
+```bash
+./game_random 8 8 0 12 0 1 spring.txt
+./game_sdl spring.txt
+```
+
+**Autumn (horizontal grid):**
+```bash
+./game_random 8 10 0 12 0 1 autumn.txt
+./game_sdl autumn.txt
+```
+
+**Winter (vertical grid):**
+```bash
+./game_random 10 8 0 12 0 1 winter.txt
+./game_sdl winter.txt
+```
+
+The SDL2 theme is selected automatically from the grid dimensions; it is not a manually selectable mode. Square grids use Spring, wider grids use Autumn, and taller grids use Winter.
+
+`game_text` can also load a saved grid file directly:
+
+```bash
+./game_text winter.txt
+```
+
+## Automatic Solver
+
+The solver is implemented in `game_tools.c` and exposed through `game_solve` and `game_nb_solutions` in `game_tools.h`. The `game_solve` function updates a game with the first solution found and returns `true` when a solution exists; if no solution exists, the game is left unchanged. `game_nb_solutions` counts all solutions.
+
+The implementation uses recursive depth-first backtracking. It visits the grid cell by cell, skips TREE and BIGTREE cells, and tries GRASS and TENT on every other cell. The `game_winable` checks prune branches that already violate row/column counts, tent adjacency, or the remaining possibilities for TREE and BIGTREE constraints. `game_solve` stops after the first solution, whereas `game_nb_solutions` explores all solutions.
+
+The command-line executable accepts a saved game as input. It prints a solution with `-s` and can optionally save it; `-c` counts solutions and prints the count unless an output file is supplied:
+
+```bash
+./game_solve -s <input>
+./game_solve -s <input> <output>
+./game_solve -c <input>
+./game_solve -c <input> <output>
+```
+
+The SDL2 and web interfaces also expose a Solve action. In the web interface, the Solve button calls the same solver through the WebAssembly wrapper.
+
+## Web Version
+
+The `web/` directory contains an HTML/CSS/JavaScript interface backed by the C game library compiled to WebAssembly with Emscripten. It has no JavaScript package-manager dependencies. Building it requires the Emscripten tools `emcc` and `emar`; a local HTTP server is recommended so that the browser can load the generated WebAssembly files.
+
+From the project root:
+
+```bash
+cd web
+make
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000/game.html` in a browser. The page provides mouse interaction, Undo, Redo, Restart, Solve, and Random actions. Stop the server with `Ctrl+C` when finished.
+
 ## Compilation et lancement
 
 ### Pré-requis
@@ -222,4 +302,3 @@ Depuis le répertoire `build/` :
 ## Avertissement
 
 Ce dépôt contient un projet étudiant réalisé à des fins pédagogiques et académiques. Il peut contenir des limitations, des choix simplifiés ou des failles de sécurité ; il n est pas destiné à un usage professionnel, à la production ou au traitement de données réelles. Utilisez-le uniquement dans un environnement de test et adaptez-le avant toute réutilisation.
-
